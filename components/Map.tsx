@@ -6,16 +6,56 @@ import {
   Marker,
   Popup,
   LayersControl,
+  useMap,
 } from "react-leaflet";
+import { useEffect } from "react";
+import { Property } from "../types/property";
+
 
 const { BaseLayer } = LayersControl;
 
-export default function Map({ data }: any) {
+type Bounds = {
+  minLat: number;
+  maxLat: number;
+  minLng: number;
+  maxLng: number;
+};
+type MapProps = {
+  data: Property[];
+  onMove: (bounds: Bounds) => void;
+};
+
+function MapEvents({ onMove }: { onMove: (bounds: Bounds) => void }) {
+  const map = useMap();
+
+  useEffect(() => {
+    const handleMove = () => {
+      const bounds = map.getBounds();
+
+      onMove({
+        minLat: bounds.getSouth(),
+        maxLat: bounds.getNorth(),
+        minLng: bounds.getWest(),
+        maxLng: bounds.getEast(),
+      });
+    };
+
+    map.on("moveend", handleMove);
+
+    return () => {
+      map.off("moveend", handleMove);
+    };
+  }, [map, onMove]);
+
+  return null;
+}
+
+export default function Map({ data, onMove }: MapProps) {
   return (
     <MapContainer
       center={[10.0452, 105.7469]}
       zoom={13}
-      style={{ height: "500px", width: "100%" }}
+      style={{ height: "100vh", width: "100%" }}
     >
       <LayersControl position="topright">
         {/* 🗺️ Map thường */}
@@ -40,7 +80,9 @@ export default function Map({ data }: any) {
         </BaseLayer>
       </LayersControl>
 
-      {data.map((item: any) => (
+      <MapEvents onMove={onMove} />
+
+      {data.map((item) => (
         <Marker key={item.id} position={[item.lat, item.lng]}>
           <Popup>
             <b>{item.title}</b>
