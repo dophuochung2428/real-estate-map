@@ -24,3 +24,33 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.cluster-wrapper {
+  background: transparent !important;
+  border: none !important;
+}
+
+.cluster-img {
+  position: relative;
+  width: 25px;
+  height: 41px;
+}
+
+.cluster-img img {
+  width: 100%;
+  height: 100%;
+}
+
+/* số nằm trong đầu marker */
+.cluster-img span {
+  position: absolute;
+  top: 5px;
+  /* chỉnh số tại đây */
+  left: 0;
+  right: 0;
+
+  text-align: center;
+  color: #fff;
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+}

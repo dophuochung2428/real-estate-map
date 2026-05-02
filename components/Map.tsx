@@ -12,6 +12,9 @@ import { useEffect } from "react";
 import { Property } from "../types/property";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import MarkerClusterGroup from "react-leaflet-cluster";
 
 // fix icon path
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -92,16 +95,33 @@ export default function Map({ data, onMove }: MapProps) {
       </LayersControl>
 
       <MapEvents onMove={onMove} />
+      <MarkerClusterGroup
+        iconCreateFunction={(cluster: any) => {
+          const count = cluster.getChildCount();
 
-      {data.map((item) => (
-        <Marker key={item.id} position={[item.lat, item.lng]}>
-          <Popup>
-            <b>{item.title}</b>
-            <br />
-            Giá: {item.price}
-          </Popup>
-        </Marker>
-      ))}
+          return L.divIcon({
+            html: `
+        <div class="cluster-img">
+          <img src="https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png" />
+          <span>${count}</span>
+        </div>
+      `,
+            className: "cluster-wrapper",
+            iconSize: [30, 50],
+            iconAnchor: [15, 50],
+          });
+        }}
+      >
+        {data.map((item) => (
+          <Marker key={item.id} position={[item.lat, item.lng]}>
+            <Popup>
+              <b>{item.title}</b>
+              <br />
+              Giá: {item.price}
+            </Popup>
+          </Marker>
+        ))}
+      </MarkerClusterGroup>
     </MapContainer>
   );
 }
