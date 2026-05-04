@@ -31,8 +31,7 @@ export default function MapWrapper({
           .gte("lat", bounds.minLat)
           .lte("lat", bounds.maxLat)
           .gte("lng", bounds.minLng)
-          .lte("lng", bounds.maxLng)
-          .limit(200);
+          .lte("lng", bounds.maxLng);
 
         if (error) {
           console.error("Fetch error:", error);

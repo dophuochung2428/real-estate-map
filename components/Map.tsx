@@ -174,8 +174,8 @@ export default function Map({ data, onMove }: MapProps) {
           return L.divIcon({
             html: `
       <div 
-      class="cluster-circle" 
-    style="width:${size}px;height:${size}px;background:${color}"
+        class="cluster-circle" 
+        style="width:${size}px;height:${size}px;background:${color}"
       >
         ${count}
       </div>
