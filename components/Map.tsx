@@ -8,7 +8,7 @@ import {
   LayersControl,
   useMap,
 } from "react-leaflet";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Property } from "../types/property";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -37,6 +37,7 @@ type Bounds = {
 type MapProps = {
   data: Property[];
   onMove: (bounds: Bounds) => void;
+  onMapLoad?: (map: L.Map) => void;
 };
 
 function MapEvents({ onMove }: { onMove: (bounds: Bounds) => void }) {
@@ -129,16 +130,25 @@ const getClusterColor = (count: number) => {
   return "linear-gradient(135deg, #f87171, #ef4444)";
 };
 
-export default function Map({ data, onMove }: MapProps) {
+export default function Map({ data, onMove, onMapLoad }: MapProps) {
+  const mapRef = useRef<L.Map | null>(null);
   const prices = data.map((item) => item.price);
 
   const minPrice = prices.length ? Math.min(...prices) : 0;
   const maxPrice = prices.length ? Math.max(...prices) : 0;
+
+  useEffect(() => {
+    if (mapRef.current && onMapLoad) {
+      onMapLoad(mapRef.current);
+    }
+  }, [onMapLoad]);
   return (
     <MapContainer
+      key="map"
       center={[10.0452, 105.7469]}
       zoom={13}
       style={{ height: "100vh", width: "100%" }}
+      ref={mapRef}
     >
       <LayersControl position="topright">
         <BaseLayer checked name="Bản đồ">
