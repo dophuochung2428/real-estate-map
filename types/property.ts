@@ -9,7 +9,7 @@ export type PropertyType =
   | "farm"
   | "warehouse_factory";
 
-  export type DirectionType =
+export type DirectionType =
   | "north"
   | "south"
   | "east"
@@ -18,6 +18,17 @@ export type PropertyType =
   | "northwest"
   | "southeast"
   | "southwest";
+
+export interface PropertyImage {
+  id: string;
+  property_id: string;
+
+  image_url: string;
+
+  is_thumbnail: boolean;
+
+  created_at?: string;
+}
 
 export interface Property {
   id: string;
@@ -35,4 +46,5 @@ export interface Property {
 
   type: PropertyType;
   direction: DirectionType;
+  images?: PropertyImage[];
 }
