@@ -57,7 +57,7 @@ export const SignUpCard = () => {
         throw new Error(res.error.message || "Tạo tài khoản thất bại");
       }
 
-      router.push("/user");
+      router.push("/dashboard");
     } catch (error) {
       setServerError(
         error instanceof Error
@@ -242,7 +242,7 @@ export const SignUpCard = () => {
         {/* Bottom */}
         <div className="mt-6 text-center text-sm">
           <button
-            onClick={() => router.push("/sign-in")}
+            onClick={() => router.push("/login")}
             className="text-[var(--muted-foreground)] hover:text-[var(--primary)] transition"
           >
             Đã có tài khoản? Đăng nhập

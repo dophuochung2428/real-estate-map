@@ -1,19 +1,31 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-
 import { authClient } from "@/lib/auth-client";
 
-export const useLogout = () => {
+export function useLogout() {
   const router = useRouter();
 
-  const logout = async () => {
-    await authClient.signOut();
+  const [isLoading, setIsLoading] = useState(false);
 
-    router.push("/sign-in");
+  const logout = async () => {
+    try {
+      setIsLoading(true);
+
+      await authClient.signOut();
+
+      router.push("/login");
+      router.refresh();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return {
     logout,
+    isLoading,
   };
-};
+}

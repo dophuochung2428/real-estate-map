@@ -113,7 +113,7 @@ export const ForgotPasswordCard = () => {
 
         <div className="mt-6 text-center">
           <button
-            onClick={() => router.push("/sign-in")}
+            onClick={() => router.push("/login")}
             className="text-sm text-cyan-400"
           >
             Quay lại đăng nhập

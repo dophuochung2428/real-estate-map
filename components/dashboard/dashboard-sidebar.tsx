@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 
 import {
@@ -6,9 +8,14 @@ import {
   Heart,
   Bell,
   Settings,
+  LogOut,
 } from "lucide-react";
 
+import { useLogout } from "@/features/auth/hooks/use-logout";
+
 export default function DashboardSidebar() {
+  const { logout, isLoading } = useLogout();
+
   return (
     <aside className="hidden w-[280px] flex-col border-r border-[var(--border)] bg-[var(--card)] lg:flex">
       {/* LOGO */}
@@ -49,6 +56,20 @@ export default function DashboardSidebar() {
             label="Cài đặt"
           />
         </div>
+      </div>
+
+      {/* LOGOUT */}
+      <div className="border-t border-[var(--border)] p-4">
+        <button
+          onClick={logout}
+          disabled={isLoading}
+          className="flex h-12 w-full items-center gap-3 rounded-2xl px-4 transition hover:bg-[var(--hover)] hover:text-[var(--error)] disabled:opacity-50"
+        >
+          <LogOut size={18} />
+          <span className="font-medium">
+            {isLoading ? "Đang đăng xuất..." : "Đăng xuất"}
+          </span>
+        </button>
       </div>
     </aside>
   );

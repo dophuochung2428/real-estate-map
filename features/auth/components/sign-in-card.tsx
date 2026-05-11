@@ -40,7 +40,7 @@ export const SignInCard = () => {
         password: form.password,
       });
       if (res.error) throw new Error(res.error.message);
-      router.push("/user");
+      router.push("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
@@ -137,7 +137,7 @@ export const SignInCard = () => {
             Quên mật khẩu?
           </button>
           <button
-            onClick={() => router.push("/sign-up")}
+            onClick={() => router.push("/register")}
             className="font-semibold text-[var(--primary)] hover:text-[var(--primary-hover)]"
           >
             Đăng ký
