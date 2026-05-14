@@ -25,6 +25,11 @@ export interface Filters {
   keyword: string;
   location: string;
 
+  province?: string;
+  district?: string;
+
+  sort?: string;
+
   type: PropertyTypeFilter;
   direction: Direction;
 

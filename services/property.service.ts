@@ -17,14 +17,38 @@ export async function getProperties(filters?: Filters) {
     },
   );
 
-  // FILTERS
-  if (filters?.location) {
+  // =========================
+  // SEARCH
+  // =========================
+
+  // Search theo title
+  if (filters?.keyword) {
+    query = query.ilike("title", `%${filters.keyword}%`);
+  }
+
+  if (filters?.location && !filters?.province) {
     query = query.ilike("address", `%${filters.location}%`);
   }
+
+  if (filters?.district) {
+    query = query.eq("district", filters.district);
+  }
+
+  // =========================
+  // PROPERTY FILTERS
+  // =========================
 
   if (filters?.type) {
     query = query.eq("type", filters.type);
   }
+
+  if (filters?.direction) {
+    query = query.eq("direction", filters.direction);
+  }
+
+  // =========================
+  // PRICE FILTERS
+  // =========================
 
   if (filters?.minPrice) {
     query = query.gte("price", filters.minPrice);
@@ -34,6 +58,51 @@ export async function getProperties(filters?: Filters) {
     query = query.lte("price", filters.maxPrice);
   }
 
+  // =========================
+  // AREA FILTERS
+  // =========================
+
+  if (filters?.minArea) {
+    query = query.gte("area", filters.minArea);
+  }
+
+  if (filters?.maxArea) {
+    query = query.lte("area", filters.maxArea);
+  }
+
+  // =========================
+  // SORTING
+  // =========================
+
+  if (filters?.sort === "price_asc") {
+    query = query.order("price", {
+      ascending: true,
+    });
+  }
+
+  if (filters?.sort === "price_desc") {
+    query = query.order("price", {
+      ascending: false,
+    });
+  }
+
+  if (filters?.sort === "area_desc") {
+    query = query.order("area", {
+      ascending: false,
+    });
+  }
+
+  // Default sort
+  if (!filters?.sort) {
+    query = query.order("created_at", {
+      ascending: false,
+    });
+  }
+
+  // =========================
+  // LIMIT
+  // =========================
+
   const { data, error, count } = await query.limit(20);
 
   if (error) {
@@ -42,7 +111,6 @@ export async function getProperties(filters?: Filters) {
 
   return {
     data: data || [],
-
     count: count || 0,
   };
 }

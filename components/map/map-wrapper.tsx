@@ -32,7 +32,6 @@ export default function MapWrapper({
 
   onMapReady?: (controls: {
     moveToLocation: (address: string) => Promise<void>;
-    refetchData: () => Promise<void>;
   }) => void;
 
   onDataChange?: (data: Property[]) => void;
@@ -43,15 +42,12 @@ export default function MapWrapper({
 }) {
   const mapRef = useRef<Map | null>(null);
 
-  const { data, isInitialLoading, isFetching, fetchData } = useMapData(initialData, filters);
+  const { data, isInitialLoading, isFetching, fetchData } = useMapData(
+    initialData,
+    filters,
+  );
 
   const { moveToLocation } = useMapGeocode(mapRef);
-
-  useEffect(() => {
-    if (isInitialLoading) {
-      fetchData();
-    }
-  }, [isInitialLoading, fetchData]);
 
   // Refetch when filters change
   useEffect(() => {
@@ -64,29 +60,19 @@ export default function MapWrapper({
 
   // Only report initial loading state (for skeleton), not background fetches
   useEffect(() => {
-    onLoadingChange?.(isInitialLoading);
+    onLoadingChange?.(isInitialLoading || isFetching);
   }, [isInitialLoading, onLoadingChange]);
 
   useEffect(() => {
     if (onMapReady) {
       onMapReady({
         moveToLocation,
-        refetchData: () => Promise.resolve(fetchData()),
       });
     }
   }, [moveToLocation, onMapReady, fetchData]);
 
   return (
     <div className="relative h-full">
-      {/* Only show loading overlay on initial load when NO data exists */}
-      {isInitialLoading && data.length === 0 && (
-        <div className="absolute inset-0 z-40 flex items-center justify-center bg-[var(--surface)]/80 backdrop-blur-sm">
-          <div className="rounded-2xl bg-[var(--card)] border border-[var(--border)] px-6 py-4 shadow-xl text-[var(--foreground)]">
-            Loading map...
-          </div>
-        </div>
-      )}
-
       <MapView
         data={data}
         onMove={fetchData}

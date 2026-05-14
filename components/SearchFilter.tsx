@@ -12,6 +12,7 @@ import { Filters } from "@/types/filter";
 import { FaFilter } from "react-icons/fa";
 import { DIRECTION_LABEL, PROPERTY_TYPE_LABEL } from "@/constants/property";
 import { PRICE_RANGES, AREA_RANGES } from "@/constants/filter";
+import { provinces, districts } from "@/constants/location";
 
 interface Props {
   filters: Filters;
@@ -20,7 +21,12 @@ interface Props {
   onLocationSearch?: (address: string) => void | Promise<void>;
 }
 
-export default function SearchFilter({ filters, onClose, onApply, onLocationSearch }: Props) {
+export default function SearchFilter({
+  filters,
+  onClose,
+  onApply,
+  onLocationSearch,
+}: Props) {
   const [local, setLocal] = useState<Filters>(filters);
   const [isApplying, setIsApplying] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -83,7 +89,8 @@ export default function SearchFilter({ filters, onClose, onApply, onLocationSear
 
             <div className="flex">
               <input
-                placeholder="Nhập mã..."
+                value={local.keyword}
+                placeholder="Tìm theo tiêu đề..."
                 className="flex-1 border border-[var(--border)] bg-[var(--secondary)] px-3 py-2 placeholder:text-[var(--text-muted)] rounded-l-lg focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
                 onChange={(e) =>
                   setLocal((p) => ({ ...p, keyword: e.target.value }))
@@ -92,7 +99,7 @@ export default function SearchFilter({ filters, onClose, onApply, onLocationSear
 
               <button
                 className="px-4 bg-[var(--primary)] text-[var(--primary-foreground)] rounded-r-lg hover:bg-[var(--primary-hover)] transition"
-                onClick={() => onApply(local)}
+                onClick={handleApply}
               >
                 <FaSearch />
               </button>
@@ -110,6 +117,7 @@ export default function SearchFilter({ filters, onClose, onApply, onLocationSear
 
             <div className="flex">
               <input
+                value={local.location}
                 placeholder="VD: Hà Nội, Quận 1, Phường 2..."
                 className="flex-1 border border-[var(--border)] bg-[var(--secondary)] px-3 py-2 rounded-l-lg placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
                 onChange={(e) =>
@@ -143,10 +151,10 @@ export default function SearchFilter({ filters, onClose, onApply, onLocationSear
               Lọc theo các tiêu chí:
             </span>
           </div>
-          <div className="flex gap-x-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
             <select
               value={local.type}
-                className="flex-1 border border-[var(--border)] bg-[var(--secondary)] px-3 py-2 rounded-lg text-[var(--foreground)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-0 focus:border-[var(--primary)]"
+              className="flex-1 border border-[var(--border)] bg-[var(--secondary)] px-3 py-2 rounded-lg text-[var(--foreground)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-0 focus:border-[var(--primary)]"
               onChange={(e) =>
                 setLocal((p) => ({
                   ...p,
@@ -234,6 +242,65 @@ export default function SearchFilter({ filters, onClose, onApply, onLocationSear
               ))}
             </select>
 
+            <select
+              value={local.province || ""}
+              className="flex-1 border border-[var(--border)] bg-[var(--secondary)] px-3 py-2 rounded-lg"
+              onChange={(e) =>
+                setLocal((p) => ({
+                  ...p,
+                  province: e.target.value,
+                  district: "",
+                }))
+              }
+            >
+              <option value="">-- Tỉnh/Thành --</option>
+
+              {provinces.map((province) => (
+                <option key={province} value={province}>
+                  {province}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={local.district || ""}
+              disabled={!local.province}
+              className="flex-1 border border-[var(--border)] bg-[var(--secondary)] px-3 py-2 rounded-lg disabled:opacity-50"
+              onChange={(e) =>
+                setLocal((p) => ({
+                  ...p,
+                  district: e.target.value,
+                }))
+              }
+            >
+              <option value="">-- Quận/Huyện --</option>
+
+              {(districts[local.province || ""] || []).map((district) => (
+                <option key={district} value={district}>
+                  {district}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={local.sort || ""}
+              className="flex-1 border border-[var(--border)] bg-[var(--secondary)] px-3 py-2 rounded-lg"
+              onChange={(e) =>
+                setLocal((p) => ({
+                  ...p,
+                  sort: e.target.value,
+                }))
+              }
+            >
+              <option value="">-- Sắp xếp --</option>
+
+              <option value="price_asc">Giá tăng dần</option>
+
+              <option value="price_desc">Giá giảm dần</option>
+
+              <option value="area_desc">Diện tích lớn</option>
+            </select>
+
             <button
               onClick={handleApply}
               disabled={isApplying}
@@ -244,6 +311,27 @@ export default function SearchFilter({ filters, onClose, onApply, onLocationSear
               }`}
             >
               {isApplying ? "Đang áp dụng..." : "Áp dụng"}
+            </button>
+
+            <button
+              onClick={() => {
+                setLocal({
+                  keyword: "",
+                  location: "",
+                  type: "",
+                  direction: "",
+                  province: "",
+                  district: "",
+                  sort: "",
+                  minPrice: undefined,
+                  maxPrice: undefined,
+                  minArea: undefined,
+                  maxArea: undefined,
+                });
+              }}
+              className="px-5 py-2 rounded-lg border border-[var(--border)]"
+            >
+              Reset
             </button>
           </div>
           {locationError && (

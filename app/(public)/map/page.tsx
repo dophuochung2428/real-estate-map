@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 
 import MainHeader from "@/components/layout/header/main-header";
 import MapWrapper from "@/components/map/map-wrapper";
@@ -9,15 +9,16 @@ import SearchFilter from "@/components/SearchFilter";
 
 import { Filters } from "@/types/filter";
 import { Property } from "@/types/property";
-
-import { getProperties } from "@/services/property.service";
+import { useDebounce } from "@/hooks/use-debounce";
 
 type MapControls = {
   moveToLocation: (address: string) => Promise<void>;
-  refetchData: () => Promise<void>;
 };
 
 export default function MapPage() {
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(false);
+
   const mapControlsRef = useRef<MapControls | null>(null);
 
   // =========================
@@ -37,37 +38,11 @@ export default function MapPage() {
   // =========================
   // DATA STATE (API SOURCE)
   // =========================
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(
     null,
   );
 
   const [showFilters, setShowFilters] = useState(false);
-
-  // =========================
-  // FETCH DATA FROM API
-  // =========================
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(false);
-
-        const result = await getProperties(filters);
-
-        setProperties(result.data);
-      } catch (err) {
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [filters]);
 
   // =========================
   // FILTER HANDLER
@@ -83,8 +58,9 @@ export default function MapPage() {
     if (!mapControlsRef.current) return;
 
     await mapControlsRef.current.moveToLocation(address);
-    mapControlsRef.current.refetchData();
   };
+
+  const debouncedFilters = useDebounce(filters, 500);
 
   return (
     <main className="flex h-screen flex-col overflow-hidden bg-[#f5f5f5]">
@@ -96,14 +72,30 @@ export default function MapPage() {
         {/* MAP */}
         <div className="absolute inset-0 z-0">
           <MapWrapper
-            data={properties}
-            filters={filters}
+            data={[]}
+            filters={debouncedFilters}
             onPropertySelect={setSelectedProperty}
+            onDataChange={setProperties}
+            onLoadingChange={setLoading}
             onMapReady={(controls) => {
               mapControlsRef.current = controls;
             }}
           />
         </div>
+
+        {loading && (
+          <div className="absolute inset-0 z-[60] flex items-center justify-center bg-black/20 backdrop-blur-sm">
+            <div className="rounded-xl bg-white px-5 py-3 shadow-xl">
+              Đang tải dữ liệu...
+            </div>
+          </div>
+        )}
+
+        {!loading && properties.length === 0 && (
+          <div className="absolute bottom-6 left-1/2 z-[60] -translate-x-1/2 rounded-xl bg-white px-4 py-2 shadow-xl">
+            Không tìm thấy bất động sản
+          </div>
+        )}
 
         {/* OVERLAY UI */}
         <div className="pointer-events-none absolute inset-0 z-50">
@@ -125,32 +117,6 @@ export default function MapPage() {
             />
           </div>
         </div>
-
-        {/* LOADING */}
-        {loading && (
-          <div className="absolute inset-0 z-50 bg-white/60 flex items-center justify-center">
-            <p className="text-gray-500">Đang tải dữ liệu...</p>
-          </div>
-        )}
-
-        {/* ERROR */}
-        {error && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center">
-            <button
-              onClick={() => window.location.reload()}
-              className="rounded-xl bg-red-600 px-4 py-2 text-white"
-            >
-              Tải lại dữ liệu
-            </button>
-          </div>
-        )}
-
-        {/* EMPTY */}
-        {!loading && !error && properties.length === 0 && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center">
-            <p className="text-gray-500">Không tìm thấy bất động sản</p>
-          </div>
-        )}
 
         {/* FILTER MODAL */}
         {showFilters && (

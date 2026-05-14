@@ -11,7 +11,9 @@ import { Bounds } from "../types";
 export function useMapData(initialData: Property[], filters: Filters) {
   const [data, setData] = useState(initialData);
 
-  const [isInitialLoading, setIsInitialLoading] = useState(initialData.length === 0);
+  const [isInitialLoading, setIsInitialLoading] = useState(
+    initialData.length === 0,
+  );
 
   const [isFetching, setIsFetching] = useState(false);
 
@@ -21,8 +23,13 @@ export function useMapData(initialData: Property[], filters: Filters) {
     async (bounds?: Bounds) => {
       // Skip if bounds haven't changed significantly (within ~0.0001 degrees ~10m)
       if (lastBoundsRef.current && bounds) {
-        const latDiff = Math.abs(bounds.maxLat - lastBoundsRef.current.maxLat);
-        const lngDiff = Math.abs(bounds.maxLng - lastBoundsRef.current.maxLng);
+        const latDiff =
+          Math.abs(bounds.maxLat - lastBoundsRef.current.maxLat) +
+          Math.abs(bounds.minLat - lastBoundsRef.current.minLat);
+
+        const lngDiff =
+          Math.abs(bounds.maxLng - lastBoundsRef.current.maxLng) +
+          Math.abs(bounds.minLng - lastBoundsRef.current.minLng);
         if (latDiff < 0.0001 && lngDiff < 0.0001) {
           return;
         }
@@ -59,27 +66,16 @@ export function useMapData(initialData: Property[], filters: Filters) {
         }
 
         if (filters.keyword) {
-          query = query.or(`
-            title.ilike.%${filters.keyword}%,
-            address.ilike.%${filters.keyword}%
-          `);
+          query = query.or(
+            `title.ilike.%${filters.keyword}%,address.ilike.%${filters.keyword}%`,
+          );
         }
 
         if (filters.location) {
           query = query.ilike("address", `%${filters.location}%`);
         }
 
-        const hasFilter =
-          filters.type ||
-          filters.direction ||
-          filters.minPrice ||
-          filters.maxPrice ||
-          filters.minArea ||
-          filters.maxArea ||
-          filters.keyword ||
-          filters.location;
-
-        if (!hasFilter && bounds) {
+        if (bounds) {
           query = query
             .gte("lat", bounds.minLat)
             .lte("lat", bounds.maxLat)
