@@ -15,15 +15,19 @@ export const SignInCard = () => {
   const supabase = createClient();
 
   const [showPassword, setShowPassword] = useState(false);
+
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
+
   const [isLoading, setIsLoading] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     setIsLoading(true);
     setError(null);
 
@@ -33,9 +37,13 @@ export const SignInCard = () => {
       const message =
         result.error.issues[0]?.message ||
         "Vui lòng nhập email và mật khẩu hợp lệ.";
+
       setError(message);
+
       toast.error(message);
+
       setIsLoading(false);
+
       return;
     }
 
@@ -52,10 +60,13 @@ export const SignInCard = () => {
       }
 
       toast.success("Đăng nhập thành công");
+
       router.push("/dashboard");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Đăng nhập thất bại";
+
       setError(message);
+
       toast.error(message);
     } finally {
       setIsLoading(false);
@@ -63,97 +74,136 @@ export const SignInCard = () => {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[var(--background)] px-4 py-12">
-      <div className="w-full max-w-md rounded-3xl bg-[var(--card)] p-8 shadow-lg">
+    <div className="relative z-10 w-full max-w-md">
+      <div className="rounded-[32px] border border-white/10 bg-white/10 p-8 shadow-2xl backdrop-blur-xl">
+        {/* HEADER */}
         <div className="mb-8 text-center">
-          <div className="text-4xl">🏠</div>
-          <h1 className="mt-4 text-2xl font-bold text-[var(--foreground)]">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/10 text-3xl backdrop-blur">
+            🏠
+          </div>
+
+          <h1 className="mt-5 text-3xl font-black tracking-tight text-white">
             NHADAT102
           </h1>
-          <p className="mt-2 text-[var(--muted-foreground)]">
-            Đăng nhập vào tài khoản của bạn
+
+          <p className="mt-2 text-sm text-zinc-400">
+            Đăng nhập để tiếp tục sử dụng nền tảng
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        {/* FORM */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* EMAIL */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-[var(--muted-foreground)]">
-              Email
-            </label>
+            <label className="text-sm font-medium text-zinc-300">Email</label>
+
             <div className="relative">
               <User
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500"
                 size={20}
               />
+
               <input
                 type="email"
                 placeholder="your@email.com"
                 value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="h-12 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] pl-12 pr-4 text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 outline-none transition"
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    email: e.target.value,
+                  })
+                }
+                className="h-14 w-full rounded-2xl border border-white/10 bg-white/5 pl-12 pr-4 text-white outline-none placeholder:text-zinc-500 transition-all duration-200 focus:border-white/20 focus:bg-white/10 focus:ring-4 focus:ring-white/5"
               />
             </div>
           </div>
 
+          {/* PASSWORD */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-[var(--muted-foreground)]">
+            <label className="text-sm font-medium text-zinc-300">
               Mật khẩu
             </label>
+
             <div className="relative">
               <Lock
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500"
                 size={20}
               />
+
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
                 value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className="h-12 w-full rounded-xl border border-[var(--border)] bg-[var(--background)] pl-12 pr-12 text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 outline-none transition"
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    password: e.target.value,
+                  })
+                }
+                className="h-14 w-full rounded-2xl border border-white/10 bg-white/5 pl-12 pr-12 text-white outline-none placeholder:text-zinc-500 transition-all duration-200 focus:border-white/20 focus:bg-white/10 focus:ring-4 focus:ring-white/5"
               />
+
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 transition hover:text-white"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
           </div>
 
+          {/* FORGOT PASSWORD */}
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => router.push("/forgot-password")}
+              className="text-sm text-zinc-400 transition hover:text-white"
+            >
+              Quên mật khẩu?
+            </button>
+          </div>
+
+          {/* SUBMIT */}
           <button
             disabled={isLoading}
             type="submit"
             className={clsx(
-              "h-12 w-full rounded-xl bg-[var(--primary)] text-[var(--primary-foreground)] font-semibold transition hover:bg-[var(--primary-hover)] focus:ring-2 focus:ring-[var(--primary)]/20",
-              isLoading && "cursor-not-allowed opacity-70",
+              "flex h-14 w-full items-center justify-center rounded-2xl bg-white text-lg font-bold text-black transition-all duration-200 hover:scale-[1.01] hover:bg-zinc-200",
+              isLoading && "cursor-not-allowed opacity-70 hover:scale-100",
             )}
           >
-            {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
+            {isLoading ? (
+              <span className="inline-flex items-center gap-2">
+                <FaSpinner className="animate-spin" />
+                Đang đăng nhập...
+              </span>
+            ) : (
+              "Đăng nhập"
+            )}
           </button>
 
+          {/* ERROR */}
           {error && (
-            <div className="text-red-600 text-sm text-center">{error}</div>
+            <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-3 text-center text-sm text-red-100">
+              {error}
+            </div>
           )}
         </form>
 
-        <div className="mt-6 flex items-center justify-between text-sm">
-          <button
-            type="button"
-            onClick={() => router.push("/forgot-password")}
-            className="text-[var(--muted-foreground)] hover:text-[var(--primary)] transition"
-          >
-            Quên mật khẩu?
-          </button>
+        {/* FOOTER */}
+        <div className="mt-8 border-t border-white/10 pt-6 text-center">
+          <p className="text-sm text-zinc-500">Chưa có tài khoản?</p>
+
           <button
             type="button"
             onClick={() => router.push("/register")}
-            className="font-semibold text-[var(--primary)] hover:text-[var(--primary-hover)]"
+            className="mt-2 font-semibold text-white transition hover:text-zinc-300"
           >
-            Đăng ký
+            Đăng ký ngay
           </button>
         </div>
       </div>
-    </main>
+    </div>
   );
 };

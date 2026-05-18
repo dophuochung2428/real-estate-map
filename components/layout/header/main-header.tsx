@@ -10,6 +10,7 @@ import MegaMenu from "./mega-menu";
 
 import { megaMenus } from "@/constants/menu";
 import { createClient } from "@/lib/supabase/client";
+import { Map } from "lucide-react";
 
 export default function MainHeader() {
   const [openMenu, setOpenMenu] = useState("");
@@ -102,6 +103,14 @@ export default function MainHeader() {
           <div className="flex items-center gap-3">
             <Link href="/favorites" className="relative">
               <Heart size={22} />
+            </Link>
+
+            <Link
+              href="/map"
+              className="hidden items-center gap-2 rounded-xl border border-[var(--border)] px-4 py-3 text-sm font-semibold transition hover:bg-[var(--hover)] md:flex"
+            >
+              <Map size={18} />
+              Bản đồ
             </Link>
 
             <Link

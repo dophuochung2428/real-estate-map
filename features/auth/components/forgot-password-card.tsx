@@ -17,6 +17,7 @@ export const ForgotPasswordCard = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     setIsLoading(true);
     setStatus("idle");
     setMessage(null);
@@ -26,10 +27,14 @@ export const ForgotPasswordCard = () => {
     if (!parsed.success) {
       const messageText =
         parsed.error.issues[0]?.message || "Email không hợp lệ.";
+
       setStatus("error");
       setMessage(messageText);
+
       toast.error(messageText);
+
       setIsLoading(false);
+
       return;
     }
 
@@ -39,29 +44,38 @@ export const ForgotPasswordCard = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: parsed.data.email }),
+        body: JSON.stringify({
+          email: parsed.data.email,
+        }),
       });
 
       if (!response.ok) {
         const body = await response.json().catch(() => null);
+
         const errorMessage =
           body?.message || "Không thể gửi yêu cầu đặt lại mật khẩu.";
+
         throw new Error(errorMessage);
       }
 
       setStatus("success");
+
       setMessage(
         "Nếu email tồn tại, chúng tôi đã gửi liên kết đặt lại mật khẩu đến hộp thư của bạn.",
       );
+
       toast.success("Yêu cầu đặt lại mật khẩu đã gửi.");
+
       setEmail("");
     } catch (error) {
       const messageText =
         error instanceof Error
           ? error.message
           : "Lỗi không xác định. Vui lòng thử lại.";
+
       setStatus("error");
       setMessage(messageText);
+
       toast.error(messageText);
     } finally {
       setIsLoading(false);
@@ -69,56 +83,69 @@ export const ForgotPasswordCard = () => {
   };
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#021B2B] px-4 text-white">
-      <div className="absolute left-[-100px] top-[70%] h-[300px] w-[300px] rounded-full bg-white/20 blur-3xl" />
-
-      <div className="relative z-10 w-full max-w-md rounded-[32px] border border-white/10 bg-white/10 p-8 backdrop-blur-xl">
+    <div className="relative z-10 w-full max-w-md">
+      <div className="rounded-[32px] border border-white/10 bg-white/10 p-8 shadow-2xl backdrop-blur-xl">
+        {/* HEADER */}
         <div className="mb-8 text-center">
-          <h1 className="text-5xl font-black text-cyan-400">RESET</h1>
-          <p className="mt-3 text-zinc-300">
-            Nhập email để nhận liên kết khôi phục
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/10 backdrop-blur">
+            <Mail className="text-white" size={28} />
+          </div>
+
+          <h1 className="mt-5 text-3xl font-black tracking-tight text-white">
+            Quên mật khẩu
+          </h1>
+
+          <p className="mt-2 text-sm text-zinc-400">
+            Nhập email để nhận liên kết khôi phục tài khoản
           </p>
         </div>
 
+        {/* FORM */}
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="relative">
-            <Mail
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-cyan-400"
-              size={20}
-            />
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-zinc-300">Email</label>
 
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="h-14 w-full rounded-2xl border border-white/10 bg-white/10 pl-12 pr-4 text-white outline-none placeholder:text-zinc-400 focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/20"
-            />
+            <div className="relative">
+              <Mail
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500"
+                size={20}
+              />
+
+              <input
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-14 w-full rounded-2xl border border-white/10 bg-white/5 pl-12 pr-4 text-white outline-none placeholder:text-zinc-500 transition-all duration-200 focus:border-white/20 focus:bg-white/10 focus:ring-4 focus:ring-white/5"
+              />
+            </div>
           </div>
 
+          {/* BUTTON */}
           <button
             type="submit"
             disabled={isLoading || !email.trim()}
-            className={`h-14 w-full rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 text-lg font-bold transition hover:scale-[1.02] ${
+            className={`flex h-14 w-full items-center justify-center rounded-2xl bg-white text-lg font-bold text-black transition-all duration-200 hover:scale-[1.01] hover:bg-zinc-200 ${
               isLoading ? "cursor-not-allowed opacity-70 hover:scale-100" : ""
             }`}
           >
             {isLoading ? (
               <span className="inline-flex items-center gap-2">
-                <FaSpinner className="h-5 w-5 animate-spin" />
+                <FaSpinner className="animate-spin" />
                 Đang gửi...
               </span>
             ) : (
-              "GỬI LIÊN KẾT"
+              "Gửi liên kết"
             )}
           </button>
 
+          {/* MESSAGE */}
           {message && (
             <div
-              className={`mt-4 rounded-2xl border p-3 text-sm ${
+              className={`rounded-2xl border p-4 text-sm leading-relaxed ${
                 status === "success"
-                  ? "border-emerald-400/40 bg-emerald-500/10 text-emerald-100"
-                  : "border-red-500/30 bg-red-500/10 text-red-100"
+                  ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-100"
+                  : "border-red-500/20 bg-red-500/10 text-red-100"
               }`}
             >
               {message}
@@ -126,15 +153,18 @@ export const ForgotPasswordCard = () => {
           )}
         </form>
 
-        <div className="mt-6 text-center">
+        {/* FOOTER */}
+        <div className="mt-8 border-t border-white/10 pt-6 text-center">
+          <p className="text-sm text-zinc-500">Nhớ mật khẩu rồi?</p>
+
           <button
             onClick={() => router.push("/login")}
-            className="text-sm text-cyan-400"
+            className="mt-2 font-semibold text-white transition hover:text-zinc-300"
           >
             Quay lại đăng nhập
           </button>
         </div>
       </div>
-    </main>
+    </div>
   );
 };

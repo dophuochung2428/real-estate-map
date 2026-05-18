@@ -9,7 +9,7 @@ const PropertyMapClient = dynamic(() => import("./property-map-client"), {
 });
 
 export default function PropertyMap({ property }: { property: any }) {
-  if (!property.latitude || !property.longitude) {
+  if (property.lat == null || property.lng == null) {
     return null;
   }
 
@@ -21,12 +21,10 @@ export default function PropertyMap({ property }: { property: any }) {
         <h2 className="text-2xl font-bold">Vị trí bất động sản</h2>
       </div>
 
-      <div className="overflow-hidden rounded-3xl">
-        <PropertyMapClient
-          latitude={property.latitude}
-          longitude={property.longitude}
-        />
-      </div>
+      <PropertyMapClient
+        latitude={Number(property.lat)}
+        longitude={Number(property.lng)}
+      />
     </div>
   );
 }

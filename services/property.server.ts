@@ -115,8 +115,6 @@ export async function getPropertyById(id: string) {
     .eq("id", id)
     .single();
 
-  console.log(result);
-
   if (result.error) {
     throw result.error;
   }

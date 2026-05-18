@@ -47,8 +47,8 @@ export default function PropertySidebar({ property }: { property: any }) {
         </div>
       </div>
 
-      {/* MORTGAGE */}
-      <MortgageCalculator property={property} />
+      {/* MORTGAGE
+      <MortgageCalculator property={property} /> */}
     </div>
   );
 }

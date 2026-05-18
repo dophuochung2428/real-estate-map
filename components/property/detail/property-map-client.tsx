@@ -1,7 +1,5 @@
 "use client";
 
-import "leaflet/dist/leaflet.css";
-
 import { MapContainer, Marker, TileLayer } from "react-leaflet";
 
 import L from "leaflet";
@@ -22,7 +20,6 @@ export default function PropertyMapClient({
   longitude,
 }: {
   latitude: number;
-
   longitude: number;
 }) {
   return (
@@ -30,10 +27,10 @@ export default function PropertyMapClient({
       center={[latitude, longitude]}
       zoom={15}
       scrollWheelZoom={false}
-      className="h-[450px] w-full"
+      className="h-[450px] w-full z-0"
     >
       <TileLayer
-        attribution="&copy; OpenStreetMap"
+        attribution="&copy; OpenStreetMap contributors"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 

@@ -3,7 +3,11 @@ import { redirect } from "next/navigation";
 
 import { getCurrentUser } from "@/features/auth/server/get-current-user";
 
-export default async function AuthLayout({ children }: { children: ReactNode }) {
+export default async function AuthLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const user = await getCurrentUser();
 
   if (user) {
@@ -11,24 +15,31 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
   }
 
   return (
-    <main className="flex min-h-screen">
-      <div className="hidden flex-1 bg-gradient-to-br from-red-600 to-red-500 lg:flex lg:flex-col lg:justify-between lg:p-14">
-        <div>
-          <h1 className="text-4xl font-bold text-white">BatDongSan Platform</h1>
-        </div>
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black px-4">
+      {/* BACKGROUND IMAGE */}
+      <div className="absolute inset-0">
+        <img
+          src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=2070&auto=format&fit=crop"
+          alt="Background"
+          className="h-full w-full object-cover"
+        />
 
-        <div className="max-w-lg">
-          <h2 className="mb-6 text-5xl font-bold leading-tight text-white">
-            Nền tảng bất động sản hiện đại
-          </h2>
-
-          <p className="text-lg text-white/80">
-            Tìm kiếm, đầu tư và quản lý bất động sản dễ dàng hơn bao giờ hết.
-          </p>
-        </div>
+        {/* OVERLAY */}
+        <div className="absolute inset-0 bg-black/70" />
       </div>
 
-      <div className="flex flex-1 items-center justify-center bg-[#f8f8f8] p-6">{children}</div>
+      {/* LIGHT EFFECTS */}
+      <div className="absolute left-[-120px] top-[10%] h-[320px] w-[320px] rounded-full bg-white/10 blur-3xl" />
+
+      <div className="absolute bottom-[-120px] right-[-100px] h-[320px] w-[320px] rounded-full bg-zinc-500/10 blur-3xl" />
+
+      {/* CONTENT */}
+      <div className="relative z-10 w-full max-w-md">{children}</div>
+
+      {/* BRAND */}
+      <div className="absolute bottom-6 text-xs tracking-[0.25em] text-zinc-600">
+        NHADAT102 • REAL ESTATE PLATFORM
+      </div>
     </main>
   );
 }
