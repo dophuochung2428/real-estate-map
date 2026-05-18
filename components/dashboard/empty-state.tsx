@@ -8,7 +8,7 @@ export default function EmptyState() {
       <p className="mt-3 text-gray-500">Hãy tạo tin đầu tiên của bạn</p>
 
       <Link
-        href="/create-property"
+        href="/properties/create"
         className="
           mt-6
           inline-flex
