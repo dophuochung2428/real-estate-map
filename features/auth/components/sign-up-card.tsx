@@ -48,7 +48,7 @@ export const SignUpCard = () => {
 
     try {
       const { data, error } = await supabase.auth.signUp({
-        email: result.data.email,
+        email: result.data.email.trim().toLowerCase(),
         password: result.data.password,
         options: {
           data: {
@@ -66,9 +66,7 @@ export const SignUpCard = () => {
         throw new Error("Không thể tạo tài khoản.");
       }
 
-      toast.success(
-        "Đăng ký thành công. Vui lòng kiểm tra email để xác thực tài khoản.",
-      );
+      toast.success("Đăng ký thành công. Bạn có thể đăng nhập ngay.");
       router.push("/login");
     } catch (err) {
       const message =

@@ -49,14 +49,18 @@ export const SignInCard = () => {
 
     try {
       const { error } = await supabase.auth.signInWithPassword({
-        email: form.email,
+        email: form.email.trim().toLowerCase(),
         password: form.password,
       });
 
       if (error) {
-        throw new Error(
-          error.message || "Thông tin đăng nhập không chính xác.",
-        );
+        console.error(error);
+
+        if (error.message.includes("Invalid login credentials")) {
+          throw new Error("Email hoặc mật khẩu không đúng");
+        }
+
+        throw new Error(error.message);
       }
 
       toast.success("Đăng nhập thành công");
