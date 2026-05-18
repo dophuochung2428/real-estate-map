@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+
+import { createClient } from "@/lib/supabase/client";
 
 export function useLogout() {
   const router = useRouter();
@@ -10,15 +11,16 @@ export function useLogout() {
   const [isLoading, setIsLoading] = useState(false);
 
   const logout = async () => {
+    const supabase = createClient();
+
     try {
       setIsLoading(true);
 
-      await authClient.signOut();
+      await supabase.auth.signOut();
 
-      router.push("/login");
-      router.refresh();
+      window.location.href = "/login";
     } catch (error) {
-      console.error("Logout failed:", error);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }

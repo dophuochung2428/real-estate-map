@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { X, MapPin, Move, BedDouble } from "lucide-react";
+import { X, MapPin, Move } from "lucide-react";
 import { Property } from "@/types/property";
+import { useRouter } from "next/navigation";
 
 interface PropertyDetailPanelProps {
   property: Property | null;
@@ -22,8 +23,10 @@ export default function PropertyDetailPanel({
 }: PropertyDetailPanelProps) {
   if (!property) return null;
 
+  const router = useRouter();
+
   return (
-    <div className="fixed top-24 right-4 z-1050 w-80 max-h-[calc(100vh-5rem)] overflow-y-auto px-1 sm:px-0">
+    <div className="fixed top-24 right-4 z-[1050] w-80 max-h-[calc(100vh-5rem)] overflow-y-auto px-1 sm:px-0">
       <div className="bg-[var(--card)]/95 backdrop-blur-xl rounded-3xl border border-[var(--border)] shadow-2xl overflow-hidden">
         {/* Close Button */}
         <button
@@ -63,29 +66,31 @@ export default function PropertyDetailPanel({
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm text-[var(--muted-foreground)]">
               <MapPin className="w-4 h-4" />
-              <span className="line-clamp-1">{property.address}</span>
+              <span className="line-clamp-1">
+                {[property.address, property.district, property.province]
+                  .filter(Boolean)
+                  .join(", ")}
+              </span>
             </div>
 
             <div className="flex items-center gap-4 text-sm text-[var(--muted-foreground)]">
               <div className="flex items-center gap-1">
                 <Move className="w-4 h-4" />
-                <span>{property.area}m²</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <BedDouble className="w-4 h-4" />
-                <span>3 PN</span>
+                <span>{Number(property.area).toLocaleString()}m²</span>
               </div>
             </div>
           </div>
 
           {/* Description */}
           <p className="text-sm text-[var(--muted-foreground)] line-clamp-3">
-            Căn hộ cao cấp vị trí trung tâm, thiết kế hiện đại, đầy đủ nội thất,
-            phù hợp đầu tư hoặc an cư lâu dài.
+            {property.description || "Chưa có mô tả"}
           </p>
 
           {/* CTA */}
-          <button className="w-full bg-[var(--primary)] text-[var(--primary-foreground)] py-3 px-4 rounded-xl font-semibold hover:bg-[var(--primary-hover)] transition-colors">
+          <button
+            onClick={() => router.push(`/properties/${property.id}`)}
+            className="w-full bg-[var(--primary)] text-[var(--primary-foreground)] py-3 px-4 rounded-xl font-semibold hover:bg-[var(--primary-hover)] transition-colors"
+          >
             Xem chi tiết
           </button>
         </div>

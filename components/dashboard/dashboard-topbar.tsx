@@ -1,6 +1,13 @@
 import { Search } from "lucide-react";
+import { User } from "@supabase/supabase-js";
 
-export default function DashboardTopbar() {
+type Props = {
+  user: User | null;
+};
+
+export default function DashboardTopbar({ user }: Props) {
+  const avatar = user?.user_metadata?.username?.charAt(0).toUpperCase() || "U";
+
   return (
     <div className="sticky top-0 z-40 flex h-[72px] items-center justify-between border-b border-[var(--border)] bg-[var(--card)] px-6">
       {/* SEARCH */}
@@ -16,13 +23,17 @@ export default function DashboardTopbar() {
       {/* PROFILE */}
       <div className="flex items-center gap-3">
         <div className="text-right">
-          <p className="font-semibold">Nguyễn Văn A</p>
+          <p className="font-semibold">
+            {user?.user_metadata?.username || "User"}
+          </p>
 
-          <p className="text-sm text-[var(--muted-foreground)]">Admin</p>
+          <p className="text-sm text-[var(--muted-foreground)]">
+            {user?.user_metadata?.role || "User"}
+          </p>
         </div>
 
         <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-100 font-bold text-red-600">
-          A
+          {avatar}
         </div>
       </div>
     </div>

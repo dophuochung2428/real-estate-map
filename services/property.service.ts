@@ -1,172 +1,39 @@
-import { supabase } from "@/lib/supabase";
-
-import { Filters } from "@/types/filter";
-
-export async function getProperties(filters?: Filters) {
-  let query = supabase.from("properties").select(
-    `
-      *,
-      property_images (
-        id,
-        image_url,
-        is_thumbnail
-      )
-    `,
-    {
-      count: "exact",
-    },
-  );
-
-  // =========================
-  // SEARCH
-  // =========================
-
-  // Search theo title
-  if (filters?.keyword) {
-    query = query.ilike("title", `%${filters.keyword}%`);
-  }
-
-  if (filters?.location && !filters?.province) {
-    query = query.ilike("address", `%${filters.location}%`);
-  }
-
-  if (filters?.district) {
-    query = query.eq("district", filters.district);
-  }
-
-  // =========================
-  // PROPERTY FILTERS
-  // =========================
-
-  if (filters?.type) {
-    query = query.eq("type", filters.type);
-  }
-
-  if (filters?.direction) {
-    query = query.eq("direction", filters.direction);
-  }
-
-  // =========================
-  // PRICE FILTERS
-  // =========================
-
-  if (filters?.minPrice) {
-    query = query.gte("price", filters.minPrice);
-  }
-
-  if (filters?.maxPrice) {
-    query = query.lte("price", filters.maxPrice);
-  }
-
-  // =========================
-  // AREA FILTERS
-  // =========================
-
-  if (filters?.minArea) {
-    query = query.gte("area", filters.minArea);
-  }
-
-  if (filters?.maxArea) {
-    query = query.lte("area", filters.maxArea);
-  }
-
-  // =========================
-  // SORTING
-  // =========================
-
-  if (filters?.sort === "price_asc") {
-    query = query.order("price", {
-      ascending: true,
-    });
-  }
-
-  if (filters?.sort === "price_desc") {
-    query = query.order("price", {
-      ascending: false,
-    });
-  }
-
-  if (filters?.sort === "area_desc") {
-    query = query.order("area", {
-      ascending: false,
-    });
-  }
-
-  // Default sort
-  if (!filters?.sort) {
-    query = query.order("created_at", {
-      ascending: false,
-    });
-  }
-
-  // =========================
-  // LIMIT
-  // =========================
-
-  const { data, error, count } = await query.limit(20);
-
-  if (error) {
-    throw error;
-  }
-
-  return {
-    data: data || [],
-    count: count || 0,
-  };
-}
-
-export async function getPropertyById(id: string) {
-  const { data, error } = await supabase
-    .from("properties")
-    .select(
-      `
-      *,
-      property_images (
-        id,
-        image_url,
-        is_thumbnail,
-        created_at
-      )
-    `,
-    )
-    .eq("id", id)
-    .single();
-
-  if (error) {
-    throw error;
-  }
-
-  return data;
-}
+import { createClient } from "@/lib/supabase/client";
+import { getStoragePath } from "@/utils/storage";
 
 export async function createProperty(payload: any) {
-  // INSERT PROPERTY
+  const supabase = createClient();
   const {
-    data: property,
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
-    error,
-  } = await supabase
+  if (authError || !user) {
+    throw new Error("Unauthorized");
+  }
+
+  const { data: property, error } = await supabase
     .from("properties")
     .insert({
       title: payload.title,
-
       price: Number(payload.price),
-
       area: Number(payload.area),
-
       address: payload.address,
-
       province: payload.province,
-
       district: payload.district,
-
       type: payload.type,
-
       direction: payload.direction,
-
       lat: payload.lat,
-
       lng: payload.lng,
+
+      thumbnail_url: payload.images.find((x: any) => x.is_thumbnail)?.image_url,
+
+      description: payload.description,
+
+      amenities: payload.amenities,
+
+      user_id: user.id,
+      status: "active",
     })
     .select()
     .single();
@@ -175,13 +42,10 @@ export async function createProperty(payload: any) {
     throw error;
   }
 
-  // INSERT IMAGES
   if (payload.images?.length) {
     const images = payload.images.map((image: any) => ({
       property_id: property.id,
-
       image_url: image.image_url,
-
       is_thumbnail: image.is_thumbnail,
     }));
 
@@ -198,22 +62,69 @@ export async function createProperty(payload: any) {
 }
 
 export async function deleteProperty(id: string) {
-  const { error } = await supabase.from("properties").delete().eq("id", id);
+  const supabase = createClient();
+
+  // AUTH
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    throw new Error("Unauthorized");
+  }
+
+  // GET IMAGES
+  const { data: images, error: imageError } = await supabase
+    .from("property_images")
+    .select("image_url")
+    .eq("property_id", id);
+
+  if (imageError) {
+    throw imageError;
+  }
+
+  // DELETE STORAGE FILES
+  if (images?.length) {
+    const filePaths = images.map((img) => getStoragePath(img.image_url));
+
+    const { error: storageError } = await supabase.storage
+      .from("property-images")
+      .remove(filePaths);
+
+    if (storageError) {
+      throw storageError;
+    }
+  }
+
+  // DELETE PROPERTY
+  const { error } = await supabase
+    .from("properties")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
 
   if (error) {
     throw error;
   }
 }
 
-export async function updateProperty(
-  id: string,
+export async function updateProperty(id: string, payload: any) {
+  const supabase = createClient();
 
-  payload: any,
-) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Unauthorized");
+  }
+
   const { error } = await supabase
     .from("properties")
     .update(payload)
-    .eq("id", id);
+    .eq("id", id)
+    .eq("user_id", user.id);
 
   if (error) {
     throw error;

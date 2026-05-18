@@ -46,5 +46,8 @@ export interface Property {
 
   type: PropertyType;
   direction: DirectionType;
+
+  description?: string;
+
   images?: PropertyImage[];
 }

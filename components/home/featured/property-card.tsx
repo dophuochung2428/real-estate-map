@@ -1,23 +1,31 @@
 "use client";
 
 import Image from "next/image";
+
+import Link from "next/link";
+
 import { BedDouble, MapPin, Move } from "lucide-react";
 
-interface Props {
-  title: string;
-  price: string;
-  location: string;
-  image: string;
-}
+type Props = {
+  property: any;
+};
 
-export default function PropertyCard({ title, price, location, image }: Props) {
+export default function PropertyCard({ property }: Props) {
+  const thumbnail =
+    property.property_images?.find((img: any) => img.is_thumbnail)?.image_url ||
+    property.property_images?.[0]?.image_url ||
+    "https://placehold.co/600x400";
+
   return (
-    <div className="group overflow-hidden rounded-3xl bg-[var(--card)] shadow-sm transition hover:-translate-y-1 hover:shadow-xl border border-[var(--border)]">
+    <Link
+      href={`/properties/${property.id}`}
+      className="group overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--card)] shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+    >
       {/* IMAGE */}
       <div className="relative h-64 overflow-hidden">
         <Image
-          src={image}
-          alt={title}
+          src={thumbnail}
+          alt={property.title}
           fill
           className="object-cover transition duration-500 group-hover:scale-110"
         />
@@ -30,30 +38,38 @@ export default function PropertyCard({ title, price, location, image }: Props) {
 
       {/* CONTENT */}
       <div className="p-5">
-        <div className="mb-3 flex items-center gap-2">
-          <span className="text-2xl font-bold text-[var(--primary)]">{price}</span>
+        {/* PRICE */}
+        <div className="mb-3">
+          <span className="text-2xl font-bold text-[var(--primary)]">
+            {property.price?.toLocaleString()}đ
+          </span>
         </div>
 
+        {/* TITLE */}
         <h3 className="mb-3 line-clamp-2 text-lg font-bold transition group-hover:text-[var(--primary)]">
-          {title}
+          {property.title}
         </h3>
 
+        {/* FEATURES */}
         <div className="mb-4 flex items-center gap-4 text-sm text-[var(--muted-foreground)]">
           <div className="flex items-center gap-1">
-            <BedDouble className="size-4" />3 PN
+            <BedDouble className="size-4" />
+            {property.bedrooms || 0} PN
           </div>
 
           <div className="flex items-center gap-1">
             <Move className="size-4" />
-            120m²
+            {property.area}m²
           </div>
         </div>
 
+        {/* LOCATION */}
         <div className="flex items-center gap-2 text-sm text-[var(--muted-foreground)]">
           <MapPin className="size-4" />
-          {location}
+
+          {property.district || property.address}
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

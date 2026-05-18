@@ -1,8 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Mail } from "lucide-react";
 import { useState } from "react";
+import { Mail } from "lucide-react";
+import { toast } from "sonner";
+import { forgotPasswordSchema } from "../schemas/forgot-password-schema";
 import { FaSpinner } from "react-icons/fa";
 
 export const ForgotPasswordCard = () => {
@@ -19,34 +21,48 @@ export const ForgotPasswordCard = () => {
     setStatus("idle");
     setMessage(null);
 
+    const parsed = forgotPasswordSchema.safeParse({ email });
+
+    if (!parsed.success) {
+      const messageText =
+        parsed.error.issues[0]?.message || "Email không hợp lệ.";
+      setStatus("error");
+      setMessage(messageText);
+      toast.error(messageText);
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: parsed.data.email }),
       });
 
       if (!response.ok) {
         const body = await response.json().catch(() => null);
-        throw new Error(
-          body?.message || "Không thể gửi yêu cầu đặt lại mật khẩu.",
-        );
+        const errorMessage =
+          body?.message || "Không thể gửi yêu cầu đặt lại mật khẩu.";
+        throw new Error(errorMessage);
       }
 
       setStatus("success");
       setMessage(
         "Nếu email tồn tại, chúng tôi đã gửi liên kết đặt lại mật khẩu đến hộp thư của bạn.",
       );
+      toast.success("Yêu cầu đặt lại mật khẩu đã gửi.");
       setEmail("");
     } catch (error) {
-      setStatus("error");
-      setMessage(
+      const messageText =
         error instanceof Error
           ? error.message
-          : "Lỗi không xác định. Vui lòng thử lại.",
-      );
+          : "Lỗi không xác định. Vui lòng thử lại.";
+      setStatus("error");
+      setMessage(messageText);
+      toast.error(messageText);
     } finally {
       setIsLoading(false);
     }
@@ -59,7 +75,6 @@ export const ForgotPasswordCard = () => {
       <div className="relative z-10 w-full max-w-md rounded-[32px] border border-white/10 bg-white/10 p-8 backdrop-blur-xl">
         <div className="mb-8 text-center">
           <h1 className="text-5xl font-black text-cyan-400">RESET</h1>
-
           <p className="mt-3 text-zinc-300">
             Nhập email để nhận liên kết khôi phục
           </p>

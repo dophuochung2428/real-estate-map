@@ -1,9 +1,17 @@
 import { ReactNode } from "react";
+import { redirect } from "next/navigation";
 
-export default function AuthLayout({ children }: { children: ReactNode }) {
+import { getCurrentUser } from "@/features/auth/server/get-current-user";
+
+export default async function AuthLayout({ children }: { children: ReactNode }) {
+  const user = await getCurrentUser();
+
+  if (user) {
+    redirect("/dashboard");
+  }
+
   return (
     <main className="flex min-h-screen">
-      {/* LEFT */}
       <div className="hidden flex-1 bg-gradient-to-br from-red-600 to-red-500 lg:flex lg:flex-col lg:justify-between lg:p-14">
         <div>
           <h1 className="text-4xl font-bold text-white">BatDongSan Platform</h1>
@@ -20,10 +28,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         </div>
       </div>
 
-      {/* RIGHT */}
-      <div className="flex flex-1 items-center justify-center bg-[#f8f8f8] p-6">
-        {children}
-      </div>
+      <div className="flex flex-1 items-center justify-center bg-[#f8f8f8] p-6">{children}</div>
     </main>
   );
 }

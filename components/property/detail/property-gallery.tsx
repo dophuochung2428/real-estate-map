@@ -4,42 +4,87 @@ import Image from "next/image";
 
 import { useState } from "react";
 
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
 export default function PropertyGallery({ property }: { property: any }) {
   const images = property.property_images || [];
 
-  const [selectedImage, setSelectedImage] = useState(images[0]?.image_url);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const selectedImage =
+    images[selectedIndex]?.image_url || "https://placehold.co/1200x700";
+
+  const next = () => {
+    if (selectedIndex >= images.length - 1) {
+      setSelectedIndex(0);
+      return;
+    }
+
+    setSelectedIndex(selectedIndex + 1);
+  };
+
+  const prev = () => {
+    if (selectedIndex <= 0) {
+      setSelectedIndex(images.length - 1);
+      return;
+    }
+
+    setSelectedIndex(selectedIndex - 1);
+  };
 
   return (
     <div>
       {/* MAIN */}
-      <div className="overflow-hidden rounded-[32px]">
+      <div className="relative overflow-hidden rounded-[32px]">
         <Image
-          src={selectedImage || "https://placehold.co/1200x700"}
+          src={selectedImage}
           alt={property.title}
-          width={1200}
-          height={700}
-          className="h-[500px] w-full object-cover"
+          width={1400}
+          height={900}
+          className="h-[550px] w-full object-cover"
         />
+
+        {/* NAV */}
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={prev}
+              className="absolute left-5 top-1/2 flex size-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur"
+            >
+              <ChevronLeft />
+            </button>
+
+            <button
+              onClick={next}
+              className="absolute right-5 top-1/2 flex size-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur"
+            >
+              <ChevronRight />
+            </button>
+          </>
+        )}
+
+        {/* COUNT */}
+        <div className="absolute bottom-5 right-5 rounded-full bg-black/50 px-4 py-2 text-sm text-white backdrop-blur">
+          {selectedIndex + 1} / {images.length}
+        </div>
       </div>
 
       {/* THUMBNAILS */}
-      <div className="mt-4 flex gap-4 overflow-x-auto">
-        {images.map((image: any) => (
+      <div className="mt-4 flex gap-4 overflow-x-auto pb-2">
+        {images.map((image: any, index: number) => (
           <button
             key={image.id}
-            onClick={() => setSelectedImage(image.image_url)}
+            onClick={() => setSelectedIndex(index)}
             className={`overflow-hidden rounded-2xl border-2 transition ${
-              selectedImage === image.image_url
-                ? "border-red-600"
-                : "border-transparent"
+              selectedIndex === index ? "border-red-600" : "border-transparent"
             }`}
           >
             <Image
               src={image.image_url}
               alt="Thumbnail"
-              width={140}
-              height={100}
-              className="h-[90px] w-[140px] object-cover"
+              width={160}
+              height={110}
+              className="h-[100px] w-[160px] object-cover"
             />
           </button>
         ))}

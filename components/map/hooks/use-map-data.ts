@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 
 import { Property } from "@/types/property";
 
@@ -39,6 +39,7 @@ export function useMapData(initialData: Property[], filters: Filters) {
       setIsFetching(true);
 
       try {
+        const supabase = await createClient();
         let query = supabase.from("properties").select("*");
 
         if (filters.type) {

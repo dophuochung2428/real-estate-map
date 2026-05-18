@@ -1,28 +1,12 @@
 import Container from "@/components/layout/container";
+
 import PropertyCard from "./property-card";
 
-const properties = [
-  {
-    title: "Căn hộ cao cấp trung tâm Cần Thơ",
-    price: "3.2 tỷ",
-    location: "Ninh Kiều, Cần Thơ",
-    image: "https://images.unsplash.com/photo-1568605114967-8130f3a36994",
-  },
-  {
-    title: "Nhà phố hiện đại đầy đủ nội thất",
-    price: "5.8 tỷ",
-    location: "Bình Thủy, Cần Thơ",
-    image: "https://images.unsplash.com/photo-1570129477492-45c003edd2be",
-  },
-  {
-    title: "Đất nền đầu tư vị trí đẹp",
-    price: "1.9 tỷ",
-    location: "Cái Răng, Cần Thơ",
-    image: "https://images.unsplash.com/photo-1600585154526-990dced4db0d",
-  },
-];
+import { getProperties } from "@/services/property.server";
 
-export default function FeaturedSection() {
+export default async function FeaturedSection() {
+  const { data: properties } = await getProperties();
+
   return (
     <section className="py-14">
       <Container>
@@ -35,8 +19,8 @@ export default function FeaturedSection() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {properties.map((property) => (
-            <PropertyCard key={property.title} {...property} />
+          {properties.map((property: any) => (
+            <PropertyCard key={property.id} property={property} />
           ))}
         </div>
       </Container>

@@ -1,12 +1,7 @@
-import "server-only";
+import { createServerClient } from "@/lib/supabase/server";
 
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
-
-export const getCurrentUser = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  return session?.user || null;
-};
+export async function getCurrentUser() {
+  const supabase = await createServerClient();
+  const { data } = await supabase.auth.getUser();
+  return data.user || null;
+}

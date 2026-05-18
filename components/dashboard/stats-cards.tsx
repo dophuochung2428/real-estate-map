@@ -1,40 +1,35 @@
 import { Eye, Building2, Heart, TrendingUp } from "lucide-react";
 
-const stats = [
-  {
-    label: "Lượt xem",
+type Props = {
+  total: number;
+  active: number;
+  sold: number;
+};
 
-    value: "12.4K",
+export default function StatsCards({ total, active, sold }: Props) {
+  const stats = [
+    {
+      label: "Tin đăng",
+      value: total,
+      icon: <Building2 size={22} />,
+    },
+    {
+      label: "Đang hoạt động",
+      value: active,
+      icon: <TrendingUp size={22} />,
+    },
+    {
+      label: "Đã bán",
+      value: sold,
+      icon: <Heart size={22} />,
+    },
+    {
+      label: "Lượt xem",
+      value: "—",
+      icon: <Eye size={22} />,
+    },
+  ];
 
-    icon: <Eye size={22} />,
-  },
-
-  {
-    label: "Tin đăng",
-
-    value: "24",
-
-    icon: <Building2 size={22} />,
-  },
-
-  {
-    label: "Yêu thích",
-
-    value: "186",
-
-    icon: <Heart size={22} />,
-  },
-
-  {
-    label: "Tăng trưởng",
-
-    value: "+24%",
-
-    icon: <TrendingUp size={22} />,
-  },
-];
-
-export default function StatsCards() {
   return (
     <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
       {stats.map((item) => (
@@ -44,7 +39,9 @@ export default function StatsCards() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-[var(--muted-foreground)]">{item.label}</p>
+              <p className="text-sm text-[var(--muted-foreground)]">
+                {item.label}
+              </p>
 
               <h2 className="mt-2 text-3xl font-bold">{item.value}</h2>
             </div>

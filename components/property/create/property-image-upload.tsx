@@ -8,6 +8,8 @@ import { useImageUpload } from "@/hooks/use-image-upload";
 
 import { useEffect } from "react";
 
+import { toast } from "sonner";
+
 type Props = {
   form: any;
 
@@ -34,7 +36,14 @@ export default function PropertyImageUpload({
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
 
-    await uploadImages(e.target.files);
+    const files = e.target.files;
+
+    if (images.length + files.length > 20) {
+      toast.error("Tối đa 20 ảnh");
+      return;
+    }
+
+    await uploadImages(files);
   };
 
   useEffect(() => {
@@ -65,6 +74,7 @@ export default function PropertyImageUpload({
           accept="image/*"
           className="hidden"
           onChange={handleUpload}
+          disabled={loading}
         />
       </label>
 

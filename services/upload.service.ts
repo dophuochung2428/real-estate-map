@@ -1,9 +1,20 @@
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 
 export async function uploadPropertyImage(file: File) {
+  const MAX_SIZE = 10 * 1024 * 1024;
+
+  if (!file.type.startsWith("image/")) {
+    throw new Error("File không hợp lệ");
+  }
+
+  if (file.size > MAX_SIZE) {
+    throw new Error("Ảnh tối đa 10MB");
+  }
+
+  const supabase = createClient();
   const fileExt = file.name.split(".").pop();
 
-  const fileName = `${Date.now()}.${fileExt}`;
+  const fileName = `${crypto.randomUUID()}.${fileExt}`;
 
   const filePath = `properties/${fileName}`;
 

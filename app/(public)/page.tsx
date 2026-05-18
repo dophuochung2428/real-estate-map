@@ -21,13 +21,13 @@ export default function HomePage() {
 
       <HeroSection />
 
-      <HighlightSection />
+      {/* <HighlightSection /> */}
 
       <FeaturedSection />
 
       <LocationSection />
 
-      <MapPreviewSection />
+      {/* <MapPreviewSection /> */}
 
       <FloatingActions />
 
