@@ -25,6 +25,8 @@ export default function PropertyDetailPanel({
 
   const router = useRouter();
 
+  const thumbnail = property.thumbnail_url;
+
   return (
     <div className="fixed top-24 right-4 z-[1050] w-80 max-h-[calc(100vh-5rem)] overflow-y-auto px-1 sm:px-0">
       <div className="bg-[var(--card)]/95 backdrop-blur-xl rounded-3xl border border-[var(--border)] shadow-2xl overflow-hidden">
@@ -38,16 +40,15 @@ export default function PropertyDetailPanel({
 
         {/* Image */}
         <div className="relative h-48">
-          <Image
-            src={
-              property.images?.find((img) => img.is_thumbnail)?.image_url ||
-              property.images?.[0]?.image_url ||
-              "/images/hero.jpg"
-            }
-            alt={property.title}
-            fill
-            className="object-cover"
-          />
+          {thumbnail && (
+            <Image
+              src={thumbnail}
+              alt={property.title}
+              fill
+              sizes="320px"
+              className="object-cover"
+            />
+          )}
         </div>
 
         {/* Content */}

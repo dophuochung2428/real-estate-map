@@ -49,5 +49,7 @@ export interface Property {
 
   description?: string;
 
+  thumbnail_url?: string;
+
   images?: PropertyImage[];
 }
