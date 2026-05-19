@@ -9,27 +9,25 @@ export async function GET(req: NextRequest) {
 
   try {
     const res = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-        address,
-      )}&key=${process.env.GOOGLE_MAPS_API_KEY}`,
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`,
+      {
+        headers: {
+          "User-Agent": "real-estate-app",
+        },
+      },
     );
 
     const data = await res.json();
 
-    if (!data.results?.length) {
-      return NextResponse.json(
-        { message: "Address not found" },
-        { status: 404 },
-      );
+    if (!data.length) {
+      return NextResponse.json({ message: "Not found" }, { status: 404 });
     }
 
-    const loc = data.results[0].geometry.location;
-
     return NextResponse.json({
-      lat: loc.lat,
-      lng: loc.lng,
+      lat: parseFloat(data[0].lat),
+      lng: parseFloat(data[0].lon),
     });
-  } catch (err) {
-    return NextResponse.json({ message: "Geocode failed" }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 }
