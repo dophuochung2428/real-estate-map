@@ -12,12 +12,16 @@ export async function createProperty(payload: any) {
     throw new Error("Unauthorized");
   }
 
+  if (!payload.images || payload.images.length === 0) {
+    throw new Error("Images is required");
+  }
+
   const { data: property, error } = await supabase
     .from("properties")
     .insert({
       title: payload.title,
-      price: Number(payload.price),
-      area: Number(payload.area),
+      price: payload.price,
+      area: payload.area,
       address: payload.address,
       province: payload.province,
       district: payload.district,
@@ -26,7 +30,9 @@ export async function createProperty(payload: any) {
       lat: payload.lat,
       lng: payload.lng,
 
-      thumbnail_url: payload.images.find((x: any) => x.is_thumbnail)?.image_url,
+      thumbnail_url:
+        payload.images.find((x: any) => x.is_thumbnail)?.image_url ??
+        payload.images?.[0]?.image_url,
 
       description: payload.description,
 

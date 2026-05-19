@@ -28,10 +28,21 @@ function MapController({ form }: any) {
   const map = useMap();
 
   useEffect(() => {
-    if (!form.lat || !form.lng) return;
+    const lat = Number(form?.lat);
+    const lng = Number(form?.lng);
 
-    map.setView([form.lat, form.lng], 16);
-  }, [form.lat, form.lng]);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
+    const timeout = setTimeout(() => {
+      const zoom = form.district ? 13 : 10;
+
+      map.setView([lat, lng], zoom, {
+        animate: true,
+      });
+    }, 150);
+
+    return () => clearTimeout(timeout);
+  }, [form?.lat, form?.lng, map]); // 👈 THÊM map VÀO ĐÂY
 
   return null;
 }
@@ -52,7 +63,13 @@ function LocationPicker({ setForm }: any) {
 }
 
 function DraggableMarker({ form, setForm }: any) {
-  if (!form.lat || !form.lng) return null;
+  const hasLocation =
+    typeof form.lat === "number" &&
+    typeof form.lng === "number" &&
+    !Number.isNaN(form.lat) &&
+    !Number.isNaN(form.lng);
+
+  if (!hasLocation) return null;
 
   return (
     <Marker
@@ -76,13 +93,22 @@ function DraggableMarker({ form, setForm }: any) {
 }
 
 export default function PropertyMapPicker({ form, setForm }: Props) {
+  const hasLocation =
+    typeof form.lat === "number" &&
+    typeof form.lng === "number" &&
+    !Number.isNaN(form.lat) &&
+    !Number.isNaN(form.lng);
+
+  const DEFAULT_CENTER: [number, number] = [10.7769, 106.7009];
   return (
     <div className="rounded-3xl bg-[var(--card)] p-6 shadow-sm">
       <h2 className="mb-6 text-2xl font-bold">Vị trí bản đồ</h2>
 
       <div className="overflow-hidden rounded-3xl">
         <MapContainer
-          center={[form.lat || 10.0452, form.lng || 105.7469]}
+          center={
+            hasLocation ? [Number(form.lat), Number(form.lng)] : DEFAULT_CENTER
+          }
           zoom={13}
           scrollWheelZoom
           className="h-[500px] w-full"
@@ -102,12 +128,34 @@ export default function PropertyMapPicker({ form, setForm }: Props) {
       <div className="mt-4 grid grid-cols-2 gap-4">
         <div className="rounded-2xl border p-4">
           <p className="text-sm text-gray-500">Latitude</p>
-          <p className="font-semibold">{form.lat}</p>
+          <input
+            type="number"
+            value={form.lat ?? ""}
+            onChange={(e) =>
+              setForm((prev: any) => ({
+                ...prev,
+                lat: e.target.value === "" ? null : Number(e.target.value),
+                isManualLocation: true,
+              }))
+            }
+            className="w-full rounded-lg border p-2"
+          />
         </div>
 
         <div className="rounded-2xl border p-4">
           <p className="text-sm text-gray-500">Longitude</p>
-          <p className="font-semibold">{form.lng}</p>
+          <input
+            type="number"
+            value={form.lng ?? ""}
+            onChange={(e) =>
+              setForm((prev: any) => ({
+                ...prev,
+                lng: e.target.value === "" ? null : Number(e.target.value),
+                isManualLocation: true,
+              }))
+            }
+            className="w-full rounded-lg border p-2"
+          />
         </div>
       </div>
     </div>

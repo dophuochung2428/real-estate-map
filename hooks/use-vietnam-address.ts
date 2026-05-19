@@ -22,7 +22,7 @@ export function useVietnamAddress() {
     const fetchProvinces = async () => {
       setLoading(true);
 
-      const res = await fetch("https://provinces.open-api.vn/api/?depth=1");
+      const res = await fetch("https://provinces.open-api.vn/api/v2/?depth=1");
 
       const data = await res.json();
       setProvinces(data);
@@ -34,12 +34,20 @@ export function useVietnamAddress() {
   }, []);
 
   const fetchDistricts = async (provinceCode: number) => {
-    const res = await fetch(
-      `https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`,
-    );
+    try {
+      const res = await fetch(
+        `https://provinces.open-api.vn/api/v2/p/${provinceCode}?depth=2`,
+      );
 
-    const data = await res.json();
-    setDistricts(data.districts);
+      const data = await res.json();
+
+      const safeDistricts = Array.isArray(data?.wards) ? data.wards : [];
+
+      setDistricts(safeDistricts);
+    } catch (err) {
+      console.error(err);
+      setDistricts([]);
+    }
   };
 
   return {

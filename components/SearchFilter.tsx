@@ -12,7 +12,7 @@ import { Filters } from "@/types/filter";
 import { FaFilter } from "react-icons/fa";
 import { DIRECTION_LABEL, PROPERTY_TYPE_LABEL } from "@/constants/property";
 import { PRICE_RANGES, AREA_RANGES } from "@/constants/filter";
-import { provinces, districts } from "@/constants/location";
+import { useVietnamAddress } from "@/hooks/use-vietnam-address";
 
 interface Props {
   filters: Filters;
@@ -31,6 +31,7 @@ export default function SearchFilter({
   const [isApplying, setIsApplying] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
+  const { provinces, districts, fetchDistricts } = useVietnamAddress();
 
   useEffect(() => {
     const esc = (e: KeyboardEvent) => {
@@ -245,19 +246,27 @@ export default function SearchFilter({
             <select
               value={local.province || ""}
               className="flex-1 border border-[var(--border)] bg-[var(--secondary)] px-3 py-2 rounded-lg"
-              onChange={(e) =>
-                setLocal((p) => ({
-                  ...p,
+              onChange={(e) => {
+                const selected = provinces.find(
+                  (p) => p.name === e.target.value,
+                );
+
+                setLocal((prev) => ({
+                  ...prev,
                   province: e.target.value,
                   district: "",
-                }))
-              }
+                }));
+
+                if (selected) {
+                  fetchDistricts(selected.code);
+                }
+              }}
             >
               <option value="">-- Tỉnh/Thành --</option>
 
               {provinces.map((province) => (
-                <option key={province} value={province}>
-                  {province}
+                <option key={province.code} value={province.name}>
+                  {province.name}
                 </option>
               ))}
             </select>
@@ -275,9 +284,9 @@ export default function SearchFilter({
             >
               <option value="">-- Quận/Huyện --</option>
 
-              {(districts[local.province || ""] || []).map((district) => (
-                <option key={district} value={district}>
-                  {district}
+              {districts.map((district) => (
+                <option key={district.code} value={district.name}>
+                  {district.name}
                 </option>
               ))}
             </select>

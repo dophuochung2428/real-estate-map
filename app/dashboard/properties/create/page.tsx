@@ -77,15 +77,13 @@ export default function CreatePropertyPage() {
         });
 
         setErrors(fieldErrors);
-
+        setSubmitting(false);
         return;
       }
 
       setErrors({});
 
-      const property = await createProperty(form);
-
-      console.log("CREATED:", property);
+      const property = await createProperty(result.data);
 
       setForm(initialForm);
 

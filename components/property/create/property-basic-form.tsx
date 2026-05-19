@@ -9,8 +9,44 @@ type Props = {
   errors: Record<string, string>;
 };
 
+const geocode = async (address: string) => {
+  const res = await fetch(
+    `/api/geocode?address=${encodeURIComponent(address)}`,
+  );
+
+  const data = await res.json();
+
+  if (!data?.lat || !data?.lng) return null;
+
+  return {
+    lat: Number(data.lat),
+    lng: Number(data.lng),
+  };
+};
+
 export default function PropertyBasicForm({ form, setForm, errors }: Props) {
   const { provinces, districts, fetchDistricts } = useVietnamAddress();
+
+  const updateMapLocation = async (district?: string, province?: string) => {
+    const query = [district, province, "Vietnam"].filter(Boolean).join(", ");
+
+    if (!query) return;
+
+    try {
+      const location = await geocode(query);
+
+      if (!location) return;
+
+      setForm((prev: any) => ({
+        ...prev,
+        lat: location.lat,
+        lng: location.lng,
+        isManualLocation: false,
+      }));
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const fullAddress = [form.address, form.district, form.province]
     .filter(Boolean)
@@ -29,7 +65,7 @@ export default function PropertyBasicForm({ form, setForm, errors }: Props) {
   useEffect(() => {
     if (form.isManualLocation) return;
 
-    if (!form.address || !form.district || !form.province) return;
+    if (!form.province) return;
 
     const timeout = setTimeout(async () => {
       try {
@@ -153,17 +189,21 @@ export default function PropertyBasicForm({ form, setForm, errors }: Props) {
 
         <select
           value={form.province}
-          onChange={(e) => {
-            const selected = provinces.find((p) => p.name === e.target.value);
+          onChange={async (e) => {
+            const value = e.target.value;
+
+            const selected = provinces.find((p) => p.name === value);
 
             setForm((prev: any) => ({
               ...prev,
-              province: e.target.value,
+              province: value,
               district: "",
             }));
 
             if (selected) {
               fetchDistricts(selected.code);
+
+              await updateMapLocation(undefined, value);
             }
           }}
           className={`h-12 w-full rounded-2xl border bg-[var(--card)] px-4 text-[var(--foreground)] appearance-none
@@ -184,12 +224,16 @@ export default function PropertyBasicForm({ form, setForm, errors }: Props) {
         <select
           value={form.district}
           disabled={!form.province}
-          onChange={(e) =>
+          onChange={async (e) => {
+            const district = e.target.value;
+
             setForm((prev: any) => ({
               ...prev,
-              district: e.target.value,
-            }))
-          }
+              district,
+            }));
+
+            await updateMapLocation(district, form.province);
+          }}
           className={`h-12 w-full rounded-2xl border bg-[var(--card)] px-4 text-[var(--foreground)] appearance-none
   ${errors.district ? "border-red-500" : "border-[var(--border)]"}`}
         >
