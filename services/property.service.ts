@@ -126,13 +126,87 @@ export async function updateProperty(id: string, payload: any) {
     throw new Error("Unauthorized");
   }
 
+  // GET OLD IMAGES
+  const { data: oldImages, error: oldImageError } = await supabase
+    .from("property_images")
+    .select("image_url")
+    .eq("property_id", id);
+
+  if (oldImageError) {
+    throw oldImageError;
+  }
+
+  // FIND REMOVED IMAGES
+  const newUrls = payload.images.map((x: any) => x.image_url);
+
+  const removedImages =
+    oldImages?.filter((img) => !newUrls.includes(img.image_url)) || [];
+
+  // DELETE REMOVED STORAGE FILES
+  if (removedImages.length) {
+    const filePaths = removedImages.map((img) => getStoragePath(img.image_url));
+
+    const { error: storageError } = await supabase.storage
+      .from("property-images")
+      .remove(filePaths);
+
+    if (storageError) {
+      throw storageError;
+    }
+  }
+
+  // UPDATE PROPERTY
   const { error } = await supabase
     .from("properties")
-    .update(payload)
+    .update({
+      title: payload.title,
+      price: payload.price,
+      area: payload.area,
+      address: payload.address,
+      province: payload.province,
+      district: payload.district,
+      type: payload.type,
+      direction: payload.direction,
+      lat: payload.lat,
+      lng: payload.lng,
+      description: payload.description,
+      amenities: payload.amenities,
+
+      thumbnail_url:
+        payload.images.find((x: any) => x.is_thumbnail)?.image_url ??
+        payload.images?.[0]?.image_url,
+    })
     .eq("id", id)
     .eq("user_id", user.id);
 
   if (error) {
     throw error;
+  }
+
+  // DELETE OLD DB IMAGES
+  const { error: deleteError } = await supabase
+    .from("property_images")
+    .delete()
+    .eq("property_id", id);
+
+  if (deleteError) {
+    throw deleteError;
+  }
+
+  // INSERT NEW IMAGES
+  if (payload.images?.length) {
+    const images = payload.images.map((image: any) => ({
+      property_id: id,
+      image_url: image.image_url,
+      is_thumbnail: image.is_thumbnail,
+    }));
+
+    const { error: imageError } = await supabase
+      .from("property_images")
+      .insert(images);
+
+    if (imageError) {
+      throw imageError;
+    }
   }
 }

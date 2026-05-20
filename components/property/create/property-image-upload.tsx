@@ -31,7 +31,15 @@ export default function PropertyImageUpload({
     removeImage,
 
     setThumbnail,
+
+    setImages,
   } = useImageUpload();
+
+  useEffect(() => {
+    if (form.images?.length) {
+      setImages(form.images);
+    }
+  }, []);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;

@@ -48,10 +48,6 @@ export default function PropertyBasicForm({ form, setForm, errors }: Props) {
     }
   };
 
-  const fullAddress = [form.address, form.district, form.province]
-    .filter(Boolean)
-    .join(", ");
-
   useEffect(() => {
     if (!form.province) return;
 
@@ -61,34 +57,6 @@ export default function PropertyBasicForm({ form, setForm, errors }: Props) {
       fetchDistricts(province.code);
     }
   }, [form.province, provinces]);
-
-  useEffect(() => {
-    if (form.isManualLocation) return;
-
-    if (!form.province) return;
-
-    const timeout = setTimeout(async () => {
-      try {
-        const res = await fetch(
-          `/api/geocode?address=${encodeURIComponent(fullAddress)}`,
-        );
-
-        const data = await res.json();
-
-        if (!data?.lat || !data?.lng) return;
-
-        setForm((prev: any) => ({
-          ...prev,
-          lat: data.lat,
-          lng: data.lng,
-        }));
-      } catch (err) {
-        console.log(err);
-      }
-    }, 700);
-
-    return () => clearTimeout(timeout);
-  }, [fullAddress]);
 
   return (
     <div className="rounded-3xl bg-[var(--card)] p-6 shadow-sm">
@@ -127,12 +95,14 @@ export default function PropertyBasicForm({ form, setForm, errors }: Props) {
 
             <input
               value={form.price}
-              onChange={(e) =>
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, "");
+
                 setForm((prev: any) => ({
                   ...prev,
-                  price: e.target.value,
-                }))
-              }
+                  price: value,
+                }));
+              }}
               placeholder="3 tỷ..."
               className={`h-12 w-full rounded-2xl border bg-transparent px-4 outline-none
   ${errors.price ? "border-red-500" : "border-[var(--border)]"}`}
@@ -148,12 +118,14 @@ export default function PropertyBasicForm({ form, setForm, errors }: Props) {
 
             <input
               value={form.area}
-              onChange={(e) =>
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, "");
+
                 setForm((prev: any) => ({
                   ...prev,
-                  area: e.target.value,
-                }))
-              }
+                  area: value,
+                }));
+              }}
               placeholder="120m²..."
               className={`h-12 w-full rounded-2xl border bg-transparent px-4 outline-none
   ${errors.area ? "border-red-500" : "border-[var(--border)]"}`}

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { formatPrice } from "../map/utils/price-format";
 
 import { BedDouble, MapPin, Move } from "lucide-react";
 import FavoriteButton from "@/components/favorite/favorite-button";
@@ -29,16 +30,6 @@ type PropertyCardProps = {
 };
 
 type Props = InlineCardProps | PropertyCardProps;
-
-function formatPrice(price: number | string) {
-  if (typeof price === "string") return price;
-
-  if (price >= 1000000000) {
-    return `${(price / 1000000000).toFixed(1)} tỷ`;
-  }
-
-  return `${(price / 1000000).toFixed(0)} triệu`;
-}
 
 export default function HorizontalPropertyCard(props: Props) {
   const router = useRouter();
@@ -86,7 +77,9 @@ export default function HorizontalPropertyCard(props: Props) {
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-3xl font-bold text-[var(--primary)]">{price}</span>
+                <span className="text-3xl font-bold text-[var(--primary)]">
+                  {price}
+                </span>
 
                 <button className="rounded-2xl bg-[var(--primary)] px-6 py-3 font-semibold text-[var(--primary-foreground)] hover:bg-[var(--primary-hover)]">
                   Xem chi tiết
@@ -112,7 +105,10 @@ export default function HorizontalPropertyCard(props: Props) {
   const location =
     property.address ?? property.location ?? "Vị trí không xác định";
 
-  const price = formatPrice(property.price);
+  const price =
+    typeof property.price === "number"
+      ? formatPrice(property.price)
+      : property.price;
   const areaLabel = property.area ? `${property.area}m²` : "120m²";
 
   const href = `/listing/${property.id}`;
@@ -147,7 +143,9 @@ export default function HorizontalPropertyCard(props: Props) {
                   VIP
                 </span>
 
-                <span className="text-sm text-[var(--muted-foreground)]">Đăng hôm nay</span>
+                <span className="text-sm text-[var(--muted-foreground)]">
+                  Đăng hôm nay
+                </span>
               </div>
 
               <h2 className="mb-4 text-2xl font-bold transition group-hover:text-[var(--primary)]">
@@ -177,7 +175,9 @@ export default function HorizontalPropertyCard(props: Props) {
             </div>
 
             <div className="flex items-center justify-between mt-6">
-              <span className="text-3xl font-bold text-[var(--primary)]">{price}</span>
+              <span className="text-3xl font-bold text-[var(--primary)]">
+                {price}
+              </span>
 
               <button
                 onClick={() => router.push(href)}

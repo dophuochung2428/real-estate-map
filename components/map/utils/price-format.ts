@@ -1,25 +1,17 @@
 export const formatPrice = (price: number) => {
   if (price >= 1_000_000_000) {
-    const ty = Math.floor(price / 1_000_000_000);
+    const ty = price / 1_000_000_000;
 
-    const du = price % 1_000_000_000;
-
-    if (du === 0) {
-      return `${ty} tỷ`;
-    }
-
-    const tr = Math.floor(du / 100_000_000);
-
-    return `${ty} tỷ ${tr}`;
+    return `${ty.toFixed(1).replace(".0", "")} tỷ`;
   }
 
   if (price >= 1_000_000) {
-    return `${Math.floor(price / 1_000_000)}tr`;
+    return `${Math.floor(price / 1_000_000)} triệu`;
   }
 
   if (price >= 1_000) {
     return `${Math.floor(price / 1_000)}k`;
   }
 
-  return price.toString();
+  return price.toLocaleString("vi-VN");
 };

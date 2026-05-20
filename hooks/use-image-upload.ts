@@ -68,5 +68,7 @@ export function useImageUpload() {
     removeImage,
 
     setThumbnail,
+    
+    setImages,
   };
 }

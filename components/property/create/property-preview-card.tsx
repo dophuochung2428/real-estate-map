@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { formatPrice } from "@/components/map/utils/price-format";
 
 type Props = {
   form: any;
@@ -43,7 +44,7 @@ export default function PropertyPreviewCard({
           </h3>
 
           <p className="mt-2 text-lg font-bold text-red-500">
-            {form.price || "Giá"}
+            {form.price ? formatPrice(Number(form.price)) : "Giá"}
           </p>
 
           <p className="mt-2 text-sm text-gray-300">

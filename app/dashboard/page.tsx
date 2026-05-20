@@ -1,6 +1,5 @@
-import DashboardTopbar from "@/components/dashboard/dashboard-topbar";
 import StatsCards from "@/components/dashboard/stats-cards";
-import PropertyTable from "@/components/dashboard/property-table";
+import RecentProperties from "@/components/dashboard/recent-properties";
 
 import { getMyListings } from "@/services/property.server";
 import EmptyState from "@/components/dashboard/empty-state";
@@ -22,9 +21,6 @@ export default async function DashboardPage() {
   const sold = listings.filter((i) => i.status === "sold").length;
 
   return (
-    <div className="flex-1">
-      <DashboardTopbar user={user} />
-
       <div className="p-6">
         <StatsCards total={total} active={active} sold={sold} />
 
@@ -32,10 +28,9 @@ export default async function DashboardPage() {
           {listings.length === 0 ? (
             <EmptyState />
           ) : (
-            <PropertyTable listings={listings} />
+            <RecentProperties listings={listings.slice(0, 5)} />
           )}
         </div>
       </div>
-    </div>
   );
 }
