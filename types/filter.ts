@@ -19,7 +19,8 @@ export type PropertyTypeFilter =
   | "land_residential"
   | "land_agriculture"
   | "farm"
-  | "warehouse_factory";
+  | "warehouse_factory"
+  | "other";
 
 export interface Filters {
   keyword: string;

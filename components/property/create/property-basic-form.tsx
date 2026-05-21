@@ -245,6 +245,7 @@ export default function PropertyBasicForm({ form, setForm, errors }: Props) {
             <option value="land_agriculture">Đất nông nghiệp</option>
             <option value="farm">Trang trại</option>
             <option value="warehouse_factory">Kho xưởng</option>
+            <option value="other">Loại khác</option>
           </select>
 
           {errors.type && (

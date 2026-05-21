@@ -10,6 +10,7 @@ export const PROPERTY_TYPE_LABEL: Record<PropertyType, string> = {
   land_agriculture: "Đất nông nghiệp",
   farm: "Trang trại",
   warehouse_factory: "Kho bãi / Nhà xưởng",
+  other: "Loại khác",
 };
 
 export const DIRECTION_LABEL: Record<DirectionType, string> = {

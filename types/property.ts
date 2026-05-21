@@ -7,7 +7,8 @@ export type PropertyType =
   | "land_residential"
   | "land_agriculture"
   | "farm"
-  | "warehouse_factory";
+  | "warehouse_factory"
+  | "other";
 
 export type DirectionType =
   | "north"
