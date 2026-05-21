@@ -119,7 +119,7 @@ export default function PropertyBasicForm({ form, setForm, errors }: Props) {
             <input
               value={form.area}
               onChange={(e) => {
-                const value = e.target.value.replace(/\D/g, "");
+                const value = e.target.value.replace(/[^\d.]/g, "");
 
                 setForm((prev: any) => ({
                   ...prev,
