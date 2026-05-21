@@ -1,5 +1,7 @@
 import { Compass, Home, MapPin, Square } from "lucide-react";
 
+import { formatDirection } from "@/utils/property-format";
+
 import { PROPERTY_TYPE_LABEL, DIRECTION_LABEL } from "@/constants/property";
 
 export default function PropertyInfo({ property }: { property: any }) {
@@ -35,13 +37,7 @@ export default function PropertyInfo({ property }: { property: any }) {
         <FeatureCard
           icon={<Compass size={22} />}
           label="Hướng"
-          value={
-            property.direction
-              ? DIRECTION_LABEL[
-                  property.direction as keyof typeof DIRECTION_LABEL
-                ]
-              : "Đang cập nhật"
-          }
+          value={formatDirection(property.direction)}
         />
 
         <FeatureCard

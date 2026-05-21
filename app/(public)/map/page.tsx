@@ -31,7 +31,7 @@ export default function MapPage() {
     keyword: "",
     location: "",
     type: "",
-    direction: "",
+    direction: null,
     minPrice: undefined,
     maxPrice: undefined,
     minArea: undefined,

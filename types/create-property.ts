@@ -18,7 +18,7 @@ export interface CreatePropertyPayload {
 
   type: string;
 
-  direction: string;
+  direction: string | null;
 
   description: string;
 

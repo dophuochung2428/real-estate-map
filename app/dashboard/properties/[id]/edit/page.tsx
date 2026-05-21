@@ -32,7 +32,7 @@ export default async function EditPropertyPage({
         province: property.province,
         district: property.district,
         type: property.type,
-        direction: property.direction,
+        direction: property.direction ?? null,
         lat: property.lat,
         lng: property.lng,
         description: property.description,

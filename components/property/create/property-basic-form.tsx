@@ -256,11 +256,11 @@ export default function PropertyBasicForm({ form, setForm, errors }: Props) {
           <label className="mb-2 block font-medium">Hướng</label>
 
           <select
-            value={form.direction}
+            value={form.direction ?? ""}
             onChange={(e) =>
               setForm((prev: any) => ({
                 ...prev,
-                direction: e.target.value,
+                direction: e.target.value === "" ? null : e.target.value,
               }))
             }
             className="h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4 text-[var(--foreground)] appearance-none"

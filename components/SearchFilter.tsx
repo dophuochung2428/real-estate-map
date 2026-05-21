@@ -225,12 +225,15 @@ export default function SearchFilter({
             </select>
 
             <select
-              value={local.direction}
+              value={local.direction ?? ""}
               className="flex-1 border border-[var(--border)] bg-[var(--secondary)] px-3 py-2 rounded-lg text-[var(--foreground)] focus:outline-none focus:ring-0 focus:border-[var(--primary)]"
               onChange={(e) =>
                 setLocal((p) => ({
                   ...p,
-                  direction: e.target.value as Filters["direction"],
+                  direction:
+                    e.target.value === ""
+                      ? null
+                      : (e.target.value as Filters["direction"]),
                 }))
               }
             >
@@ -328,7 +331,7 @@ export default function SearchFilter({
                   keyword: "",
                   location: "",
                   type: "",
-                  direction: "",
+                  direction: null,
                   province: "",
                   district: "",
                   sort: "",

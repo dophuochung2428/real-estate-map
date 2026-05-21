@@ -45,7 +45,7 @@ export interface Property {
   address: string;
 
   type: PropertyType;
-  direction: DirectionType;
+  direction: DirectionType | null;
 
   description?: string;
 

@@ -1,5 +1,5 @@
 export type Direction =
-  | ""
+  | null
   | "north"
   | "south"
   | "east"
@@ -31,7 +31,7 @@ export interface Filters {
   sort?: string;
 
   type: PropertyTypeFilter;
-  direction: Direction;
+  direction?: Direction;
 
   minPrice?: number;
   maxPrice?: number;

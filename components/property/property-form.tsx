@@ -41,7 +41,7 @@ const initialForm: CreatePropertyPayload = {
   province: "",
   district: "",
   type: "",
-  direction: "",
+  direction: null,
   lat: 0,
   lng: 0,
   description: "",
