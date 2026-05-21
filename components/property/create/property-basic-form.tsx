@@ -260,7 +260,7 @@ export default function PropertyBasicForm({ form, setForm, errors }: Props) {
             onChange={(e) =>
               setForm((prev: any) => ({
                 ...prev,
-                direction: e.target.value === "" ? null : e.target.value,
+                direction: e.target.value || null,
               }))
             }
             className="h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4 text-[var(--foreground)] appearance-none"

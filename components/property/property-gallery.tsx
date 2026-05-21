@@ -12,7 +12,7 @@ export default function PropertyGallery({ property }: { property: Property }) {
       {/* MAIN */}
       <div className="relative h-[500px] overflow-hidden rounded-3xl">
         <Image
-          src={images[0]?.image_url || "/placeholder.jpg"}
+          src={images[0]?.image_url || "/placeholder.png"}
           alt={property.title}
           fill
           className="object-cover"

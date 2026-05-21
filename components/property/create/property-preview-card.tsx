@@ -28,7 +28,7 @@ export default function PropertyPreviewCard({
           <Image
             src={
               form.images?.find((img: UploadImage) => img.is_thumbnail)
-                ?.image_url || "/images/placeholder.jpg"
+                ?.image_url || "/images/placeholder.png"
             }
             alt="Preview"
             width={600}

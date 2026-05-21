@@ -35,11 +35,7 @@ export const propertySchema = z.object({
 
   type: z.string().trim().min(1, "Chọn loại bất động sản"),
 
-  direction: z
-    .string()
-    .trim()
-    .optional()
-    .transform((v) => v || null),
+  direction: z.string().nullable().optional(),
 
   description: z.string().trim().min(20, "Mô tả tối thiểu 20 ký tự"),
 

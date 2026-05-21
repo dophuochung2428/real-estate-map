@@ -72,7 +72,12 @@ export default function PropertyForm({ mode, initialData }: Props) {
     try {
       setSubmitting(true);
 
-      const result = propertySchema.safeParse(form);
+      const normalizedForm = {
+        ...form,
+        direction: form.direction ?? null,
+      };
+
+      const result = propertySchema.safeParse(normalizedForm);
 
       if (!result.success) {
         const fieldErrors: Record<string, string> = {};
