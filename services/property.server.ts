@@ -23,8 +23,8 @@ export async function getProperties(filters?: Filters): Promise<any> {
   }
 
   if (filters?.province) {
-  query = query.eq("province", filters.province);
-}
+    query = query.eq("province", filters.province);
+  }
 
   if (filters?.district) {
     query = query.eq("district", filters.district);
@@ -154,7 +154,9 @@ export async function addRecentlyViewed(propertyId: string) {
   });
 }
 
-export async function getMyListings(): Promise<any[]> {
+export async function getMyListings(filters?: {
+  keyword?: string;
+}): Promise<any[]> {
   const supabase = await createServerClient();
   const {
     data: { user },
@@ -164,7 +166,7 @@ export async function getMyListings(): Promise<any[]> {
     return [];
   }
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("properties")
     .select(
       `
@@ -175,10 +177,18 @@ export async function getMyListings(): Promise<any[]> {
       )
     `,
     )
-    .eq("user_id", user.id)
-    .order("created_at", {
-      ascending: false,
-    });
+    .eq("user_id", user.id);
+
+  // SEARCH
+  if (filters?.keyword) {
+    query = query.or(
+      `title.ilike.%${filters.keyword}%,address.ilike.%${filters.keyword}%`,
+    );
+  }
+
+  const { data, error } = await query.order("created_at", {
+    ascending: false,
+  });
 
   if (error) {
     throw error;
