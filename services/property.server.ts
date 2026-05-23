@@ -22,9 +22,9 @@ export async function getProperties(filters?: Filters): Promise<any> {
     query = query.ilike("title", `%${filters.keyword}%`);
   }
 
-  if (filters?.location && !filters?.province) {
-    query = query.ilike("address", `%${filters.location}%`);
-  }
+  if (filters?.province) {
+  query = query.eq("province", filters.province);
+}
 
   if (filters?.district) {
     query = query.eq("district", filters.district);

@@ -1,4 +1,5 @@
 import { Filters } from "@/types/filter";
+import { SearchFilters } from "@/types/search";
 
 export function buildSearchQuery(filters: Filters) {
   const params = new URLSearchParams();
@@ -33,6 +34,32 @@ export function buildSearchQuery(filters: Filters) {
 
   if (filters.maxArea) {
     params.set("maxArea", String(filters.maxArea));
+  }
+
+  return params.toString();
+}
+
+export function buildSearchQueryHeroSection(filters: SearchFilters) {
+  const params = new URLSearchParams();
+
+  if (filters.keyword) {
+    params.set("keyword", filters.keyword);
+  }
+
+  if (filters.province) {
+    params.set("province", filters.province);
+  }
+
+  if (filters.propertyType) {
+    params.set("type", filters.propertyType);
+  }
+
+  if (filters.minPrice !== undefined) {
+    params.set("minPrice", String(filters.minPrice));
+  }
+
+  if (filters.maxPrice !== undefined) {
+    params.set("maxPrice", String(filters.maxPrice));
   }
 
   return params.toString();

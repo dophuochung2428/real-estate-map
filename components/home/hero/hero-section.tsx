@@ -1,14 +1,22 @@
 "use client";
 
-import { ChevronDown, MapPin, Search } from "lucide-react";
-
 import { useRouter } from "next/navigation";
 
 import Container from "@/components/layout/container";
 
 import { PROPERTY_TYPE_LABEL } from "@/constants/property";
-import { PRICE_RANGES } from "@/constants/filter";
+
 import { useState } from "react";
+
+import SearchInput from "@/components/search/search-input";
+
+import ProvinceSelect from "@/components/search/province-select";
+
+import PriceSelect from "@/components/search/price-select";
+
+import { SearchFilters } from "@/types/search";
+
+import { buildSearchQueryHeroSection } from "@/lib/search/build-query";
 
 type Props = {
   provinces: string[];
@@ -17,10 +25,16 @@ type Props = {
 export default function HeroSection({ provinces }: Props) {
   const router = useRouter();
 
-  const [price, setPrice] = useState<{
-    minPrice?: number;
-    maxPrice?: number;
-  }>({});
+  const [filters, setFilters] = useState<SearchFilters>({
+    keyword: "",
+    province: "",
+  });
+
+  const handleSearch = () => {
+    const query = buildSearchQueryHeroSection(filters);
+
+    router.push(`/listing?${query}`);
+  };
 
   return (
     <section className="relative h-[620px] overflow-hidden">
@@ -53,57 +67,47 @@ export default function HeroSection({ provinces }: Props) {
           {/* SEARCH */}
           <div className="mx-auto max-w-4xl rounded-3xl border border-white/10 bg-[var(--card)]/95 p-6 shadow-2xl backdrop-blur-md">
             {/* SEARCH INPUT */}
-            <div className="flex h-14 items-center rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4">
-              <Search className="mr-3 size-5 text-[var(--muted-foreground)]" />
-
-              <input
-                placeholder="Tìm theo địa chỉ, khu vực, tiêu đề..."
-                className="flex-1 bg-transparent outline-none placeholder:text-[var(--muted-foreground)]"
-              />
-            </div>
+            <SearchInput
+              value={filters.keyword ?? ""}
+              onChange={(value) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  keyword: value,
+                }))
+              }
+              onEnter={handleSearch}
+            />
 
             {/* FILTERS */}
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3 mt-4">
               {/* LOCATION */}
-              <select className="h-14 rounded-2xl border border-[var(--border)] bg-[var(--card)] px-5 text-sm font-medium text-[var(--foreground)] outline-none transition hover:border-[var(--primary)]">
-                <option value="">-- Tỉnh / Thành phố --</option>
-
-                {provinces.map((province) => (
-                  <option key={province} value={province}>
-                    {province}
-                  </option>
-                ))}
-              </select>
+              <ProvinceSelect
+                provinces={provinces}
+                value={filters.province ?? ""}
+                onChange={(value) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    province: value,
+                  }))
+                }
+              />
 
               {/* PRICE */}
-              <select
-                value={
-                  price.minPrice !== undefined
-                    ? PRICE_RANGES.findIndex(
-                        (r) => r.min === price.minPrice,
-                      ).toString()
-                    : "0"
+              <PriceSelect
+                minPrice={filters.minPrice}
+                maxPrice={filters.maxPrice}
+                onChange={(value) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    minPrice: value.minPrice,
+                    maxPrice: value.maxPrice,
+                  }))
                 }
-                className="h-14 rounded-2xl border border-[var(--border)] bg-[var(--card)] px-5 text-sm font-medium text-[var(--foreground)] outline-none transition hover:border-[var(--primary)]"
-                onChange={(e) => {
-                  const range = PRICE_RANGES[Number(e.target.value)];
-
-                  setPrice({
-                    minPrice: range.min,
-                    maxPrice: range.max,
-                  });
-                }}
-              >
-                {PRICE_RANGES.map((opt, idx) => (
-                  <option key={idx} value={idx}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+              />
 
               {/* SEARCH BUTTON */}
               <button
-                onClick={() => router.push("/listing")}
+                onClick={handleSearch}
                 className="h-14 rounded-2xl bg-[var(--primary)] px-10 font-semibold text-[var(--primary-foreground)] transition hover:bg-[var(--primary-hover)]"
               >
                 Tìm kiếm
@@ -118,6 +122,9 @@ export default function HeroSection({ provinces }: Props) {
               {Object.entries(PROPERTY_TYPE_LABEL).map(([key, label]) => (
                 <button
                   key={key}
+                  onClick={() => {
+                    router.push(`/listing?type=${key}`);
+                  }}
                   className="rounded-full border border-[var(--border)] bg-[var(--secondary)] px-4 py-2 text-sm font-medium transition hover:border-[var(--primary)] hover:bg-[var(--accent)]"
                 >
                   {label}
