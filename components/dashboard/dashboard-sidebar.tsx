@@ -69,7 +69,19 @@ export default function DashboardSidebar() {
     >
       {/* LOGO */}
       <div className="border-b border-[var(--border)] p-6">
-        <h1 className="text-2xl font-bold text-[var(--primary)]">RealEstate</h1>
+        <Link href="/" className="flex items-center gap-3">
+          <div className="flex size-11 items-center justify-center rounded-2xl bg-[var(--primary)] font-bold text-[var(--primary-foreground)] shadow-lg">
+            B
+          </div>
+
+          <div>
+            <h1 className="text-lg font-bold leading-none">BatDongSan</h1>
+
+            <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+              Real Estate Platform
+            </p>
+          </div>
+        </Link>
       </div>
 
       {/* MENU */}
