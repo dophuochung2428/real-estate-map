@@ -20,6 +20,8 @@ import MapClusters from "./map-clusters";
 
 import { MapViewProps } from "./types";
 
+import MapHighlight from "./map-highlight";
+
 delete (
   L.Icon.Default.prototype as unknown as {
     _getIconUrl?: string;
@@ -35,11 +37,17 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-function MapViewComponent({ data, onMove, onMapLoad, onPropertySelect }: MapViewProps) {
+function MapViewComponent({
+  data,
+  onMove,
+  onMapLoad,
+  onPropertySelect,
+  highlightGeoJson,
+}: MapViewProps) {
   return (
     <MapContainer
-      center={[10.0452, 105.7469]}
-      zoom={13}
+      center={[10.0125, 105.0809]}
+      zoom={12}
       className="h-full w-full"
     >
       <MapInit onMapLoad={onMapLoad} />
@@ -47,6 +55,8 @@ function MapViewComponent({ data, onMove, onMapLoad, onPropertySelect }: MapView
       <MapEvents onMove={onMove} />
 
       <MapControls />
+
+      <MapHighlight data={highlightGeoJson} />
 
       <MapClusters data={data} onPropertySelect={onPropertySelect} />
     </MapContainer>

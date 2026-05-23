@@ -15,4 +15,6 @@ export type MapViewProps = {
   onMapLoad?: (map: import("leaflet").Map) => void;
 
   onPropertySelect?: (property: Property) => void;
+
+  highlightGeoJson?: any;
 };

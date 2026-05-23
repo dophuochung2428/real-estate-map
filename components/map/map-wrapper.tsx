@@ -47,7 +47,7 @@ export default function MapWrapper({
     filters,
   );
 
-  const { moveToLocation } = useMapGeocode(mapRef);
+  const { moveToLocation, highlightGeoJson } = useMapGeocode(mapRef);
 
   // Refetch when filters change
   useEffect(() => {
@@ -78,6 +78,7 @@ export default function MapWrapper({
         onMove={fetchData}
         onMapLoad={(map) => (mapRef.current = map)}
         onPropertySelect={onPropertySelect}
+        highlightGeoJson={highlightGeoJson}
       />
     </div>
   );

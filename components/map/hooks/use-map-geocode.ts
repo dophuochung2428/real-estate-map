@@ -1,9 +1,11 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import { Map as LeafletMap } from "leaflet";
 
 export function useMapGeocode(mapRef: React.RefObject<LeafletMap | null>) {
-  const cache = useRef(new Map<string, [number, number]>());
+  const cache = useRef(new Map());
+
+  const [highlightGeoJson, setHighlightGeoJson] = useState<any>(null);
 
   const moveToLocation = useCallback(
     async (address: string) => {
@@ -11,41 +13,74 @@ export function useMapGeocode(mapRef: React.RefObject<LeafletMap | null>) {
         throw new Error("Map not initialized");
       }
 
+      // clear old highlight
+      setHighlightGeoJson(null);
+
+      /**
+       * CACHE
+       */
       if (cache.current.has(address)) {
-        const cached = cache.current.get(address)!;
-        mapRef.current.flyTo(cached, 13, { duration: 1.5 });
+        const cached = cache.current.get(address);
+
+        setHighlightGeoJson(cached.geojson);
+
+        // nếu có boundary -> fitBounds
+        if (cached.boundingbox) {
+          const bounds = [
+            [Number(cached.boundingbox[0]), Number(cached.boundingbox[2])],
+            [Number(cached.boundingbox[1]), Number(cached.boundingbox[3])],
+          ];
+
+          mapRef.current.fitBounds(bounds as any, {
+            padding: [40, 40],
+          });
+        } else {
+          mapRef.current.flyTo([cached.lat, cached.lng], 13, {
+            duration: 1.5,
+          });
+        }
+
         return;
       }
 
-      const query = `${address}, Việt Nam`;
-
+      /**
+       * FETCH
+       */
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=vn&limit=5&accept-language=vi`,
+        `/api/geocode?address=${encodeURIComponent(address)}`,
       );
 
-      const results = await response.json();
+      const result = await response.json();
 
-      if (!results.length) {
-        throw new Error("Không tìm thấy địa chỉ");
+      if (!response.ok) {
+        throw new Error(result.message);
       }
 
-      const best =
-        results.find((r: { display_name: string }) =>
-          r.display_name.includes("Hồ Chí Minh"),
-        ) || results[0];
+      cache.current.set(address, result);
 
-      const lat = parseFloat(best.lat);
+      setHighlightGeoJson(result.geojson);
 
-      const lng = parseFloat(best.lon);
+      // nếu có boundary -> zoom đúng vùng
+      if (result.boundingbox) {
+        const bounds = [
+          [Number(result.boundingbox[0]), Number(result.boundingbox[2])],
+          [Number(result.boundingbox[1]), Number(result.boundingbox[3])],
+        ];
 
-      cache.current.set(address, [lat, lng]);
-
-      mapRef.current.flyTo([lat, lng], 13, { duration: 1.5 });
+        mapRef.current.fitBounds(bounds as any, {
+          padding: [40, 40],
+        });
+      } else {
+        mapRef.current.flyTo([result.lat, result.lng], 13, {
+          duration: 1.5,
+        });
+      }
     },
     [mapRef],
   );
 
   return {
     moveToLocation,
+    highlightGeoJson,
   };
 }
