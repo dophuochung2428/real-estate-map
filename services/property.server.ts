@@ -235,3 +235,20 @@ export async function getSimilarProperties({
 
   return data || [];
 }
+
+export async function getProvinces(): Promise<string[]> {
+  const supabase = await createServerClient();
+
+  const { data, error } = await supabase
+    .from("properties")
+    .select("province")
+    .not("province", "is", null);
+
+  if (error) {
+    throw error;
+  }
+
+  const provinces = [...new Set(data.map((item) => item.province))];
+
+  return provinces.sort();
+}

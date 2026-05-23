@@ -6,10 +6,22 @@ import { useRouter } from "next/navigation";
 
 import Container from "@/components/layout/container";
 
-const tabs = ["Mua bán", "Cho thuê", "Dự án"];
+import { PROPERTY_TYPE_LABEL } from "@/constants/property";
+import { PRICE_RANGES } from "@/constants/filter";
+import { useState } from "react";
 
-export default function HeroSection() {
+type Props = {
+  provinces: string[];
+};
+
+export default function HeroSection({ provinces }: Props) {
   const router = useRouter();
+
+  const [price, setPrice] = useState<{
+    minPrice?: number;
+    maxPrice?: number;
+  }>({});
+
   return (
     <section className="relative h-[620px] overflow-hidden">
       {/* BACKGROUND */}
@@ -39,54 +51,57 @@ export default function HeroSection() {
           </div>
 
           {/* SEARCH */}
-          <div className="mx-auto max-w-5xl rounded-3xl bg-[var(--card)] border border-[var(--border)] p-5 shadow-2xl">
-            {/* TABS */}
-            <div className="mb-5 flex gap-3 overflow-auto">
-              {tabs.map((tab, index) => (
-                <button
-                  key={tab}
-                  className={`rounded-full px-5 py-2 text-sm font-semibold transition ${
-                    index === 0
-                      ? "bg-[var(--primary)] text-[var(--primary-foreground)]"
-                      : "bg-[var(--secondary)] text-[var(--secondary-foreground)] hover:bg-[var(--secondary-hover)]"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
+          <div className="mx-auto max-w-4xl rounded-3xl border border-white/10 bg-[var(--card)]/95 p-6 shadow-2xl backdrop-blur-md">
+            {/* SEARCH INPUT */}
+            <div className="flex h-14 items-center rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4">
+              <Search className="mr-3 size-5 text-[var(--muted-foreground)]" />
+
+              <input
+                placeholder="Tìm theo địa chỉ, khu vực, tiêu đề..."
+                className="flex-1 bg-transparent outline-none placeholder:text-[var(--muted-foreground)]"
+              />
             </div>
 
-            {/* SEARCH BAR */}
-            <div className="flex flex-col gap-3 lg:flex-row">
-              {/* INPUT */}
-              <div className="flex h-14 flex-1 items-center rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4">
-                <Search className="mr-3 size-5 text-[var(--muted-foreground)]" />
-
-                <input
-                  placeholder="Tìm theo khu vực, dự án..."
-                  className="flex-1 outline-none placeholder:text-[var(--muted-foreground)]"
-                />
-              </div>
-
+            {/* FILTERS */}
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3 mt-4">
               {/* LOCATION */}
-              <button className="flex h-14 items-center justify-between rounded-2xl border border-[var(--border)] bg-[var(--card)] px-5 lg:w-[220px]">
-                <div className="flex items-center gap-2">
-                  <MapPin className="size-5 text-[var(--primary)]" />
+              <select className="h-14 rounded-2xl border border-[var(--border)] bg-[var(--card)] px-5 text-sm font-medium text-[var(--foreground)] outline-none transition hover:border-[var(--primary)]">
+                <option value="">-- Tỉnh / Thành phố --</option>
 
-                  <span className="text-sm font-medium text-[var(--foreground)]">Khu vực</span>
-                </div>
+                {provinces.map((province) => (
+                  <option key={province} value={province}>
+                    {province}
+                  </option>
+                ))}
+              </select>
 
-                <ChevronDown className="size-4 text-[var(--muted-foreground)]" />
-              </button>
+              {/* PRICE */}
+              <select
+                value={
+                  price.minPrice !== undefined
+                    ? PRICE_RANGES.findIndex(
+                        (r) => r.min === price.minPrice,
+                      ).toString()
+                    : "0"
+                }
+                className="h-14 rounded-2xl border border-[var(--border)] bg-[var(--card)] px-5 text-sm font-medium text-[var(--foreground)] outline-none transition hover:border-[var(--primary)]"
+                onChange={(e) => {
+                  const range = PRICE_RANGES[Number(e.target.value)];
 
-              {/* TYPE */}
-              <button className="flex h-14 items-center justify-between rounded-2xl border border-[var(--border)] bg-[var(--card)] px-5 lg:w-[220px]">
-                <span className="text-sm font-medium text-[var(--foreground)]">Mức giá</span>
+                  setPrice({
+                    minPrice: range.min,
+                    maxPrice: range.max,
+                  });
+                }}
+              >
+                {PRICE_RANGES.map((opt, idx) => (
+                  <option key={idx} value={idx}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
 
-                <ChevronDown className="size-4 text-[var(--muted-foreground)]" />
-              </button>
-
-              {/* BUTTON */}
+              {/* SEARCH BUTTON */}
               <button
                 onClick={() => router.push("/listing")}
                 className="h-14 rounded-2xl bg-[var(--primary)] px-10 font-semibold text-[var(--primary-foreground)] transition hover:bg-[var(--primary-hover)]"
@@ -96,19 +111,16 @@ export default function HeroSection() {
             </div>
 
             {/* QUICK TAGS */}
-            <div className="mt-5 flex flex-wrap gap-3">
-              {[
-                "Chung cư",
-                "Nhà riêng",
-                "Đất nền",
-                "Biệt thự",
-                "Shophouse",
-              ].map((item) => (
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <span className="text-sm font-medium text-[var(--muted-foreground)]">
+                Loại phổ biến:
+              </span>
+              {Object.entries(PROPERTY_TYPE_LABEL).map(([key, label]) => (
                 <button
-                  key={item}
-                  className="rounded-full bg-[var(--secondary)] px-4 py-2 text-sm transition hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)]"
+                  key={key}
+                  className="rounded-full border border-[var(--border)] bg-[var(--secondary)] px-4 py-2 text-sm font-medium transition hover:border-[var(--primary)] hover:bg-[var(--accent)]"
                 >
-                  {item}
+                  {label}
                 </button>
               ))}
             </div>

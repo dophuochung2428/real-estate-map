@@ -101,9 +101,9 @@ export default function MainHeader() {
 
           {/* RIGHT */}
           <div className="flex items-center gap-3">
-            <Link href="/favorites" className="relative">
+            {/* <Link href="/favorites" className="relative">
               <Heart size={22} />
-            </Link>
+            </Link> */}
 
             <Link
               href="/map"
