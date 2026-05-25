@@ -10,10 +10,14 @@ import MobileBottomNav from "@/components/mobile/mobile-bottom-nav";
 
 import FloatingActions from "@/components/common/floating-actions";
 
-import { getProvinces } from "@/services/property.server";
+import { getProperties, getProvinces } from "@/services/property.server";
+
+import MainFooter from "@/components/layout/footer/main-footer";
 
 export default async function HomePage() {
   const provinces = await getProvinces();
+
+  const { data: properties } = await getProperties();
 
   return (
     <main className="bg-[var(--background)] pb-24 lg:pb-0">
@@ -23,13 +27,15 @@ export default async function HomePage() {
 
       {/* <HighlightSection /> */}
 
-      <FeaturedSection />
+      <FeaturedSection properties={properties} />
 
-      <LocationSection />
+      <LocationSection properties={properties} />
 
       {/* <MapPreviewSection /> */}
 
       <FloatingActions />
+
+      <MainFooter />
 
       <MobileBottomNav />
     </main>

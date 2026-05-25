@@ -2,11 +2,11 @@ import Container from "@/components/layout/container";
 
 import PropertyCard from "./property-card";
 
-import { getProperties } from "@/services/property.server";
+type Props = {
+  properties: any[];
+};
 
-export default async function FeaturedSection() {
-  const { data: properties } = await getProperties();
-
+export default function FeaturedSection({ properties }: Props) {
   return (
     <section className="py-14">
       <Container>

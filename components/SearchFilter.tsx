@@ -80,7 +80,7 @@ export default function SearchFilter({
         {/* ===== ROW 1: SEARCH ===== */}
         <div className="flex flex-col sm:flex-row gap-4">
           {/* Search by code */}
-          <div className="flex-1 space-y-2">
+          {/* <div className="flex-1 space-y-2">
             <div className="flex items-center gap-2">
               <FaBookmark className="text-red-500 w-4 h-4" />
               <span className="text-sm font-bold text-[var(--foreground)]">
@@ -105,7 +105,7 @@ export default function SearchFilter({
                 <FaSearch />
               </button>
             </div>
-          </div>
+          </div> */}
 
           {/* Search by location */}
           <div className="flex-1 space-y-2">
