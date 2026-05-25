@@ -12,12 +12,15 @@ import MapMarkers from "./map-markers";
 
 import { getClusterColor } from "./utils/cluster-color";
 
+import { GeoFilter } from "@/types/geo-filter";
+
 type Props = {
   data: Property[];
   onPropertySelect?: (property: Property) => void;
+  geoFilter: GeoFilter;
 };
 
-function MapClustersComponent({ data, onPropertySelect }: Props) {
+function MapClustersComponent({ data, onPropertySelect, geoFilter }: Props) {
   return (
     <MarkerClusterGroup
       iconCreateFunction={(cluster: { getChildCount: () => number }) => {
@@ -53,7 +56,11 @@ function MapClustersComponent({ data, onPropertySelect }: Props) {
         });
       }}
     >
-      <MapMarkers data={data} onPropertySelect={onPropertySelect} />
+      <MapMarkers
+        data={data}
+        geoFilter={geoFilter}
+        onPropertySelect={onPropertySelect}
+      />
     </MarkerClusterGroup>
   );
 }

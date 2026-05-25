@@ -1,5 +1,7 @@
 import { Property } from "@/types/property";
 
+import { GeoFilter } from "@/types/geo-filter";
+
 export type Bounds = {
   minLat: number;
   maxLat: number;
@@ -17,4 +19,11 @@ export type MapViewProps = {
   onPropertySelect?: (property: Property) => void;
 
   highlightGeoJson?: any;
+
+  geoFilter: GeoFilter;
+
+  onLocateUser: () => void;
+
+  onRadiusChange: (radius: number) => void;
+  onDisableGeoFilter: () => void;
 };

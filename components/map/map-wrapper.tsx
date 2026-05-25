@@ -14,6 +14,8 @@ import { useMapData } from "./hooks/use-map-data";
 
 import { useMapGeocode } from "./hooks/use-map-geocode";
 
+import { GeoFilter } from "@/types/geo-filter";
+
 const MapView = dynamic(() => import("./map-view"), {
   ssr: false,
 });
@@ -21,6 +23,8 @@ const MapView = dynamic(() => import("./map-view"), {
 export default function MapWrapper({
   data: initialData,
   filters,
+  geoFilter,
+  setGeoFilter,
   onMapReady,
   onDataChange,
   onLoadingChange,
@@ -29,6 +33,10 @@ export default function MapWrapper({
   data: Property[];
 
   filters: Filters;
+
+  geoFilter: GeoFilter;
+
+  setGeoFilter: React.Dispatch<React.SetStateAction<GeoFilter>>;
 
   onMapReady?: (controls: {
     moveToLocation: (address: string) => Promise<void>;
@@ -48,6 +56,33 @@ export default function MapWrapper({
   );
 
   const { moveToLocation, highlightGeoJson } = useMapGeocode(mapRef);
+
+  const handleLocateUser = () => {
+    if (!navigator.geolocation) return;
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        setGeoFilter({
+          enabled: true,
+          center: [lat, lng],
+          radius: 1000,
+        });
+
+        mapRef.current?.flyTo([lat, lng], 14, {
+          animate: true,
+        });
+      },
+      (error) => {
+        console.log(error);
+      },
+      {
+        enableHighAccuracy: true,
+      },
+    );
+  };
 
   // Refetch when filters change
   useEffect(() => {
@@ -79,6 +114,21 @@ export default function MapWrapper({
         onMapLoad={(map) => (mapRef.current = map)}
         onPropertySelect={onPropertySelect}
         highlightGeoJson={highlightGeoJson}
+        geoFilter={geoFilter}
+        onLocateUser={handleLocateUser}
+        onRadiusChange={(radius) => {
+          setGeoFilter((prev) => ({
+            ...prev,
+            radius,
+          }));
+        }}
+        onDisableGeoFilter={() => {
+          setGeoFilter({
+            enabled: false,
+            center: null,
+            radius: 1000,
+          });
+        }}
       />
     </div>
   );

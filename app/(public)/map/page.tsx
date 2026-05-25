@@ -14,6 +14,8 @@ import { useDebounce } from "@/hooks/use-debounce";
 import Link from "next/link";
 import { List } from "lucide-react";
 
+import { GeoFilter } from "@/types/geo-filter";
+
 type MapControls = {
   moveToLocation: (address: string) => Promise<void>;
 };
@@ -47,6 +49,12 @@ export default function MapPage() {
 
   const [showFilters, setShowFilters] = useState(false);
 
+  const [geoFilter, setGeoFilter] = useState<GeoFilter>({
+    enabled: false,
+    center: null,
+    radius: 1000,
+  });
+
   // =========================
   // FILTER HANDLER
   // =========================
@@ -72,6 +80,8 @@ export default function MapPage() {
         <MapWrapper
           data={[]}
           filters={debouncedFilters}
+          geoFilter={geoFilter}
+          setGeoFilter={setGeoFilter}
           onPropertySelect={setSelectedProperty}
           onDataChange={setProperties}
           onLoadingChange={setLoading}

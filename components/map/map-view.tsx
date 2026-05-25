@@ -22,6 +22,9 @@ import { MapViewProps } from "./types";
 
 import MapHighlight from "./map-highlight";
 
+import { Circle, Marker } from "react-leaflet";
+import MapRadiusFilter from "./map-radius-filter";
+
 delete (
   L.Icon.Default.prototype as unknown as {
     _getIconUrl?: string;
@@ -43,6 +46,10 @@ function MapViewComponent({
   onMapLoad,
   onPropertySelect,
   highlightGeoJson,
+  geoFilter,
+  onLocateUser,
+  onRadiusChange,
+  onDisableGeoFilter,
 }: MapViewProps) {
   return (
     <MapContainer
@@ -58,7 +65,36 @@ function MapViewComponent({
 
       <MapHighlight data={highlightGeoJson} />
 
-      <MapClusters data={data} onPropertySelect={onPropertySelect} />
+      <MapRadiusFilter
+        enabled={geoFilter.enabled}
+        radius={geoFilter.radius}
+        onLocateUser={onLocateUser}
+        onRadiusChange={onRadiusChange}
+        onDisable={onDisableGeoFilter}
+      />
+
+      {geoFilter.enabled && geoFilter.center && (
+        <>
+          <Marker position={geoFilter.center} />
+
+          <Circle
+            center={geoFilter.center}
+            radius={geoFilter.radius}
+            pathOptions={{
+              color: "#2563eb",
+              fillColor: "#3b82f6",
+              fillOpacity: 0.15,
+            }}
+          />
+        </>
+      )}
+
+      <MapClusters
+        key={`${geoFilter.enabled}-${geoFilter.radius}`}
+        data={data}
+        geoFilter={geoFilter}
+        onPropertySelect={onPropertySelect}
+      />
     </MapContainer>
   );
 }
