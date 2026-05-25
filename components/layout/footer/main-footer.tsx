@@ -133,11 +133,15 @@ export default function MainFooter() {
       {/* BOTTOM */}
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-6 py-5 text-sm text-slate-500 md:flex-row">
-          <p>
-            © 2026 VCVN Valuation - Chi nhánh Long Xuyên. All rights reserved.
-          </p>
+          <div>
+            <p>© 2026 VCVN Valuation System. All rights reserved.</p>
 
-          <p className="text-slate-600">Developed by Hung.dev</p>
+            <p className="mt-1 text-xs text-slate-600">
+              Dữ liệu phục vụ nghiệp vụ thẩm định giá và tham khảo thị trường
+              nội bộ.
+            </p>
+          </div>
+          Designed & Developed by Hung.dev
         </div>
       </div>
     </footer>
