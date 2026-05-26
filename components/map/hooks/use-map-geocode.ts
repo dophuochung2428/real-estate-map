@@ -1,9 +1,11 @@
 import { useCallback, useRef, useState } from "react";
 
-import { Map as LeafletMap } from "leaflet";
+import type { Map as LeafletMap, Marker } from "leaflet";
 
 export function useMapGeocode(mapRef: React.RefObject<LeafletMap | null>) {
   const cache = useRef(new Map());
+
+  const coordinateMarkerRef = useRef<Marker | null>(null);
 
   const [highlightGeoJson, setHighlightGeoJson] = useState<any>(null);
 
@@ -19,7 +21,34 @@ export function useMapGeocode(mapRef: React.RefObject<LeafletMap | null>) {
       // SEARCH BY COORDINATES
       // =========================
       if (coordinateRegex.test(address)) {
+        const leaflet = await import("leaflet");
+
         const [lat, lng] = address.split(",").map((v) => Number(v.trim()));
+
+        coordinateMarkerRef.current?.remove();
+
+        const markerIcon = leaflet.divIcon({
+          className: "coordinate-marker",
+          html: `
+      <div class="relative">
+        <div class="h-5 w-5 rounded-full bg-blue-500 border-4 border-white shadow-xl"></div>
+        <div class="absolute inset-0 animate-ping rounded-full bg-blue-400 opacity-60"></div>
+      </div>
+    `,
+          iconSize: [20, 20],
+          iconAnchor: [10, 10],
+        });
+
+        coordinateMarkerRef.current = leaflet
+          .marker([lat, lng], {
+            icon: markerIcon,
+          })
+          .addTo(mapRef.current).bindPopup(`
+      <div>
+        <b>Tọa độ đã tìm</b><br/>
+        ${lat}, ${lng}
+      </div>
+    `);
 
         mapRef.current.flyTo([lat, lng], 16, {
           duration: 1.5,
