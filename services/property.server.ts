@@ -106,8 +106,7 @@ export async function getPropertyById(id: string) {
       ),
       owner:profiles (
         id,
-        name,
-        image,
+        full_name,
         email
       )
     `,
@@ -124,9 +123,14 @@ export async function getPropertyById(id: string) {
 
 export async function addRecentlyViewed(propertyId: string) {
   const supabase = await createServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user = null;
+
+  try {
+    const res = await supabase.auth.getUser();
+    user = res.data.user;
+  } catch {
+    user = null;
+  }
 
   if (!user) return;
 

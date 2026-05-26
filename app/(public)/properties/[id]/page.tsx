@@ -25,7 +25,11 @@ export default async function PropertyDetailPage({
     notFound();
   }
 
-  await addRecentlyViewed(id);
+  try {
+    await addRecentlyViewed(id);
+  } catch (e) {
+    console.error("recently viewed error:", e);
+  }
 
   return (
     <main className="min-h-screen bg-[var(--background)]">
