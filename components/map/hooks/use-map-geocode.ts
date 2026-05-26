@@ -13,6 +13,21 @@ export function useMapGeocode(mapRef: React.RefObject<LeafletMap | null>) {
         throw new Error("Map not initialized");
       }
 
+      const coordinateRegex = /^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/;
+
+      // =========================
+      // SEARCH BY COORDINATES
+      // =========================
+      if (coordinateRegex.test(address)) {
+        const [lat, lng] = address.split(",").map((v) => Number(v.trim()));
+
+        mapRef.current.flyTo([lat, lng], 16, {
+          duration: 1.5,
+        });
+
+        return;
+      }
+
       // clear old highlight
       setHighlightGeoJson(null);
 

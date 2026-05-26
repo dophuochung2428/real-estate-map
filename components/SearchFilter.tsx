@@ -30,6 +30,7 @@ export default function SearchFilter({
   const [local, setLocal] = useState<Filters>(filters);
   const [isApplying, setIsApplying] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [isCoordinateSearching, setIsCoordinateSearching] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
   const { provinces, districts, fetchDistricts } = useVietnamAddress();
 
@@ -79,33 +80,82 @@ export default function SearchFilter({
       <div className="relative w-full max-w-4xl bg-[var(--card)] border border-[var(--border)] p-4 sm:p-5 rounded-xl shadow-xl space-y-5 max-h-[90vh] overflow-y-auto">
         {/* ===== ROW 1: SEARCH ===== */}
         <div className="flex flex-col sm:flex-row gap-4">
-          {/* Search by code */}
-          {/* <div className="flex-1 space-y-2">
+          {/* Search by coordinates */}
+          <div className="flex-1 space-y-2">
             <div className="flex items-center gap-2">
-              <FaBookmark className="text-red-500 w-4 h-4" />
+              <FaBookmark className="text-[var(--primary)] w-4 h-4" />
+
               <span className="text-sm font-bold text-[var(--foreground)]">
-                Tìm theo Mã bài viết
+                Tìm theo tọa độ
               </span>
             </div>
 
             <div className="flex">
               <input
                 value={local.keyword}
-                placeholder="Tìm theo tiêu đề..."
+                placeholder="VD: 10.458641, 105.457934"
                 className="flex-1 border border-[var(--border)] bg-[var(--secondary)] px-3 py-2 placeholder:text-[var(--text-muted)] rounded-l-lg focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)]"
                 onChange={(e) =>
-                  setLocal((p) => ({ ...p, keyword: e.target.value }))
+                  setLocal((p) => ({
+                    ...p,
+                    keyword: e.target.value,
+                  }))
                 }
               />
 
               <button
-                className="px-4 bg-[var(--primary)] text-[var(--primary-foreground)] rounded-r-lg hover:bg-[var(--primary-hover)] transition"
-                onClick={handleApply}
+                className="px-4 bg-[var(--primary)] text-[var(--primary-foreground)] rounded-r-lg hover:bg-[var(--primary-hover)] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={!local.keyword.trim() || isCoordinateSearching}
+                onClick={async () => {
+                  const value = local.keyword.trim();
+
+                  const coordinateRegex = /^-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?$/;
+
+                  if (!coordinateRegex.test(value)) {
+                    alert("Vui lòng nhập đúng định dạng lat,lng");
+                    return;
+                  }
+
+                  const [lat, lng] = value
+                    .split(",")
+                    .map((v) => Number(v.trim()));
+
+                  if (lat < -90 || lat > 90) {
+                    alert("Latitude không hợp lệ");
+                    return;
+                  }
+
+                  if (lng < -180 || lng > 180) {
+                    alert("Longitude không hợp lệ");
+                    return;
+                  }
+
+                  try {
+                    setIsCoordinateSearching(true);
+
+                    await Promise.resolve(onLocationSearch?.(`${lat},${lng}`));
+
+                    onClose();
+                  } finally {
+                    setIsCoordinateSearching(false);
+                  }
+                }}
               >
-                <FaSearch />
+                {isCoordinateSearching ? (
+                  <span className="inline-flex items-center gap-2">
+                    <FaSpinner className="h-4 w-4 animate-spin" />
+                    Tìm
+                  </span>
+                ) : (
+                  <FaSearch />
+                )}
               </button>
             </div>
-          </div> */}
+
+            <p className="text-xs text-[var(--text-muted)]">
+              Nhập theo định dạng: latitude, longitude
+            </p>
+          </div>
 
           {/* Search by location */}
           <div className="flex-1 space-y-2">
