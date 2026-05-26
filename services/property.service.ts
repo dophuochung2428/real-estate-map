@@ -39,7 +39,7 @@ export async function createProperty(payload: any) {
       amenities: payload.amenities,
 
       user_id: user.id,
-      status: "active",
+      status: "pending",
     })
     .select()
     .single();

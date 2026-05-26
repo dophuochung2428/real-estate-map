@@ -152,9 +152,9 @@ export default function MainHeader() {
               </Link>
             )}
 
-            <button className="lg:hidden">
+            {/* <button className="lg:hidden">
               <Menu className="size-7" />
-            </button>
+            </button> */}
           </div>
         </div>
       </Container>

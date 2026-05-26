@@ -17,11 +17,11 @@ const items = [
     label: "Tìm kiếm",
     href: "/listing",
   },
-  {
-    icon: Heart,
-    label: "Đã lưu",
-    href: "/saved",
-  },
+  // {
+  //   icon: Heart,
+  //   label: "Đã lưu",
+  //   href: "/saved",
+  // },
   {
     icon: User,
     label: "Tài khoản",
@@ -34,7 +34,7 @@ export default function MobileBottomNav() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[var(--border)] bg-[var(--card)]/95 backdrop-blur-xl lg:hidden">
-      <div className="grid grid-cols-4">
+      <div className="grid grid-cols-3">
         {items.map((item) => {
           const active = pathname === item.href;
 

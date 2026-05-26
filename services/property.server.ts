@@ -104,7 +104,7 @@ export async function getPropertyById(id: string) {
         is_thumbnail,
         created_at
       ),
-      created_by:user (
+      owner:profiles (
         id,
         name,
         image,
