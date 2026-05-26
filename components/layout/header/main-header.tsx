@@ -107,10 +107,10 @@ export default function MainHeader() {
 
             <Link
               href="/map"
-              className="hidden items-center gap-2 rounded-xl border border-[var(--border)] px-4 py-3 text-sm font-semibold transition hover:bg-[var(--hover)] md:flex"
-            >
+              className="flex items-center gap-2 rounded-xl border border-[var(--border)] px-3 py-2 text-sm font-semibold transition hover:bg-[var(--hover)] md:px-4 md:py-3"
+              >
               <Map size={18} />
-              Bản đồ
+              <span className="hidden md:inline">Bản đồ</span>
             </Link>
 
             <Link
