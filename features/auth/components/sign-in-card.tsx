@@ -54,13 +54,15 @@ export const SignInCard = () => {
       });
 
       if (error) {
-        console.error(error);
+        const message = error.message.includes("Invalid login credentials")
+          ? "Email hoặc mật khẩu không đúng"
+          : error.message;
 
-        if (error.message.includes("Invalid login credentials")) {
-          throw new Error("Email hoặc mật khẩu không đúng");
-        }
+        setError(message);
 
-        throw new Error(error.message);
+        toast.error(message);
+
+        return;
       }
 
       toast.success("Đăng nhập thành công");
