@@ -16,6 +16,7 @@ export default function MainFooter() {
               src="/logos/vcvn.png"
               alt="VCVN Logo"
               fill
+              sizes="240px"
               priority
               className="object-contain object-left"
             />

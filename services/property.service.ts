@@ -80,33 +80,12 @@ export async function deleteProperty(id: string) {
     throw new Error("Unauthorized");
   }
 
-  // GET IMAGES
-  const { data: images, error: imageError } = await supabase
-    .from("property_images")
-    .select("image_url")
-    .eq("property_id", id);
-
-  if (imageError) {
-    throw imageError;
-  }
-
-  // DELETE STORAGE FILES
-  if (images?.length) {
-    const filePaths = images.map((img) => getStoragePath(img.image_url));
-
-    const { error: storageError } = await supabase.storage
-      .from("property-images")
-      .remove(filePaths);
-
-    if (storageError) {
-      throw storageError;
-    }
-  }
-
-  // DELETE PROPERTY
+  // SOFT DELETE PROPERTY
   const { error } = await supabase
     .from("properties")
-    .delete()
+    .update({
+      status: "deleted",
+    })
     .eq("id", id)
     .eq("user_id", user.id);
 
@@ -175,6 +154,8 @@ export async function updateProperty(id: string, payload: any) {
       thumbnail_url:
         payload.images.find((x: any) => x.is_thumbnail)?.image_url ??
         payload.images?.[0]?.image_url,
+
+      status: "pending",
     })
     .eq("id", id)
     .eq("user_id", user.id);
@@ -208,5 +189,30 @@ export async function updateProperty(id: string, payload: any) {
     if (imageError) {
       throw imageError;
     }
+  }
+}
+
+export async function restoreProperty(id: string) {
+  const supabase = createClient();
+
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    throw new Error("Unauthorized");
+  }
+
+  const { error } = await supabase
+    .from("properties")
+    .update({
+      status: "pending",
+    })
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) {
+    throw error;
   }
 }

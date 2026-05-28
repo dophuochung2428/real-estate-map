@@ -4,8 +4,10 @@ import { createServerClient } from "@/lib/supabase/server";
 export async function getProperties(filters?: Filters): Promise<any> {
   const supabase = await createServerClient();
 
-  let query = supabase.from("properties").select(
-    `
+  let query = supabase
+    .from("properties")
+    .select(
+      `
       *,
       property_images (
         id,
@@ -13,10 +15,11 @@ export async function getProperties(filters?: Filters): Promise<any> {
         is_thumbnail
       )
     `,
-    {
-      count: "exact",
-    },
-  );
+      {
+        count: "exact",
+      },
+    )
+    .eq("status", "active");
 
   if (filters?.keyword) {
     query = query.ilike("title", `%${filters.keyword}%`);
@@ -226,6 +229,7 @@ export async function getSimilarProperties({
       )
     `,
     )
+    .eq("status", "active")
     .neq("id", propertyId)
     .limit(4);
 
@@ -256,6 +260,7 @@ export async function getProvinces(): Promise<string[]> {
   const { data, error } = await supabase
     .from("properties")
     .select("province")
+    .eq("status", "active")
     .not("province", "is", null);
 
   if (error) {

@@ -1,13 +1,20 @@
-export default function AdminPropertiesPage() {
+import { getAdminProperties } from "@/features/admin/properties/server/get-admin-properties";
+import AdminPropertiesTable from "@/features/admin/properties/components/AdminPropertiesTable";
+
+export default async function AdminPropertiesPage() {
+  const properties = await getAdminProperties();
+
   return (
     <div>
-      <h1 className="text-3xl font-bold">
-        Quản lý bài đăng
-      </h1>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold">Quản lý bài đăng</h1>
 
-      <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6">
-        Danh sách bài đăng sẽ hiển thị ở đây.
+        <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+          Duyệt và quản lý toàn bộ tin bất động sản
+        </p>
       </div>
+
+      <AdminPropertiesTable properties={properties} />
     </div>
   );
 }

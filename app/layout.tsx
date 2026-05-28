@@ -1,8 +1,9 @@
-import MobileBottomNav from "@/components/mobile/mobile-bottom-nav";
 import "./globals.css";
 import "leaflet/dist/leaflet.css";
+
 import { Toaster } from "sonner";
-import MainHeader from "@/components/layout/header/main-header";
+import MobileBottomNav from "@/components/mobile/mobile-bottom-nav";
+import Providers from "./providers";
 
 export const metadata = {
   title: "NHADAT102 | Real Estate",
@@ -17,11 +18,13 @@ export default function RootLayout({
   return (
     <html lang="vi">
       <body>
-        <Toaster richColors position="top-right" />
+        <Providers>
+          <Toaster richColors position="top-right" />
 
-        {children}
+          {children}
 
-        <MobileBottomNav />
+          <MobileBottomNav />
+        </Providers>
       </body>
     </html>
   );

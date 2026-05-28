@@ -18,7 +18,8 @@ export function useLogout() {
 
       await supabase.auth.signOut();
 
-      window.location.href = "/login";
+      router.replace("/login");
+      router.refresh();
     } catch (error) {
       console.error(error);
     } finally {

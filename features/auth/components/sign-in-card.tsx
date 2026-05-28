@@ -48,7 +48,7 @@ export const SignInCard = () => {
     }
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: form.email.trim().toLowerCase(),
         password: form.password,
       });
@@ -65,9 +65,19 @@ export const SignInCard = () => {
         return;
       }
 
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", data.user.id)
+        .single();
+
       toast.success("Đăng nhập thành công");
 
-      router.push("/dashboard");
+      if (profile?.role === "admin") {
+        router.push("/admin");
+      } else {
+        router.push("/dashboard/properties");
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : "Đăng nhập thất bại";
 
@@ -93,7 +103,7 @@ export const SignInCard = () => {
           </h1>
 
           <p className="mt-2 text-sm text-zinc-400">
-            Đăng nhập để tiếp tục sử dụng nền tảng
+            Hệ thống dành cho tài khoản được cấp quyền
           </p>
         </div>
 
@@ -159,15 +169,10 @@ export const SignInCard = () => {
             </div>
           </div>
 
-          {/* FORGOT PASSWORD */}
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={() => router.push("/forgot-password")}
-              className="text-sm text-zinc-400 transition hover:text-white"
-            >
-              Quên mật khẩu?
-            </button>
+          <div className="text-right">
+            <p className="text-sm text-zinc-500">
+              Quên mật khẩu? Liên hệ quản trị viên.
+            </p>
           </div>
 
           {/* SUBMIT */}
@@ -196,19 +201,6 @@ export const SignInCard = () => {
             </div>
           )}
         </form>
-
-        {/* FOOTER */}
-        <div className="mt-8 border-t border-white/10 pt-6 text-center">
-          <p className="text-sm text-zinc-500">Chưa có tài khoản?</p>
-
-          <button
-            type="button"
-            onClick={() => router.push("/register")}
-            className="mt-2 font-semibold text-white transition hover:text-zinc-300"
-          >
-            Đăng ký ngay
-          </button>
-        </div>
       </div>
     </div>
   );

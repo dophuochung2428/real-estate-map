@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getMyListings } from "@/services/property.server";
 
 import PropertyCard from "@/components/property/property-card";
+import MyPropertiesList from "@/features/dashboard/components/MyPropertiesList";
 
 type Props = {
   searchParams: Promise<{
@@ -49,18 +50,7 @@ export default async function PropertiesManagementPage({
         </Link>
       </div>
 
-      {/* LIST */}
-      <div className="space-y-4">
-        {properties.length === 0 ? (
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-10 text-center text-gray-400">
-            Chưa có tin đăng nào
-          </div>
-        ) : (
-          properties.map((property: any) => (
-            <PropertyCard key={property.id} property={property} />
-          ))
-        )}
-      </div>
+      <MyPropertiesList initialProperties={properties} />
     </div>
   );
 }

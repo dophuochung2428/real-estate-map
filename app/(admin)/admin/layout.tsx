@@ -1,42 +1,46 @@
 import Link from "next/link";
 
-export default function AdminLayout({
+import { redirect } from "next/navigation";
+
+import { createServerClient } from "@/lib/supabase/server";
+
+import AdminSidebar from "@/features/admin/components/admin-sidebar";
+
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const supabase = await createServerClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // chưa login
+  if (!user) {
+    redirect("/");
+  }
+
+  // lấy profile
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  // không phải admin
+  if (profile?.role !== "admin") {
+    redirect("/");
+  }
+
   return (
     <div className="flex min-h-screen bg-[var(--background)]">
       {/* SIDEBAR */}
-      <aside className="w-64 border-r border-[var(--border)] bg-[var(--card)] p-5">
-        <h1 className="mb-8 text-2xl font-bold">Admin Panel</h1>
-
-        <nav className="flex flex-col gap-2">
-          <Link
-            href="/admin"
-            className="rounded-xl px-4 py-3 transition hover:bg-[var(--muted)]"
-          >
-            Dashboard
-          </Link>
-
-          <Link
-            href="/admin/properties"
-            className="rounded-xl px-4 py-3 transition hover:bg-[var(--muted)]"
-          >
-            Quản lý bài đăng
-          </Link>
-
-          <Link
-            href="/admin/users"
-            className="rounded-xl px-4 py-3 transition hover:bg-[var(--muted)]"
-          >
-            Quản lý người dùng
-          </Link>
-        </nav>
-      </aside>
+      <AdminSidebar />
 
       {/* CONTENT */}
-      <main className="flex-1 p-6">{children}</main>
+      <main className="flex-1 overflow-y-auto p-6">{children}</main>
     </div>
   );
 }

@@ -36,13 +36,15 @@ export default function PropertyGallery({ property }: { property: any }) {
     <div>
       {/* MAIN */}
       <div className="relative overflow-hidden rounded-[32px]">
-        <Image
-          src={selectedImage}
-          alt={property.title}
-          width={1400}
-          height={900}
-          className="h-[550px] w-full object-cover"
-        />
+        <div className="relative h-[550px] w-full overflow-hidden rounded-[32px] bg-black">
+          <Image
+            src={selectedImage}
+            alt={property.title}
+            fill
+            sizes="100vw"
+            className="object-contain"
+          />
+        </div>
 
         {/* NAV */}
         {images.length > 1 && (
@@ -75,16 +77,16 @@ export default function PropertyGallery({ property }: { property: any }) {
           <button
             key={image.id}
             onClick={() => setSelectedIndex(index)}
-            className={`overflow-hidden rounded-2xl border-2 transition ${
+            className={`relative h-[100px] w-[160px] overflow-hidden rounded-2xl border-2 transition ${
               selectedIndex === index ? "border-red-600" : "border-transparent"
             }`}
           >
             <Image
               src={image.image_url}
               alt="Thumbnail"
-              width={160}
-              height={110}
-              className="h-[100px] w-[160px] object-cover"
+              fill
+              sizes="160px"
+              className="object-contain bg-black p-1"
             />
           </button>
         ))}

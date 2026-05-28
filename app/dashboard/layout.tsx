@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
 
+import { redirect } from "next/navigation";
+
 import DashboardSidebar from "@/components/dashboard/dashboard-sidebar";
 
 import { requireAuth } from "@/features/auth/server/require-auth";
@@ -20,6 +22,18 @@ export default async function DashboardLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  // lấy role
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user?.id)
+    .single();
+
+  // admin không được vào dashboard staff
+  if (profile?.role !== "staff") {
+    redirect("/");
+  }
 
   return (
     <main className="flex h-screen overflow-hidden bg-[var(--background)]">
