@@ -1,15 +1,13 @@
 import { Compass, Home, MapPin, Square } from "lucide-react";
-
 import { formatDirection } from "@/utils/property-format";
-
-import { PROPERTY_TYPE_LABEL, DIRECTION_LABEL } from "@/constants/property";
+import { PROPERTY_TYPE_LABEL } from "@/constants/property";
 
 export default function PropertyInfo({ property }: { property: any }) {
   return (
-    <div className="overflow-hidden rounded-[32px] border border-white/10 bg-[var(--card)] shadow-xl">
+    <div className="overflow-hidden rounded-[32px] border border-[var(--border)] bg-[var(--card)] shadow-xl">
       {/* TOP */}
-      <div className="border-b border-white/10 p-8">
-        <h1 className="text-3xl font-bold leading-tight text-white md:text-4xl">
+      <div className="border-b border-[var(--border)] p-8">
+        <h1 className="text-3xl font-bold leading-tight text-[var(--foreground)] md:text-4xl">
           {property.title}
         </h1>
 
@@ -19,7 +17,7 @@ export default function PropertyInfo({ property }: { property: any }) {
         </div>
 
         <div className="mt-6 flex items-end gap-3">
-          <p className="text-4xl font-extrabold tracking-tight text-red-500">
+          <p className="text-4xl font-extrabold tracking-tight text-[var(--primary)]">
             {property.price?.toLocaleString()}đ
           </p>
           <span className="pb-1 text-sm text-[var(--muted-foreground)]">
@@ -62,10 +60,12 @@ export default function PropertyInfo({ property }: { property: any }) {
       </div>
 
       {/* DESCRIPTION */}
-      <div className="border-t border-white/10 p-8">
-        <h2 className="text-2xl font-bold text-white">Thông tin mô tả</h2>
+      <div className="border-t border-[var(--border)] p-8">
+        <h2 className="text-2xl font-bold text-[var(--foreground)]">
+          Thông tin mô tả
+        </h2>
 
-        <div className="mt-6 whitespace-pre-line leading-8 text-zinc-300">
+        <div className="mt-6 whitespace-pre-line leading-8 text-[var(--muted-foreground)]">
           {property.description || "Chưa có mô tả cho bất động sản này."}
         </div>
       </div>
@@ -83,15 +83,17 @@ function FeatureCard({
   value: string;
 }) {
   return (
-    <div className="group min-w-0 rounded-[28px] border border-white/10 bg-white/5 p-5 transition duration-300 hover:-translate-y-1 hover:border-red-500/30 hover:bg-white/[0.05] hover:shadow-2xl">
-      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-500/10 text-red-500 transition group-hover:scale-110">
+    <div className="group min-w-0 rounded-[28px] border border-[var(--border)] bg-[var(--surface)] p-5 transition duration-300 hover:-translate-y-1 hover:border-[var(--primary)]/40 hover:shadow-2xl">
+      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--primary)]/10 text-[var(--primary)] transition group-hover:scale-110">
         {icon}
       </div>
 
       <div className="mt-5 min-w-0">
         <p className="text-sm text-[var(--muted-foreground)]">{label}</p>
 
-        <p className="mt-2 truncate text-lg font-bold text-white">{value}</p>
+        <p className="mt-2 truncate text-lg font-bold text-[var(--foreground)]">
+          {value}
+        </p>
       </div>
     </div>
   );

@@ -1,84 +1,48 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
+/* ===== DARK THEME FIXED (NO SYSTEM DEPENDENCY) ===== */
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --muted-foreground: #6b7280;
-  --heading: #111827;
-  --text-muted: #6b7280;
-  --border: #e5e7eb;
-  --border-strong: #d1d5db;
-  --card: #ffffff;
-  --surface: #f8fafc;
+  --background: #0f172a;
+  --foreground: #f8fafc;
+  --muted-foreground: #94a3b8;
+  --heading: #f8fafc;
+  --text-muted: #94a3b8;
+
+  --border: #334155;
+  --border-strong: #475569;
+
+  --card: #111827;
+  --surface: #0f172a;
 
   --primary: #ef4444;
   --primary-foreground: #ffffff;
   --primary-hover: #dc2626;
 
-  --secondary: #f3f4f6;
-  --secondary-foreground: #475569;
-  --secondary-hover: #e5e7eb;
+  --secondary: #1e293b;
+  --secondary-foreground: #f8fafc;
+  --secondary-hover: #475569;
 
-  --accent: #fef3f2;
-  --accent-foreground: #b91c1c;
+  --accent: #3f1d1d;
+  --accent-foreground: #fef2f2;
 
   --success: #16a34a;
-  --success-foreground: #ffffff;
   --warning: #ca8a04;
-  --warning-foreground: #ffffff;
   --error: #dc2626;
-  --error-foreground: #ffffff;
 
-  --hover: #f8fafc;
-  --active: #f1f5f9;
+  --hover: #1f2937;
+  --active: #334155;
   --focus: #ef4444;
-  --focus-ring: rgba(239, 68, 68, 0.18);
+  --focus-ring: rgba(239, 68, 68, 0.22);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f172a;
-    --foreground: #f8fafc;
-    --muted-foreground: #94a3b8;
-    --heading: #f8fafc;
-    --text-muted: #94a3b8;
-    --border: #334155;
-    --border-strong: #475569;
-    --card: #111827;
-    --surface: #0f172a;
-
-    --primary: #ef4444;
-    --primary-foreground: #ffffff;
-    --primary-hover: #dc2626;
-
-    --secondary: #1e293b;
-    --secondary-foreground: #f8fafc;
-    --secondary-hover: #475569;
-
-    --accent: #3f1d1d;
-    --accent-foreground: #fef2f2;
-
-    --success: #16a34a;
-    --success-foreground: #ffffff;
-    --warning: #ca8a04;
-    --warning-foreground: #ffffff;
-    --error: #dc2626;
-    --error-foreground: #ffffff;
-
-    --hover: #1f2937;
-    --active: #334155;
-    --focus: #ef4444;
-    --focus-ring: rgba(239, 68, 68, 0.22);
-  }
-}
-
+/* fallback đảm bảo mobile luôn giống desktop */
+html,
 body {
   background: var(--background);
   color: var(--foreground);
-  transition:
-    background 0.3s ease,
-    color 0.3s ease;
+  margin: 0;
+  padding: 0;
 }
 
 /* ===== MARKER ===== */
