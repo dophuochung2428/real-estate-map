@@ -4,6 +4,7 @@
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
+  --muted-foreground: #6b7280;
   --heading: #111827;
   --text-muted: #6b7280;
   --border: #e5e7eb;
@@ -39,6 +40,7 @@
   :root {
     --background: #0f172a;
     --foreground: #f8fafc;
+    --muted-foreground: #94a3b8;
     --heading: #f8fafc;
     --text-muted: #94a3b8;
     --border: #334155;

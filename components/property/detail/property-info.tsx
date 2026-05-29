@@ -13,7 +13,7 @@ export default function PropertyInfo({ property }: { property: any }) {
           {property.title}
         </h1>
 
-        <div className="mt-4 flex items-center gap-2 text-sm text-white/50">
+        <div className="mt-4 flex items-center gap-2 text-sm text-[var(--muted-foreground)]">
           <MapPin size={16} />
           <span>{property.address}</span>
         </div>
@@ -22,7 +22,9 @@ export default function PropertyInfo({ property }: { property: any }) {
           <p className="text-4xl font-extrabold tracking-tight text-red-500">
             {property.price?.toLocaleString()}đ
           </p>
-          <span className="pb-1 text-sm text-white/40">Giá bán</span>
+          <span className="pb-1 text-sm text-[var(--muted-foreground)]">
+            Giá bán
+          </span>
         </div>
       </div>
 
@@ -63,7 +65,7 @@ export default function PropertyInfo({ property }: { property: any }) {
       <div className="border-t border-white/10 p-8">
         <h2 className="text-2xl font-bold text-white">Thông tin mô tả</h2>
 
-        <div className="mt-6 whitespace-pre-line leading-8 text-white/65">
+        <div className="mt-6 whitespace-pre-line leading-8 text-zinc-300">
           {property.description || "Chưa có mô tả cho bất động sản này."}
         </div>
       </div>
@@ -81,13 +83,13 @@ function FeatureCard({
   value: string;
 }) {
   return (
-    <div className="group min-w-0 rounded-[28px] border border-white/10 bg-white/[0.03] p-5 transition duration-300 hover:-translate-y-1 hover:border-red-500/30 hover:bg-white/[0.05] hover:shadow-2xl">
+    <div className="group min-w-0 rounded-[28px] border border-white/10 bg-white/5 p-5 transition duration-300 hover:-translate-y-1 hover:border-red-500/30 hover:bg-white/[0.05] hover:shadow-2xl">
       <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-500/10 text-red-500 transition group-hover:scale-110">
         {icon}
       </div>
 
       <div className="mt-5 min-w-0">
-        <p className="text-sm text-white/50">{label}</p>
+        <p className="text-sm text-[var(--muted-foreground)]">{label}</p>
 
         <p className="mt-2 truncate text-lg font-bold text-white">{value}</p>
       </div>
