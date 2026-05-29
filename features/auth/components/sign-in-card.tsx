@@ -67,11 +67,22 @@ export const SignInCard = () => {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("role")
+        .select("role, status")
         .eq("id", data.user.id)
         .single();
 
       toast.success("Đăng nhập thành công");
+
+      if (profile?.status !== "active") {
+        await supabase.auth.signOut();
+
+        const message = "Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên.";
+
+        setError(message);
+        toast.error(message);
+
+        return;
+      }
 
       if (profile?.role === "admin") {
         router.push("/admin");

@@ -6,6 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAdminProperties } from "../hooks/use-admin-properties";
 import { Property } from "../types/property.type";
 import { usePropertiesRealtime } from "@/hooks/use-properties-realtime";
+import { useRef } from "react";
 
 const statusMap: Record<
   string,
@@ -37,6 +38,7 @@ type Props = {
 };
 
 export default function AdminPropertiesTable({ properties }: Props) {
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const {
     properties: data,
     changeStatus,
@@ -48,37 +50,21 @@ export default function AdminPropertiesTable({ properties }: Props) {
   const queryClient = useQueryClient();
 
   usePropertiesRealtime((payload) => {
-    const { eventType, new: newRow, old } = payload;
+    const { eventType } = payload;
 
-    queryClient.setQueryData(
-      ["admin-properties"],
-      (oldData: Property[] = []) => {
-        // INSERT
-        if (eventType === "INSERT") {
-          return [
-            {
-              ...newRow,
-              property_images: newRow.property_images ?? [],
-            },
-            ...oldData,
-          ];
-        }
+    if (
+      eventType === "UPDATE" ||
+      eventType === "INSERT" ||
+      eventType === "DELETE"
+    ) {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
-        // UPDATE
-        if (eventType === "UPDATE") {
-          return oldData.map((item) =>
-            item.id === newRow.id ? { ...item, ...newRow } : item,
-          );
-        }
-
-        // DELETE
-        if (eventType === "DELETE") {
-          return oldData.filter((item) => item.id !== old.id);
-        }
-
-        return oldData;
-      },
-    );
+      timeoutRef.current = setTimeout(() => {
+        queryClient.invalidateQueries({
+          queryKey: ["admin-properties"],
+        });
+      }, 200);
+    }
   });
 
   // reset selection when data changes

@@ -25,13 +25,17 @@ export default async function AdminLayout({
   // lấy profile
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, status")
     .eq("id", user.id)
     .single();
 
   // không phải admin
   if (profile?.role !== "admin") {
     redirect("/");
+  }
+
+  if (profile?.status === "suspended") {
+    redirect("/blocked");
   }
 
   return (

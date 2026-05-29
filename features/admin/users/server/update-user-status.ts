@@ -1,0 +1,24 @@
+import { createSupabaseAdmin } from "@/lib/supabase/admin";
+
+export async function updateUserStatus(
+  id: string,
+  status: "active" | "suspended",
+) {
+  const supabase = createSupabaseAdmin();
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .update({ status })
+    .eq("id", id)
+    .select();
+
+  if (error) {
+    throw error;
+  }
+
+  if (!data || data.length === 0) {
+    throw new Error("Không tìm thấy người dùng");
+  }
+
+  return data[0];
+}

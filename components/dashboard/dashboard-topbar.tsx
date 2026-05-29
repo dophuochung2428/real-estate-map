@@ -4,12 +4,16 @@ import { Search, X, Loader2 } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
-
 type Props = {
   user: User | null;
+
+  profile: {
+    full_name: string;
+    role: string;
+  } | null;
 };
 
-export default function DashboardTopbar({ user }: Props) {
+export default function DashboardTopbar({ user, profile }: Props) {
   const pathname = usePathname();
 
   const router = useRouter();
@@ -28,7 +32,14 @@ export default function DashboardTopbar({ user }: Props) {
 
   const isPropertiesPage = pathname === "/dashboard/properties";
 
-  const avatar = user?.user_metadata?.username?.charAt(0).toUpperCase() || "U";
+  const avatar =
+    profile?.full_name
+      ?.trim()
+      ?.split(" ")
+      ?.filter(Boolean)
+      ?.pop()
+      ?.charAt(0)
+      ?.toUpperCase() || "U";
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -112,12 +123,10 @@ export default function DashboardTopbar({ user }: Props) {
       {/* PROFILE */}
       <div className="flex items-center gap-3">
         <div className="text-right">
-          <p className="font-semibold">
-            {user?.user_metadata?.username || "User"}
-          </p>
+          <p className="font-semibold">{profile?.full_name || "User"}</p>
 
           <p className="text-sm text-[var(--muted-foreground)]">
-            {user?.user_metadata?.role || "User"}
+            {profile?.role || "User"}
           </p>
         </div>
 
