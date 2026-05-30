@@ -34,12 +34,7 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // chưa login
-  if (!user) {
-    return {
-      response,
-      hasSession: false,
-    };
-  }
+  if (!user) return response;
 
   // check status
   const { data: profile } = await supabase
@@ -61,14 +56,8 @@ export async function updateSession(request: NextRequest) {
       }
     });
 
-    return {
-      response: redirectResponse,
-      hasSession: false,
-    };
+    return redirectResponse;
   }
 
-  return {
-    response,
-    hasSession: true,
-  };
+  return response;
 }

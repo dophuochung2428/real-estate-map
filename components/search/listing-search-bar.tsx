@@ -34,7 +34,7 @@ export default function ListingSearchBar({ provinces, initialFilters }: Props) {
   };
 
   return (
-    <div className="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--background)]/90 py-4 backdrop-blur-xl">
+    <div className="border-b border-[var(--border)] bg-[var(--background)]/90 py-4 md:sticky md:top-0 md:z-40 md:backdrop-blur-xl">
       <Container>
         <div className="grid grid-cols-1 gap-3 rounded-3xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm md:grid-cols-[1.5fr_1fr_1fr_auto]">
           <SearchInput
