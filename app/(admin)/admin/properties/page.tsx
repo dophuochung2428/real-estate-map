@@ -1,8 +1,24 @@
 import { getAdminProperties } from "@/features/admin/properties/server/get-admin-properties";
 import AdminPropertiesTable from "@/features/admin/properties/components/AdminPropertiesTable";
 
-export default async function AdminPropertiesPage() {
-  const properties = await getAdminProperties();
+export default async function AdminPropertiesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    page?: string;
+    search?: string;
+    status?: string;
+  }>;
+}) {
+  const params = await searchParams;
+
+  const page = Number(params.page || 1);
+
+  const result = await getAdminProperties({
+    page,
+    search: params.search,
+    status: params.status,
+  });
 
   return (
     <div>
@@ -14,7 +30,11 @@ export default async function AdminPropertiesPage() {
         </p>
       </div>
 
-      <AdminPropertiesTable properties={properties} />
+      <AdminPropertiesTable
+        properties={result.properties}
+        totalPages={result.totalPages}
+        currentPage={result.page}
+      />
     </div>
   );
 }

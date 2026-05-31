@@ -28,36 +28,42 @@ export async function updateSession(request: NextRequest) {
     },
   });
 
-  // lấy user hiện tại
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // chưa login
-  if (!user) return response;
+  if (!user) {
+    return {
+      response,
+      hasSession: false,
+    };
+  }
 
-  // check status
   const { data: profile } = await supabase
     .from("profiles")
     .select("status")
     .eq("id", user.id)
     .single();
 
-  // nếu bị khóa
   if (profile?.status === "suspended") {
     const redirectResponse = NextResponse.redirect(
       new URL("/login", request.url),
     );
 
-    // xóa cookies auth
     request.cookies.getAll().forEach((cookie) => {
       if (cookie.name.startsWith("sb-")) {
         redirectResponse.cookies.delete(cookie.name);
       }
     });
 
-    return redirectResponse;
+    return {
+      response: redirectResponse,
+      hasSession: false,
+    };
   }
 
-  return response;
+  return {
+    response,
+    hasSession: true,
+  };
 }

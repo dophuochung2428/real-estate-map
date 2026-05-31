@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { useAdminProperties } from "../hooks/use-admin-properties";
 import { Property } from "../types/property.type";
 import { usePropertiesRealtime } from "@/hooks/use-properties-realtime";
 import { useRef } from "react";
+
+import { useRouter, useSearchParams } from "next/navigation";
 
 const statusMap: Record<
   string,
@@ -35,9 +36,18 @@ const statusMap: Record<
 
 type Props = {
   properties: Property[];
+  totalPages: number;
+  currentPage: number;
 };
 
-export default function AdminPropertiesTable({ properties }: Props) {
+export default function AdminPropertiesTable({
+  properties,
+  totalPages,
+  currentPage,
+}: Props) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const currentStatus = searchParams.get("status") || "all";
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const {
     properties: data,
@@ -46,8 +56,6 @@ export default function AdminPropertiesTable({ properties }: Props) {
   } = useAdminProperties(properties);
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-
-  const queryClient = useQueryClient();
 
   usePropertiesRealtime((payload) => {
     const { eventType } = payload;
@@ -60,9 +68,7 @@ export default function AdminPropertiesTable({ properties }: Props) {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
       timeoutRef.current = setTimeout(() => {
-        queryClient.invalidateQueries({
-          queryKey: ["admin-properties"],
-        });
+        router.refresh();
       }, 200);
     }
   });
@@ -79,14 +85,16 @@ export default function AdminPropertiesTable({ properties }: Props) {
   };
 
   const toggleAll = () => {
-    if (selectedIds.length === data.length) {
+    if (isAllSelected) {
       setSelectedIds([]);
     } else {
       setSelectedIds(data.map((property) => property.id));
     }
   };
 
-  const isAllSelected = data.length > 0 && selectedIds.length === data.length;
+  const isAllSelected =
+    data.length > 0 &&
+    data.every((property) => selectedIds.includes(property.id));
 
   const selectedProperties = data.filter((p: Property) =>
     selectedIds.includes(p.id),
@@ -176,6 +184,61 @@ export default function AdminPropertiesTable({ properties }: Props) {
           )}
         </div>
       )}
+
+      <div className="mb-5 flex flex-col gap-3">
+        <div className="relative flex-1">
+          <input
+            type="text"
+            placeholder="Tìm kiếm bài đăng..."
+            defaultValue={searchParams.get("search") || ""}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                const params = new URLSearchParams(searchParams);
+
+                params.set("search", e.currentTarget.value);
+                params.set("page", "1");
+
+                router.push(`?${params.toString()}`);
+              }
+            }}
+            className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--card)] pl-4 pr-10 outline-none transition focus:border-[var(--primary)]"
+          />
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {[
+            { value: "all", label: "Tất cả" },
+            { value: "pending", label: "Chờ duyệt" },
+            { value: "active", label: "Đang hiển thị" },
+            { value: "rejected", label: "Từ chối" },
+            { value: "sold", label: "Đã bán" },
+          ].map((item) => (
+            <button
+              key={item.value}
+              onClick={() => {
+                const params = new URLSearchParams(searchParams);
+
+                if (item.value === "all") {
+                  params.delete("status");
+                } else {
+                  params.set("status", item.value);
+                }
+
+                params.set("page", "1");
+
+                router.push(`?${params.toString()}`);
+              }}
+              className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
+                currentStatus === item.value
+                  ? "bg-[var(--primary)] text-white"
+                  : "border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--muted)]"
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)]">
         <table className="w-full table-fixed">
@@ -358,8 +421,51 @@ export default function AdminPropertiesTable({ properties }: Props) {
                 </tr>
               );
             })}
+            {data.length === 0 && (
+              <tr>
+                <td
+                  colSpan={6}
+                  className="py-10 text-center text-sm text-[var(--muted-foreground)]"
+                >
+                  Không tìm thấy bài đăng phù hợp
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
+      </div>
+      <div className="mt-6 flex justify-center gap-2">
+        <button
+          disabled={currentPage <= 1}
+          onClick={() => {
+            const params = new URLSearchParams(searchParams);
+
+            params.set("page", String(currentPage - 1));
+
+            router.push(`?${params.toString()}`);
+          }}
+          className="rounded-lg border px-4 py-2 disabled:opacity-40"
+        >
+          Trước
+        </button>
+
+        <span className="flex items-center px-4">
+          {currentPage} / {totalPages}
+        </span>
+
+        <button
+          disabled={currentPage >= totalPages}
+          onClick={() => {
+            const params = new URLSearchParams(searchParams);
+
+            params.set("page", String(currentPage + 1));
+
+            router.push(`?${params.toString()}`);
+          }}
+          className="rounded-lg border px-4 py-2 disabled:opacity-40"
+        >
+          Sau
+        </button>
       </div>
     </div>
   );

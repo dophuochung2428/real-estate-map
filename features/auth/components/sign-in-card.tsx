@@ -73,6 +73,8 @@ export const SignInCard = () => {
 
       toast.success("Đăng nhập thành công");
 
+      router.refresh();
+
       if (profile?.status !== "active") {
         await supabase.auth.signOut();
 
@@ -83,6 +85,8 @@ export const SignInCard = () => {
 
         return;
       }
+
+      console.log("profile", profile);
 
       if (profile?.role === "admin") {
         router.push("/admin");
