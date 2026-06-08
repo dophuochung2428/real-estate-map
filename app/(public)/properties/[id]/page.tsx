@@ -7,6 +7,8 @@ import PropertyInfo from "@/components/property/detail/property-info";
 import PropertySidebar from "@/components/property/detail/property-sidebar";
 import PropertyMap from "@/components/property/detail/property-map";
 import SimilarProperties from "@/components/property/detail/similar-properties";
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 
 import { addRecentlyViewed, getPropertyById } from "@/services/property.server";
 
@@ -37,8 +39,28 @@ export default async function PropertyDetailPage({
 
       <div className="mx-auto max-w-7xl px-4 py-6">
         {/* BREADCRUMB */}
-        <div className="mb-5 text-sm text-[var(--muted-foreground)]">
-          Trang chủ / Bất động sản / {property.title}
+        <div className="mb-5 flex flex-wrap items-center text-sm">
+          <Link
+            href="/"
+            className="text-[var(--muted-foreground)] hover:text-[var(--primary)]"
+          >
+            Trang chủ
+          </Link>
+
+          <ChevronRight className="mx-1 h-4 w-4 text-[var(--muted-foreground)]" />
+
+          <Link
+            href="/listing"
+            className="text-[var(--muted-foreground)] hover:text-[var(--primary)]"
+          >
+            Bất động sản
+          </Link>
+
+          <ChevronRight className="mx-1 h-4 w-4 text-[var(--muted-foreground)]" />
+
+          <span className="truncate text-[var(--foreground)]">
+            {property.title}
+          </span>
         </div>
 
         {/* GALLERY */}

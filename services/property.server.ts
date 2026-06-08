@@ -81,7 +81,20 @@ export async function getProperties(filters?: Filters): Promise<any> {
     });
   }
 
-  const { data, error, count } = await query.limit(20);
+  const page = filters?.page || 1;
+  const pageSize = filters?.pageSize || 12;
+
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  const { data, error, count } = await query.range(from, to);
+
+  if (error?.code === "PGRST103") {
+    return {
+      data: [],
+      count: count || 0,
+    };
+  }
 
   if (error) {
     throw error;

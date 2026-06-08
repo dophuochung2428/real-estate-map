@@ -39,4 +39,7 @@ export interface Filters {
 
   minArea?: number;
   maxArea?: number;
+
+  page?: number;
+  pageSize?: number;
 }

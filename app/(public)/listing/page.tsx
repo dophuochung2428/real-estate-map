@@ -10,6 +10,8 @@ import { getProperties, getProvinces } from "@/services/property.server";
 
 import PropertyTypePills from "@/components/search/property-type-pills";
 
+import Pagination from "@/components/listing/pagination";
+
 type Props = {
   searchParams: Promise<{
     keyword?: string;
@@ -21,11 +23,15 @@ type Props = {
     maxPrice?: string;
 
     type?: string;
+
+    page?: string;
   }>;
 };
 
 export default async function ListingPage({ searchParams }: Props) {
   const params = await searchParams;
+
+  const currentPage = Number(params.page || 1);
 
   const provinces = await getProvinces();
 
@@ -51,7 +57,14 @@ export default async function ListingPage({ searchParams }: Props) {
     minArea: undefined,
 
     maxArea: undefined,
+
+    page: currentPage,
+    pageSize: 12,
   });
+
+  const pageSize = 12;
+
+  const totalPages = Math.max(1, Math.ceil(count / pageSize));
 
   return (
     <main className="min-h-screen bg-[var(--background)]">
@@ -79,7 +92,12 @@ export default async function ListingPage({ searchParams }: Props) {
             <h1 className="text-3xl font-bold">Kết quả tìm kiếm</h1>
 
             <p className="mt-2 text-[var(--muted-foreground)]">
-              {count} bất động sản
+              {count} bất động sản tìm thấy
+            </p>
+
+            <p className="text-sm text-[var(--muted-foreground)]">
+              Hiển thị {(currentPage - 1) * pageSize + 1} -{" "}
+              {Math.min(currentPage * pageSize, count)}
             </p>
           </div>
         </div>
@@ -100,6 +118,19 @@ export default async function ListingPage({ searchParams }: Props) {
               <PropertyCard key={property.id} property={property} />
             ))}
           </div>
+        )}
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            searchParams={{
+              keyword: params.keyword,
+              province: params.province,
+              minPrice: params.minPrice,
+              maxPrice: params.maxPrice,
+              type: params.type,
+            }}
+          />
         )}
       </Container>
     </main>

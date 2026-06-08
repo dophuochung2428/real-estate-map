@@ -18,6 +18,7 @@ export default function PropertyTypePills() {
       params.delete("type");
     } else {
       params.set("type", type);
+      params.set("page", "1");
     }
 
     router.push(`/listing?${params.toString()}`);

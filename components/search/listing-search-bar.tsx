@@ -28,9 +28,11 @@ export default function ListingSearchBar({ provinces, initialFilters }: Props) {
   const [filters, setFilters] = useState<SearchFilters>(initialFilters);
 
   const handleSearch = () => {
-    const query = buildSearchQueryHeroSection(filters);
+    const params = new URLSearchParams(buildSearchQueryHeroSection(filters));
 
-    router.push(`/listing?${query}`);
+    params.set("page", "1");
+
+    router.push(`/listing?${params.toString()}`);
   };
 
   return (
