@@ -57,7 +57,7 @@ export default function DashboardSidebar() {
     <aside
       className="
         hidden
-        h-screen
+        h-full
         w-[280px]
         shrink-0
         flex-col

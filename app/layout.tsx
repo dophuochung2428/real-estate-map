@@ -20,8 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="vi" className={cn("dark", "font-sans", geist.variable)} suppressHydrationWarning>
-      <body className="bg-[var(--background)] text-[var(--foreground)]">
+    <html lang="vi" className={cn("dark h-full", "font-sans", geist.variable)} suppressHydrationWarning>
+      <body className="h-full bg-[var(--background)] text-[var(--foreground)]">
         <Providers>
           <Toaster richColors position="top-right" />
 

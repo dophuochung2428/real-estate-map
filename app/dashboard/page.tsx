@@ -12,7 +12,9 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const listings = await getMyListings();
+  const result = await getMyListings();
+
+  const listings = result.data;
 
   const total = listings.length;
 
@@ -21,16 +23,16 @@ export default async function DashboardPage() {
   const sold = listings.filter((i) => i.status === "sold").length;
 
   return (
-      <div className="p-6">
-        <StatsCards total={total} active={active} sold={sold} />
+    <div className="p-6">
+      <StatsCards total={total} active={active} sold={sold} />
 
-        <div className="mt-6">
-          {listings.length === 0 ? (
-            <EmptyState />
-          ) : (
-            <RecentProperties listings={listings.slice(0, 5)} />
-          )}
-        </div>
+      <div className="mt-6">
+        {listings.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <RecentProperties listings={listings.slice(0, 5)} />
+        )}
       </div>
+    </div>
   );
 }

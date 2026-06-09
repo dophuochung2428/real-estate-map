@@ -176,26 +176,37 @@ export async function addRecentlyViewed(propertyId: string) {
 
 export async function getMyListings(filters?: {
   keyword?: string;
-}): Promise<any[]> {
+  page?: number;
+  pageSize?: number;
+}): Promise<{
+  data: any[];
+  count: number;
+}> {
   const supabase = await createServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return [];
+    return {
+      data: [],
+      count: 0,
+    };
   }
 
   let query = supabase
     .from("properties")
     .select(
       `
-      *,
-      property_images (
-        image_url,
-        is_thumbnail
-      )
-    `,
+  *,
+  property_images (
+    image_url,
+    is_thumbnail
+  )
+`,
+      {
+        count: "exact",
+      },
     )
     .eq("user_id", user.id);
 
@@ -206,15 +217,26 @@ export async function getMyListings(filters?: {
     );
   }
 
-  const { data, error } = await query.order("created_at", {
-    ascending: false,
-  });
+  const page = filters?.page || 1;
+  const pageSize = filters?.pageSize || 10;
+
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  const { data, error, count } = await query
+    .order("created_at", {
+      ascending: false,
+    })
+    .range(from, to);
 
   if (error) {
     throw error;
   }
 
-  return data || [];
+  return {
+    data: data || [],
+    count: count || 0,
+  };
 }
 
 export async function getSimilarProperties({

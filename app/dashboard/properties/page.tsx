@@ -3,11 +3,13 @@ import Link from "next/link";
 import { getMyListings } from "@/services/property.server";
 
 import PropertyCard from "@/components/property/property-card";
+import PaginationControl from "@/components/property/pagination";
 import MyPropertiesList from "@/features/dashboard/components/MyPropertiesList";
 
 type Props = {
   searchParams: Promise<{
     keyword?: string;
+    page?: string;
   }>;
 };
 
@@ -15,12 +17,18 @@ export default async function PropertiesManagementPage({
   searchParams,
 }: Props) {
   const params = await searchParams;
-  const properties = await getMyListings({
+  const page = Number(params.page || 1);
+
+  const result = await getMyListings({
     keyword: params.keyword,
+    page,
+    pageSize: 10,
   });
 
+  const totalPages = Math.ceil(result.count / 10);
+
   return (
-    <div>
+    <div className="p-4">
       {/* HEADER */}
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div>
@@ -50,7 +58,8 @@ export default async function PropertiesManagementPage({
         </Link>
       </div>
 
-      <MyPropertiesList initialProperties={properties} />
+      <MyPropertiesList initialProperties={result.data} />
+      <PaginationControl currentPage={page} totalPages={totalPages} />
     </div>
   );
 }
