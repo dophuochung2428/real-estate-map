@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function SetPasswordPage() {
   const router = useRouter();
@@ -10,6 +11,7 @@ export default function SetPasswordPage() {
 
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSetPassword() {
     if (password.length < 6) {
@@ -49,13 +51,23 @@ export default function SetPasswordPage() {
             Mật khẩu mới
           </label>
 
-          <input
-            type="password"
-            placeholder="Nhập mật khẩu..."
-            className="w-full rounded-xl border border-slate-600 bg-slate-900 px-4 py-3 text-white placeholder:text-slate-500 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Nhập mật khẩu..."
+              className="w-full rounded-xl border border-slate-600 bg-slate-900 px-4 py-3 pr-12 text-white placeholder:text-slate-500 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-white"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
         </div>
 
         <button

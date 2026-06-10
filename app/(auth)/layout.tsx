@@ -38,7 +38,7 @@ export default async function AuthLayout({
 
       {/* BRAND */}
       <div className="absolute bottom-6 text-xs tracking-[0.25em] text-zinc-600">
-        NHADAT102 • REAL ESTATE PLATFORM
+        REAL ASSET VAL
       </div>
     </main>
   );

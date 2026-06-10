@@ -10,8 +10,8 @@ import { cn } from "@/lib/utils";
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata = {
-  title: "NHADAT102 | Real Estate",
-  description: "Tìm kiếm, quản lý và đăng bất động sản với NHADAT102.",
+  title: "REAL-ASSET-VAL - Tìm kiếm, quản lý và đăng bất động sản",
+  description: "Tìm kiếm, quản lý và đăng bất động sản với REAL ASSET VAL.",
 };
 
 export default function RootLayout({

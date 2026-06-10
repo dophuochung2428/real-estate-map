@@ -7,18 +7,18 @@ export default function MainFooter() {
   return (
     <footer className="border-t border-white/10 bg-[#0B1220] text-white">
       {/* TOP */}
-      <div className="mx-auto grid max-w-7xl gap-14 px-6 py-16 md:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto grid max-w-7xl gap-14 px-6 py-16 md:grid-cols-2 lg:grid-cols-[380px_1fr_1fr_1fr]">
         {/* BRAND */}
         <div>
           {/* LOGO */}
-          <div className="relative h-20 w-[240px]">
+          <div className="w-full max-w-[300px]">
             <Image
-              src="/logos/vcvn.png"
+              src="/logos/logo_footer.jpg"
               alt="VCVN Logo"
-              fill
-              sizes="240px"
+              width={500}
+              height={150}
+              className="w-full h-auto"
               priority
-              className="object-contain object-left"
             />
           </div>
 
@@ -28,9 +28,9 @@ export default function MainFooter() {
               Chi nhánh Long Xuyên - An Giang
             </h3>
 
-            <p className="mt-2 text-sm tracking-wide text-slate-400">
+            {/* <p className="mt-2 text-sm tracking-wide text-slate-400">
               VCVN Valuation System
-            </p>
+            </p> */}
 
             <div className="mt-5 inline-flex items-center rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-xs font-medium text-cyan-300">
               Dữ liệu khu vực Tây Nam Bộ
@@ -84,7 +84,9 @@ export default function MainFooter() {
             <div className="flex items-start gap-3">
               <MapPin className="mt-1 h-4 w-4 shrink-0 text-cyan-400" />
 
-              <p className="leading-6">Long Xuyên, An Giang</p>
+              <p className="leading-6">
+                181 Lý Công Uẩn, Bình Khánh 7, Bình Đức, An Giang
+              </p>
             </div>
 
             <div className="flex items-center gap-3">
@@ -106,7 +108,7 @@ export default function MainFooter() {
                 <p className="font-medium leading-6 text-slate-200">
                   Công ty TNHH Thẩm định giá
                   <br />
-                  Value Control Việt Nam
+                  Real Asset Value Việt Nam
                 </p>
 
                 <p className="mt-1 text-slate-500">Đơn vị vận hành hệ thống</p>
@@ -124,7 +126,8 @@ export default function MainFooter() {
               </p>
 
               <p className="mt-1 text-sm text-slate-400">
-                Giám đốc Chi nhánh Long Xuyên
+                Giám đốc Chi nhánh{" "}
+                <span className="whitespace-nowrap">Long Xuyên</span>
               </p>
             </div>
           </div>

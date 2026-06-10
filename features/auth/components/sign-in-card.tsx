@@ -114,7 +114,7 @@ export const SignInCard = () => {
           </div>
 
           <h1 className="mt-5 text-3xl font-black tracking-tight text-white">
-            NHADAT102
+            REAL ASSET VAL
           </h1>
 
           <p className="mt-2 text-sm text-zinc-400">
