@@ -1,12 +1,10 @@
-import { createSupabaseAdmin } from "@/lib/supabase/admin";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export async function updateUserStatus(
   id: string,
   status: "active" | "suspended",
 ) {
-  const supabase = createSupabaseAdmin();
-
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("profiles")
     .update({ status })
     .eq("id", id)

@@ -4,8 +4,26 @@ import UsersToolbar from "@/features/admin/users/components/users-toolbar";
 
 import UsersTable from "@/features/admin/users/components/users-table";
 
+import { createServerClient } from "@/lib/supabase/server";
+
 export default async function AdminUsersPage() {
   const users = await getUsers();
+
+  const supabase = await createServerClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("id, role")
+    .eq("id", user?.id)
+    .single();
+
+  if (!profile) {
+    return <div>Unauthorized</div>;
+  }
 
   return (
     <div>
@@ -21,8 +39,7 @@ export default async function AdminUsersPage() {
 
         <UsersToolbar />
       </div>
-
-      <UsersTable users={users} />
+      <UsersTable users={users} currentUser={profile} />
     </div>
   );
 }

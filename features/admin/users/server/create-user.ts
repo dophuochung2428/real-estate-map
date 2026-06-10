@@ -1,4 +1,4 @@
-import { createSupabaseAdmin } from "@/lib/supabase/admin";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export async function createUserService({
   email,
@@ -9,7 +9,7 @@ export async function createUserService({
   full_name: string;
   role: "admin" | "staff";
 }) {
-  const supabase = createSupabaseAdmin();
+  const supabase = supabaseAdmin;
 
   const { data, error } = await supabase.auth.admin.inviteUserByEmail(email, {
     data: {

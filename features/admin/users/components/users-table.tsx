@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { suspendUser, activateUser } from "../actions";
+import { suspendUser, activateUser, changeUserPassword } from "../actions";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -17,12 +17,67 @@ type User = {
 
 type Props = {
   users: User[];
+  currentUser: {
+    id: string;
+    role: string;
+  };
 };
 
-export default function UsersTable({ users }: Props) {
+export default function UsersTable({ users, currentUser }: Props) {
   const router = useRouter();
 
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [openPasswordModal, setOpenPasswordModal] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordLoading, setPasswordLoading] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const openPasswordModalFn = (userId: string) => {
+    setSelectedUserId(userId);
+    setNewPassword("");
+    setConfirmPassword("");
+    setOpenPasswordModal(true);
+  };
+
+  const handleChangePassword = async () => {
+    if (!selectedUserId) return;
+
+    if (newPassword !== confirmPassword) {
+      toast.error("Mật khẩu nhập lại không khớp");
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      toast.error("Mật khẩu phải từ 6 ký tự");
+      return;
+    }
+
+    try {
+      setPasswordLoading(true);
+
+      const result = await changeUserPassword(selectedUserId, newPassword);
+
+      if (!result.success) {
+        toast.error(result.message);
+        return;
+      }
+
+      toast.success("Đổi mật khẩu thành công");
+
+      setOpenPasswordModal(false);
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (error) {
+      console.error(error);
+      toast.error("Có lỗi xảy ra");
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
 
   const handleToggleStatus = async (user: User) => {
     try {
@@ -122,6 +177,15 @@ export default function UsersTable({ users }: Props) {
                   {/* <button className="rounded-lg bg-blue-500/10 px-3 py-1 text-sm font-medium text-blue-600 transition hover:bg-blue-500/20">
                     Sửa
                   </button> */}
+                  {currentUser?.role === "admin" &&
+                    currentUser?.id !== u.id && (
+                      <button
+                        onClick={() => openPasswordModalFn(u.id)}
+                        className="rounded-lg bg-yellow-500/10 px-3 py-1 text-sm font-medium text-yellow-600 transition hover:bg-yellow-500/20"
+                      >
+                        Đổi mật khẩu
+                      </button>
+                    )}
 
                   {u.status === "active" ? (
                     <button
@@ -146,6 +210,73 @@ export default function UsersTable({ users }: Props) {
           ))}
         </tbody>
       </table>
+      {openPasswordModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="w-[400px] rounded-xl border border-[var(--border)] bg-[var(--card)]/95 backdrop-blur-xl p-5 text-[var(--foreground)] shadow-xl backdrop-blur-md">
+            <h2 className="mb-4 text-lg font-semibold">Đổi mật khẩu</h2>
+
+            {/* password mới */}
+            <div className="relative mb-3">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Mật khẩu mới"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="w-full rounded-lg border border-[var(--border)] bg-transparent p-2 pr-10 text-[var(--foreground)] outline-none focus:ring-2 focus:ring-blue-500"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
+              >
+                {showPassword ? "🙈" : "👁"}
+              </button>
+            </div>
+
+            {/* confirm */}
+            <div className="relative mb-4">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Nhập lại mật khẩu"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full rounded-lg border border-[var(--border)] bg-transparent p-2 pr-10 text-[var(--foreground)] outline-none focus:ring-2 focus:ring-blue-500"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
+              >
+                {showPassword ? "🙈" : "👁"}
+              </button>
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => {
+                  setOpenPasswordModal(false);
+                  setNewPassword("");
+                  setConfirmPassword("");
+                  setSelectedUserId(null);
+                }}
+                className="rounded-lg bg-[var(--muted)] px-3 py-1 text-[var(--foreground)]"
+              >
+                Huỷ
+              </button>
+
+              <button
+                onClick={handleChangePassword}
+                disabled={passwordLoading}
+                className="rounded-lg bg-blue-600 px-3 py-1 text-white disabled:opacity-50"
+              >
+                {passwordLoading ? "Đang xử lý..." : "Xác nhận"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
