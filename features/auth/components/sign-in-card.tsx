@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { signInSchema } from "../schemas/sign-in-schema";
 import { FaSpinner } from "react-icons/fa";
 import clsx from "clsx";
+import { Home } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/client";
 
@@ -109,8 +110,12 @@ export const SignInCard = () => {
       <div className="rounded-[32px] border border-white/10 bg-white/10 p-8 shadow-2xl backdrop-blur-xl">
         {/* HEADER */}
         <div className="mb-8 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/10 text-3xl backdrop-blur">
-            🏠
+          <div className="mx-auto h-16 w-16 overflow-hidden rounded-2xl border border-white/10 bg-white/10 backdrop-blur">
+            <img
+              src="/logos/logo_v2.png"
+              alt="logo"
+              className="h-full w-full object-cover"
+            />
           </div>
 
           <h1 className="mt-5 text-3xl font-black tracking-tight text-white">
@@ -216,6 +221,16 @@ export const SignInCard = () => {
             </div>
           )}
         </form>
+      </div>
+      <div className="mt-5 text-center">
+        <button
+          type="button"
+          onClick={() => router.push("/")}
+          className="inline-flex items-center gap-2 text-xs text-zinc-400 transition hover:text-white"
+        >
+          <Home size={14} />
+          Quay về trang chủ
+        </button>
       </div>
     </div>
   );

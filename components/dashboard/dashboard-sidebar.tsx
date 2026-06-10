@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
 import {
   LayoutDashboard,
@@ -68,17 +69,28 @@ export default function DashboardSidebar() {
       "
     >
       {/* LOGO */}
-      <div className="border-b border-[var(--border)] p-6">
+      <div className="border-b border-[var(--border)] p-4">
         <Link href="/" className="flex items-center gap-3">
-          <div className="flex size-11 items-center justify-center rounded-2xl bg-[var(--primary)] font-bold text-[var(--primary-foreground)] shadow-lg">
-            B
-          </div>
+          <Image
+            src="/logos/logo_v2.png"
+            alt="REAL ASSET VALUE Logo"
+            width={56}
+            height={56}
+            className="h-14 w-14 shrink-0 rounded-xl object-cover"
+            priority
+          />
 
-          <div>
-            <h1 className="text-lg font-bold leading-none">BatDongSan</h1>
+          <div className="min-w-0 flex-1 leading-none">
+            <h1 className="truncate text-[15px] font-semibold text-[#1f6fa5]">
+              GIÁ TRỊ TÀI SẢN THỰC
+            </h1>
 
-            <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-              Real Estate Platform
+            <p className="mt-1 text-[10px] uppercase tracking-wider text-[var(--muted-foreground)]">
+              REAL ASSET VALUE
+            </p>
+
+            <p className="mt-1 text-[11px] italic text-red-400">
+              Uy tín, chính xác, nhanh chóng
             </p>
           </div>
         </Link>
