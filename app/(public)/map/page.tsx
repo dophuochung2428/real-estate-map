@@ -109,23 +109,24 @@ export default function MapPage() {
       {/* OVERLAY UI */}
       <div className="pointer-events-none absolute inset-0 z-50">
         {/* BACK TO LIST */}
-        <div className="pointer-events-auto absolute top-4 right-4 md:right-12">
+        <div className="pointer-events-auto absolute top-16 right-0 md:right-0">
           <Link
             href="/"
-            className="mr-3 mt-[-5px] inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-slate-900/90 px-4 py-3 text-sm font-medium text-white shadow-2xl backdrop-blur transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-black/40"
+            className="mr-3 mt-[-5px] inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-slate-900/90 px-3 py-3 text-sm font-medium text-white shadow-2xl backdrop-blur transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-black/40 md:px-4"
           >
             <List size={18} />
-            Danh sách
+            <span className="hidden md:inline">Danh sách</span>
           </Link>
         </div>
 
         {/* SEARCH */}
-        <div className="pointer-events-auto absolute top-4 left-4 md:left-12">
+        <div className="pointer-events-auto absolute top-4 left-12 md:left-12">
           <button
             onClick={() => setShowFilters(true)}
-            className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-slate-900/90 px-4 py-3 text-sm font-medium text-white shadow-2xl backdrop-blur transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-black/40"
+            className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-slate-900/90 px-3 py-3 text-sm font-medium text-white shadow-2xl backdrop-blur transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-black/40 md:px-4"
           >
-            Tìm kiếm nhanh
+            <span className="md:hidden">🔍</span>
+            <span className="hidden md:inline">Tìm kiếm nhanh</span>
           </button>
         </div>
 

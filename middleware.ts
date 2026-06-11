@@ -45,10 +45,6 @@ export async function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
 
-  if (mobile && hasSupabaseSession && (role === "admin" || role === "staff")) {
-    return NextResponse.redirect(new URL("/not-allowed", request.url));
-  }
-
   if (isProtectedRoute(pathname) && !hasSupabaseSession) {
     return NextResponse.redirect(new URL("/login", request.url));
   }

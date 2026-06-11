@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 
-import { useEffect, useRef, memo } from "react";
+import { useEffect, useRef, memo, useState } from "react";
 
 import type { Map } from "leaflet";
 
@@ -50,6 +50,8 @@ export default function MapWrapper({
 }) {
   const mapRef = useRef<Map | null>(null);
 
+  const [showRadiusPanel, setShowRadiusPanel] = useState(true);
+
   const { data, isInitialLoading, isFetching, fetchData } = useMapData(
     initialData,
     filters,
@@ -84,6 +86,24 @@ export default function MapWrapper({
     );
   };
 
+  const handleLocateToggle = () => {
+    if (geoFilter.enabled) {
+      setGeoFilter({
+        enabled: false,
+        center: null,
+        radius: 1000,
+      });
+
+      setShowRadiusPanel(false);
+
+      return;
+    }
+
+    setShowRadiusPanel(true);
+
+    handleLocateUser();
+  };
+
   // Refetch when filters change
   useEffect(() => {
     fetchData();
@@ -115,19 +135,14 @@ export default function MapWrapper({
         onPropertySelect={onPropertySelect}
         highlightGeoJson={highlightGeoJson}
         geoFilter={geoFilter}
-        onLocateUser={handleLocateUser}
+        onLocateUser={handleLocateToggle}
+        showRadiusPanel={showRadiusPanel}
+        onHideRadiusPanel={() => setShowRadiusPanel(false)}
         onRadiusChange={(radius) => {
           setGeoFilter((prev) => ({
             ...prev,
             radius,
           }));
-        }}
-        onDisableGeoFilter={() => {
-          setGeoFilter({
-            enabled: false,
-            center: null,
-            radius: 1000,
-          });
         }}
       />
     </div>

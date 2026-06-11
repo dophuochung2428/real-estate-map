@@ -7,7 +7,7 @@ export default function MainFooter() {
   return (
     <footer className="border-t border-white/10 bg-[#0B1220] text-white">
       {/* TOP */}
-      <div className="mx-auto grid max-w-7xl gap-14 px-6 py-16 md:grid-cols-2 lg:grid-cols-[380px_1fr_1fr_1fr]">
+      <div className="mx-auto grid max-w-7xl gap-14 px-6 py-16 md:grid-cols-2 lg:grid-cols-[380px_1fr_1fr]">
         {/* BRAND */}
         <div>
           {/* LOGO */}
@@ -55,7 +55,7 @@ export default function MainFooter() {
         </div>
 
         {/* SERVICES */}
-        <div>
+        {/* <div>
           <h4 className="text-base font-semibold text-white">Dịch vụ</h4>
 
           <ul className="mt-6 space-y-4 text-sm text-slate-400">
@@ -74,7 +74,7 @@ export default function MainFooter() {
               </li>
             ))}
           </ul>
-        </div>
+        </div> */}
 
         {/* CONTACT */}
         <div>

@@ -48,8 +48,9 @@ function MapViewComponent({
   highlightGeoJson,
   geoFilter,
   onLocateUser,
+  showRadiusPanel,
+  onHideRadiusPanel,
   onRadiusChange,
-  onDisableGeoFilter,
 }: MapViewProps) {
   return (
     <MapContainer
@@ -68,9 +69,10 @@ function MapViewComponent({
       <MapRadiusFilter
         enabled={geoFilter.enabled}
         radius={geoFilter.radius}
+        showPanel={showRadiusPanel}
         onLocateUser={onLocateUser}
         onRadiusChange={onRadiusChange}
-        onDisable={onDisableGeoFilter}
+        onHidePanel={onHideRadiusPanel}
       />
 
       {geoFilter.enabled && geoFilter.center && (

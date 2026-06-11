@@ -4,14 +4,14 @@ import { LocateFixed, X } from "lucide-react";
 
 type Props = {
   enabled: boolean;
-
   radius: number;
+  showPanel: boolean;
 
   onLocateUser: () => void;
 
   onRadiusChange: (radius: number) => void;
 
-  onDisable: () => void;
+  onHidePanel: () => void;
 };
 
 const radiusOptions = [
@@ -36,12 +36,13 @@ const radiusOptions = [
 export default function MapRadiusFilter({
   enabled,
   radius,
+  showPanel,
   onLocateUser,
   onRadiusChange,
-  onDisable,
+  onHidePanel,
 }: Props) {
   return (
-    <div className="pointer-events-auto absolute right-4 top-24 z-[9999] flex flex-col items-end gap-2">
+    <div className="pointer-events-auto absolute right-2 top-26 z-[9999] flex flex-col items-end gap-2">
       {/* LOCATION BUTTON */}
       <button
         onClick={onLocateUser}
@@ -66,7 +67,7 @@ export default function MapRadiusFilter({
       </button>
 
       {/* RADIUS OPTIONS */}
-      {enabled && (
+      {enabled && showPanel && (
         <div
           className="
   flex items-center gap-2
@@ -79,7 +80,7 @@ export default function MapRadiusFilter({
 "
         >
           <button
-            onClick={onDisable}
+            onClick={onHidePanel}
             className="
     flex h-10 w-10 items-center justify-center
     rounded-xl

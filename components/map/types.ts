@@ -25,5 +25,8 @@ export type MapViewProps = {
   onLocateUser: () => void;
 
   onRadiusChange: (radius: number) => void;
-  onDisableGeoFilter: () => void;
+
+  showRadiusPanel: boolean;
+
+  onHideRadiusPanel: () => void;
 };

@@ -88,22 +88,6 @@ export const SignInCard = () => {
         return;
       }
 
-      if (
-        isMobile &&
-        (profile?.role === "admin" || profile?.role === "staff")
-      ) {
-        await supabase.auth.signOut();
-
-        const message =
-          "Tài khoản này không được phép đăng nhập trên thiết bị di động";
-
-        setError(message);
-        toast.error(message);
-
-        setIsLoading(false);
-        return;
-      }
-
       toast.success("Đăng nhập thành công");
 
       router.refresh();

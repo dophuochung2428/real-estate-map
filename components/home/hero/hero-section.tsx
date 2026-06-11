@@ -1,21 +1,15 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-
-import Container from "@/components/layout/container";
-
-import { PROPERTY_TYPE_LABEL } from "@/constants/property";
-
 import { useState } from "react";
 
+import Container from "@/components/layout/container";
 import SearchInput from "@/components/search/search-input";
-
 import ProvinceSelect from "@/components/search/province-select";
-
 import PriceSelect from "@/components/search/price-select";
 
+import { PROPERTY_TYPE_LABEL } from "@/constants/property";
 import { SearchFilters } from "@/types/search";
-
 import { buildSearchQueryHeroSection } from "@/lib/search/build-query";
 
 type Props = {
@@ -37,7 +31,7 @@ export default function HeroSection({ provinces }: Props) {
   };
 
   return (
-    <section className="relative h-[620px] overflow-hidden">
+    <section className="relative h-[500px] md:h-[620px] overflow-hidden">
       {/* BACKGROUND */}
       <div
         className="absolute inset-0 bg-cover bg-center"
@@ -52,20 +46,20 @@ export default function HeroSection({ provinces }: Props) {
       <Container className="relative z-10 flex h-full items-center">
         <div className="w-full">
           {/* TITLE */}
-          <div className="mx-auto mb-10 max-w-4xl text-center text-white">
-            <h1 className="mb-5 text-5xl font-bold leading-tight">
+          <div className="mx-auto mb-6 max-w-4xl text-center text-white md:mb-10">
+            <h1 className="mb-4 text-3xl font-bold leading-tight md:mb-5 md:text-5xl">
               Tìm kiếm bất động sản
               <br />
               nhanh chóng & dễ dàng
             </h1>
 
-            <p className="text-lg text-white/80">
+            <p className="text-sm text-white/80 md:text-lg">
               Hơn 1 triệu bất động sản đang được đăng tải
             </p>
           </div>
 
           {/* SEARCH */}
-          <div className="mx-auto max-w-4xl rounded-3xl border border-white/10 bg-[var(--card)]/95 p-6 shadow-2xl backdrop-blur-md">
+          <div className="mx-auto max-w-4xl rounded-3xl border border-white/10 bg-[var(--card)]/95 p-4 shadow-2xl backdrop-blur-md md:p-6">
             {/* SEARCH INPUT */}
             <SearchInput
               value={filters.keyword ?? ""}
@@ -79,7 +73,7 @@ export default function HeroSection({ provinces }: Props) {
             />
 
             {/* FILTERS */}
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-3 mt-4">
+            <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
               {/* LOCATION */}
               <ProvinceSelect
                 provinces={provinces}
@@ -114,11 +108,12 @@ export default function HeroSection({ provinces }: Props) {
               </button>
             </div>
 
-            {/* QUICK TAGS */}
-            <div className="mt-6 flex flex-wrap items-center gap-3">
+            {/* QUICK TAGS - DESKTOP ONLY */}
+            <div className="mt-6 hidden flex-wrap items-center gap-3 md:flex">
               <span className="text-sm font-medium text-[var(--muted-foreground)]">
                 Loại phổ biến:
               </span>
+
               {Object.entries(PROPERTY_TYPE_LABEL).map(([key, label]) => (
                 <button
                   key={key}

@@ -26,6 +26,14 @@ export default function MainHeader() {
 
   const supabase = createClient();
 
+  const isMobile =
+    typeof navigator !== "undefined" &&
+    /Mobile|Android|iPhone/i.test(navigator.userAgent);
+
+  const isStaffOrAdmin = role === "admin" || role === "staff";
+
+  const isRestrictedMobile = isMobile && isStaffOrAdmin;
+
   useEffect(() => {
     const getUser = async () => {
       const {
@@ -114,79 +122,91 @@ export default function MainHeader() {
 
           {/* RIGHT */}
           <div className="flex items-center gap-3">
-            {/* MAP */}
+            {/* MAP luôn có */}
             <Link
               href="/map"
-              className="flex items-center gap-2 rounded-xl border border-[var(--border)] px-3 py-2 text-sm font-semibold transition hover:bg-[var(--hover)] md:px-4 md:py-3"
+              className="flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold"
             >
               <Map size={18} />
               <span className="hidden md:inline">Bản đồ</span>
             </Link>
 
-            {/* LOGIN */}
-            {!user && (
-              <Link
-                href="/login"
-                className="flex items-center gap-2 rounded-xl border border-[var(--border)] px-3 py-2 text-sm font-semibold transition hover:bg-[var(--hover)] md:px-4 md:py-3"
-              >
-                <User size={18} />
-                <span className="hidden md:inline">Đăng nhập</span>
-              </Link>
-            )}
+            {/* MOBILE RESTRICTED VIEW */}
+            {isRestrictedMobile ? (
+              <>
+                {/* LOGOUT ONLY */}
+                <button
+                  onClick={async () => {
+                    await supabase.auth.signOut();
+                    window.location.href = "/";
+                  }}
+                  className="flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold hover:bg-red-50 hover:text-red-600"
+                >
+                  <LogOut size={18} />
+                  <span className="hidden md:inline">Đăng xuất</span>
+                </button>
+              </>
+            ) : (
+              <>
+                {/* LOGIN */}
+                {!user && (
+                  <Link href="/login" className="...">
+                    <User size={18} />
+                    <span className="hidden md:inline">Đăng nhập</span>
+                  </Link>
+                )}
 
-            {/* STAFF ACTIONS */}
-            {role === "staff" && (
-              <Link
-                href="/dashboard/properties/create"
-                className="rounded-2xl bg-[var(--primary)] px-5 py-3 font-semibold text-[var(--primary-foreground)] transition hover:bg-[var(--primary-hover)]"
-              >
-                Đăng tin
-              </Link>
-            )}
+                {/* STAFF */}
+                {role === "staff" && (
+                  <>
+                    <Link
+                      href="/dashboard/properties/create"
+                      className="rounded-2xl bg-[var(--primary)] px-5 py-3 font-semibold"
+                    >
+                      Đăng tin
+                    </Link>
 
-            {role === "staff" && (
-              <Link
-                href="/dashboard/properties"
-                className="flex items-center gap-3 rounded-2xl border border-[var(--border)] px-4 py-2 hover:bg-[var(--hover)]"
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 font-bold text-red-600">
-                  {avatar}
-                </div>
+                    <Link
+                      href="/dashboard/properties"
+                      className="flex items-center gap-3 rounded-2xl border px-4 py-2"
+                    >
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 font-bold text-red-600">
+                        {avatar}
+                      </div>
+                      <div className="hidden md:block">
+                        <p className="text-sm font-semibold">
+                          {profile?.full_name || "User"}
+                        </p>
+                        <p className="text-xs">Quản lý tin đăng</p>
+                      </div>
+                    </Link>
+                  </>
+                )}
 
-                <div className="hidden text-left md:block">
-                  <p className="text-sm font-semibold">
-                    {profile?.full_name || "User"}
-                  </p>
+                {/* ADMIN */}
+                {role === "admin" && (
+                  <Link
+                    href="/admin"
+                    className="rounded-2xl bg-red-600 px-5 py-3 font-semibold text-white"
+                  >
+                    Trang quản trị
+                  </Link>
+                )}
 
-                  <p className="text-xs text-[var(--muted-foreground)]">
-                    Quản lý tin đăng
-                  </p>
-                </div>
-              </Link>
-            )}
-
-            {/* ADMIN */}
-            {role === "admin" && (
-              <Link
-                href="/admin"
-                className="rounded-2xl bg-red-600 px-5 py-3 font-semibold text-white transition hover:bg-red-700"
-              >
-                Trang quản trị
-              </Link>
-            )}
-
-            {/* CUSTOMER LOGOUT */}
-            {role === "customer" && user && (
-              <button
-                onClick={async () => {
-                  await supabase.auth.signOut();
-                  window.location.href = "/";
-                }}
-                className="flex items-center gap-2 rounded-xl border border-[var(--border)] px-3 py-2 text-sm font-semibold transition hover:bg-red-50 hover:text-red-600 md:px-4 md:py-3"
-              >
-                <LogOut size={18} />
-                <span className="hidden md:inline">Đăng xuất</span>
-              </button>
+                {/* CUSTOMER LOGOUT */}
+                {role === "customer" && user && (
+                  <button
+                    onClick={async () => {
+                      await supabase.auth.signOut();
+                      window.location.href = "/";
+                    }}
+                    className="flex items-center gap-2 rounded-xl border px-3 py-2 text-sm"
+                  >
+                    <LogOut size={18} />
+                    <span className="hidden md:inline">Đăng xuất</span>
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>
