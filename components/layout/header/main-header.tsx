@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Map, User } from "lucide-react";
+import { Map, User, LogOut } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 
@@ -173,6 +173,20 @@ export default function MainHeader() {
               >
                 Trang quản trị
               </Link>
+            )}
+
+            {/* CUSTOMER LOGOUT */}
+            {role === "customer" && user && (
+              <button
+                onClick={async () => {
+                  await supabase.auth.signOut();
+                  window.location.href = "/";
+                }}
+                className="flex items-center gap-2 rounded-xl border border-[var(--border)] px-3 py-2 text-sm font-semibold transition hover:bg-red-50 hover:text-red-600 md:px-4 md:py-3"
+              >
+                <LogOut size={18} />
+                <span className="hidden md:inline">Đăng xuất</span>
+              </button>
             )}
           </div>
         </div>
