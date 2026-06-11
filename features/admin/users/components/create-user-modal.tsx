@@ -20,7 +20,7 @@ export default function CreateUserModal({ open, onClose }: Props) {
 
   const [email, setEmail] = useState("");
 
-  const [role, setRole] = useState<"admin" | "staff">("staff");
+  const [role, setRole] = useState<"customer" | "staff">("staff");
 
   if (!open) return null;
 
@@ -111,13 +111,13 @@ export default function CreateUserModal({ open, onClose }: Props) {
 
             <select
               value={role}
-              onChange={(e) => setRole(e.target.value as "admin" | "staff")}
+              onChange={(e) => setRole(e.target.value as "customer" | "staff")}
               disabled={pending}
               className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-black disabled:cursor-not-allowed disabled:opacity-50"
             >
               <option value="staff">Nhân viên</option>
 
-              <option value="admin">Quản trị viên</option>
+              <option value="customer">Khách hàng trả phí</option>
             </select>
           </div>
         </div>

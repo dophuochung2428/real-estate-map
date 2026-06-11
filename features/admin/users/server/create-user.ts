@@ -7,7 +7,7 @@ export async function createUserService({
 }: {
   email: string;
   full_name: string;
-  role: "admin" | "staff";
+  role: "admin" | "staff" | "customer";
 }) {
   const supabase = supabaseAdmin;
 

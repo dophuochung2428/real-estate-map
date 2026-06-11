@@ -9,7 +9,7 @@ export async function createUserAction(formData: FormData) {
 
   const full_name = formData.get("full_name") as string;
 
-  const role = formData.get("role") as "admin" | "staff";
+  const role = formData.get("role") as "admin" | "staff" | "customer";
 
   // VALIDATION
   if (!email || !full_name) {
