@@ -36,12 +36,14 @@ export async function updateSession(request: NextRequest) {
     return {
       response,
       hasSession: false,
+      role: null,
+      user: null,
     };
   }
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("status")
+    .select("status, role")
     .eq("id", user.id)
     .single();
 
@@ -59,11 +61,15 @@ export async function updateSession(request: NextRequest) {
     return {
       response: redirectResponse,
       hasSession: false,
+      role: null,
+      user: null,
     };
   }
 
   return {
     response,
     hasSession: true,
+    user,
+    role: profile?.role ?? null,
   };
 }

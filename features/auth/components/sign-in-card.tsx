@@ -26,6 +26,10 @@ export const SignInCard = () => {
 
   const [error, setError] = useState<string | null>(null);
 
+  const isMobile =
+    typeof navigator !== "undefined" &&
+    /Mobile|Android|iPhone/i.test(navigator.userAgent);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -72,10 +76,6 @@ export const SignInCard = () => {
         .eq("id", data.user.id)
         .single();
 
-      toast.success("Đăng nhập thành công");
-
-      router.refresh();
-
       if (profile?.status !== "active") {
         await supabase.auth.signOut();
 
@@ -84,10 +84,29 @@ export const SignInCard = () => {
         setError(message);
         toast.error(message);
 
+        setIsLoading(false);
         return;
       }
 
-      console.log("profile", profile);
+      if (
+        isMobile &&
+        (profile?.role === "admin" || profile?.role === "staff")
+      ) {
+        await supabase.auth.signOut();
+
+        const message =
+          "Tài khoản này không được phép đăng nhập trên thiết bị di động";
+
+        setError(message);
+        toast.error(message);
+
+        setIsLoading(false);
+        return;
+      }
+
+      toast.success("Đăng nhập thành công");
+
+      router.refresh();
 
       if (profile?.role === "admin") {
         router.push("/admin");

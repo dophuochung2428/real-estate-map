@@ -29,16 +29,25 @@ function isAuthRoute(pathname: string) {
   );
 }
 
-function hasSession(request: NextRequest) {
-  return request.cookies
-    .getAll()
-    .some((cookie) => cookie.name.startsWith("sb-"));
+function isMobile(userAgent: string | null) {
+  return /Mobile|Android|iPhone/i.test(userAgent || "");
 }
 
-export async function proxy(request: NextRequest) {
-  const { response, hasSession: hasSupabaseSession } =
-    await updateSession(request);
+export async function middleware(request: NextRequest) {
+  const userAgent = request.headers.get("user-agent");
+  const mobile = isMobile(userAgent);
+
+  const {
+    response,
+    hasSession: hasSupabaseSession,
+    role,
+  } = await updateSession(request);
+
   const pathname = request.nextUrl.pathname;
+
+  if (mobile && hasSupabaseSession && (role === "admin" || role === "staff")) {
+    return NextResponse.redirect(new URL("/not-allowed", request.url));
+  }
 
   if (isProtectedRoute(pathname) && !hasSupabaseSession) {
     return NextResponse.redirect(new URL("/login", request.url));
