@@ -45,6 +45,13 @@ export async function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
 
+  if (
+    mobile &&
+    (pathname.startsWith("/admin") || pathname.startsWith("/dashboard"))
+  ) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
   if (isProtectedRoute(pathname) && !hasSupabaseSession) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
@@ -58,6 +65,9 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/admin",
+    "/admin/:path*",
+
     "/dashboard/:path*",
     "/saved/:path*",
     "/recently-viewed/:path*",

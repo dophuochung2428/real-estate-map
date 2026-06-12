@@ -92,6 +92,11 @@ export const SignInCard = () => {
 
       router.refresh();
 
+      if (isMobile) {
+        router.push("/");
+        return;
+      }
+
       if (profile?.role === "admin") {
         router.push("/admin");
       } else {

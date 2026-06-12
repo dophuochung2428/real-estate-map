@@ -150,7 +150,10 @@ export default function MainHeader() {
               <>
                 {/* LOGIN */}
                 {!user && (
-                  <Link href="/login" className="...">
+                  <Link
+                    href="/login"
+                    className="flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold"
+                  >
                     <User size={18} />
                     <span className="hidden md:inline">Đăng nhập</span>
                   </Link>
