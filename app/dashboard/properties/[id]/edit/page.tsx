@@ -41,6 +41,7 @@ export default async function EditPropertyPage({
         images:
           property.property_images?.map((img: any) => ({
             image_url: img.image_url,
+            image_key: img.image_key,
             is_thumbnail: img.is_thumbnail,
           })) || [],
       }}

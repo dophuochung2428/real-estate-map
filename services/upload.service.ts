@@ -1,46 +1,36 @@
-import { createClient } from "@/lib/supabase/client";
 import imageCompression from "browser-image-compression";
+import { r2 } from "@/lib/r2/client";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 
 export async function uploadPropertyImage(file: File) {
-  const MAX_SIZE = 10 * 1024 * 1024;
-
-  if (!file.type.startsWith("image/")) {
-    throw new Error("File không hợp lệ");
-  }
-
-  if (file.size > MAX_SIZE) {
-    throw new Error("Ảnh tối đa 10MB");
-  }
-
-  // 👉 OPTIMIZED COMPRESSION (WebP)
-  const compressedFile = await imageCompression(file, {
-    maxSizeMB: 0.3, // ép nhỏ hơn nữa (quan trọng)
-    maxWidthOrHeight: 1600, // giảm kích thước ảnh (quan trọng)
-    useWebWorker: true,
-    fileType: "image/webp", // ép luôn WebP
-  });
-
-  const supabase = createClient();
-
-  // fallback an toàn
-  const isWebp = compressedFile.type === "image/webp";
-  const fileExt = isWebp ? "webp" : compressedFile.type.split("/")[1];
-
-  const fileName = `${crypto.randomUUID()}.${fileExt}`;
+  const fileName = `${crypto.randomUUID()}.webp`;
   const filePath = `properties/${fileName}`;
 
-  const { error } = await supabase.storage
-    .from("property-images")
-    .upload(filePath, compressedFile, {
-      contentType: compressedFile.type,
-      upsert: false,
-    });
+  const arrayBuffer = await file.arrayBuffer();
 
-  if (error) throw error;
+  await r2.send(
+    new PutObjectCommand({
+      Bucket: "property-images",
+      Key: filePath,
+      Body: Buffer.from(arrayBuffer),
+      ContentType: "image/webp",
+    }),
+  );
 
-  const { data } = supabase.storage
-    .from("property-images")
-    .getPublicUrl(filePath);
+  const publicUrl = `${process.env.R2_PUBLIC_URL}/${filePath}`;
 
-  return data.publicUrl;
+  return {
+    url: publicUrl,
+    key: filePath,
+  };
+}
+
+export async function deletePropertyImage(filePath: string) {
+  await r2.send(
+    new DeleteObjectCommand({
+      Bucket: "property-images",
+      Key: filePath,
+    }),
+  );
 }

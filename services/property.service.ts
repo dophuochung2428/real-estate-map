@@ -52,6 +52,7 @@ export async function createProperty(payload: any) {
     const images = payload.images.map((image: any) => ({
       property_id: property.id,
       image_url: image.image_url,
+      image_key: image.image_key,
       is_thumbnail: image.is_thumbnail,
     }));
 
@@ -108,7 +109,7 @@ export async function updateProperty(id: string, payload: any) {
   // GET OLD IMAGES
   const { data: oldImages, error: oldImageError } = await supabase
     .from("property_images")
-    .select("image_url")
+    .select("image_url,image_key")
     .eq("property_id", id);
 
   if (oldImageError) {
@@ -123,14 +124,38 @@ export async function updateProperty(id: string, payload: any) {
 
   // DELETE REMOVED STORAGE FILES
   if (removedImages.length) {
-    const filePaths = removedImages.map((img) => getStoragePath(img.image_url));
+    const r2Images = removedImages.filter((img) => img.image_key);
 
-    const { error: storageError } = await supabase.storage
-      .from("property-images")
-      .remove(filePaths);
+    const supabaseImages = removedImages.filter((img) => !img.image_key);
 
-    if (storageError) {
-      throw storageError;
+    // DELETE R2
+    await Promise.all(
+      r2Images.map((img) =>
+        fetch("/api/delete", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            key: img.image_key,
+          }),
+        }),
+      ),
+    );
+
+    // DELETE SUPABASE
+    if (supabaseImages.length) {
+      const filePaths = supabaseImages.map((img) =>
+        getStoragePath(img.image_url),
+      );
+
+      const { error: storageError } = await supabase.storage
+        .from("property-images")
+        .remove(filePaths);
+
+      if (storageError) {
+        throw storageError;
+      }
     }
   }
 
@@ -179,6 +204,7 @@ export async function updateProperty(id: string, payload: any) {
     const images = payload.images.map((image: any) => ({
       property_id: id,
       image_url: image.image_url,
+      image_key: image.image_key,
       is_thumbnail: image.is_thumbnail,
     }));
 

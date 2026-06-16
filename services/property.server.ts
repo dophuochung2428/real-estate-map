@@ -12,6 +12,7 @@ export async function getProperties(filters?: Filters): Promise<any> {
       property_images (
         id,
         image_url,
+        image_key,
         is_thumbnail
       )
     `,
@@ -117,6 +118,7 @@ export async function getPropertyById(id: string) {
       property_images (
         id,
         image_url,
+        image_key,
         is_thumbnail,
         created_at
       ),
@@ -201,6 +203,7 @@ export async function getMyListings(filters?: {
   *,
   property_images (
     image_url,
+    image_key,
     is_thumbnail
   )
 `,
@@ -260,6 +263,7 @@ export async function getSimilarProperties({
       property_images (
         id,
         image_url,
+        image_key,
         is_thumbnail
       )
     `,

@@ -121,7 +121,7 @@ export default function PropertyImageUpload({
 
                 {/* DELETE */}
                 <button
-                  onClick={() => removeImage(image.image_url)}
+                  onClick={() => removeImage(image.image_key, image.image_url)}
                   className="flex h-10 w-10 items-center justify-center rounded-full bg-red-600 text-white"
                 >
                   <Trash2 size={18} />

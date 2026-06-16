@@ -60,6 +60,8 @@ export const propertySchema = z.object({
       z.object({
         image_url: z.string().url(),
 
+        image_key: z.string(),
+
         is_thumbnail: z.boolean(),
       }),
     )
