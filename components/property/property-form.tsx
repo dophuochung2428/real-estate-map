@@ -19,6 +19,7 @@ import { propertySchema } from "@/validations/property.schema";
 import { createProperty, updateProperty } from "@/services/property.service";
 
 import { CreatePropertyPayload } from "@/types/create-property";
+import { uploadImage, deleteImage } from "@/services/image-upload.service";
 
 const PropertyMapPicker = dynamic(
   () => import("@/components/property/create/property-map-picker"),
@@ -99,20 +100,86 @@ export default function PropertyForm({ mode, initialData }: Props) {
 
       // CREATE
       if (mode === "create") {
-        const property = await createProperty(result.data);
+        const uploadedImages: any[] = [];
 
-        toast.success("Đăng tin thành công");
+        const uploadedKeys: string[] = [];
 
-        router.push(`/properties/${property.id}`);
+        try {
+          for (const image of result.data.images) {
+            if (!image.file) {
+              uploadedImages.push(image);
+
+              continue;
+            }
+
+            const uploaded = await uploadImage(image.file);
+
+            uploadedKeys.push(uploaded.key);
+
+            uploadedImages.push({
+              image_url: uploaded.url,
+              image_key: uploaded.key,
+              is_thumbnail: image.is_thumbnail,
+            });
+          }
+
+          const payload = {
+            ...result.data,
+            images: uploadedImages,
+          };
+
+          const property = await createProperty(payload);
+
+          toast.success("Đăng tin thành công");
+
+          router.push(`/properties/${property.id}`);
+        } catch (error) {
+          await Promise.all(uploadedKeys.map((key) => deleteImage(key)));
+
+          throw error;
+        }
       }
 
       // EDIT
       else {
-        await updateProperty(initialData.id, result.data);
+        const uploadedImages: any[] = [];
 
-        toast.success("Cập nhật thành công");
+        const uploadedKeys: string[] = [];
 
-        router.push("/dashboard/properties");
+        try {
+          for (const image of result.data.images) {
+            if (!image.is_new) {
+              uploadedImages.push(image);
+
+              continue;
+            }
+
+            const uploaded = await uploadImage(image.file);
+
+            uploadedKeys.push(uploaded.key);
+
+            uploadedImages.push({
+              image_url: uploaded.url,
+              image_key: uploaded.key,
+              is_thumbnail: image.is_thumbnail,
+            });
+          }
+
+          const payload = {
+            ...result.data,
+            images: uploadedImages,
+          };
+
+          await updateProperty(initialData.id, payload);
+
+          toast.success("Cập nhật thành công");
+
+          router.push("/dashboard/properties");
+        } catch (error) {
+          await Promise.all(uploadedKeys.map((key) => deleteImage(key)));
+
+          throw error;
+        }
       }
     } catch (err) {
       console.log(err);

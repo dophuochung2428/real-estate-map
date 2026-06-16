@@ -62,6 +62,16 @@ export default function PropertyImageUpload({
     }));
   }, [images, setForm]);
 
+  useEffect(() => {
+    return () => {
+      images.forEach((img) => {
+        if (img.image_url?.startsWith("blob:")) {
+          URL.revokeObjectURL(img.image_url);
+        }
+      });
+    };
+  }, [images]);
+
   return (
     <div className="rounded-3xl bg-[var(--card)] p-6 shadow-sm">
       <h2 className="mb-6 text-2xl font-bold">Hình ảnh</h2>

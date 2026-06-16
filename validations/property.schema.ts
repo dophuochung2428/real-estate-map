@@ -58,11 +58,15 @@ export const propertySchema = z.object({
   images: z
     .array(
       z.object({
-        image_url: z.string().url(),
+        image_url: z.string(),
 
-        image_key: z.string(),
+        image_key: z.string().optional(),
 
         is_thumbnail: z.boolean(),
+
+        is_new: z.boolean().optional(),
+
+        file: z.any().optional(),
       }),
     )
     .min(1, "Phải có ít nhất 1 ảnh"),

@@ -3,9 +3,11 @@
 import { useState } from "react";
 import imageCompression from "browser-image-compression";
 type UploadImage = {
+  file?: File;
   image_url: string;
-  image_key: string;
+  image_key?: string;
   is_thumbnail: boolean;
+  is_new?: boolean;
 };
 
 export function useImageUpload() {
@@ -26,20 +28,11 @@ export function useImageUpload() {
             fileType: "image/webp",
           });
 
-          const formData = new FormData();
-          formData.append("file", compressedFile);
-
-          const res = await fetch("/api/upload", {
-            method: "POST",
-            body: formData,
-          });
-
-          const data = await res.json();
-
           return {
-            image_url: data.url,
-            image_key: data.key,
+            file: compressedFile as File,
+            image_url: URL.createObjectURL(compressedFile),
             is_thumbnail: false,
+            is_new: true,
           };
         }),
       );
@@ -59,7 +52,7 @@ export function useImageUpload() {
     }
   };
 
-  const removeImage = (imageKey: string, imageUrl: string) => {
+  const removeImage = (imageKey: string | undefined, imageUrl: string) => {
     setImages((prev) => prev.filter((img) => img.image_url !== imageUrl));
   };
 
