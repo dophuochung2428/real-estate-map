@@ -44,6 +44,29 @@ export default async function EditPropertyPage({
             image_key: img.image_key,
             is_thumbnail: img.is_thumbnail,
           })) || [],
+
+        contact_name: property.contact_name ?? "",
+        contact_phone: property.contact_phone ?? "",
+
+        legal_status: property.legal_status,
+
+        business_advantage: property.business_advantage,
+
+        environment: property.environment ?? "",
+
+        land_ont_area: property.land_ont_area?.toString() ?? "",
+
+        land_cln_area: property.land_cln_area?.toString() ?? "",
+
+        frontage_width: property.frontage_width?.toString() ?? "",
+
+        max_depth: property.max_depth?.toString() ?? "",
+
+        land_shape: property.land_shape ?? "",
+
+        asset_on_land: property.asset_on_land ?? "",
+
+        appraisal_completed_at: property.appraisal_completed_at,
       }}
     />
   );

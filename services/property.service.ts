@@ -242,3 +242,55 @@ export async function restoreProperty(id: string) {
     throw error;
   }
 }
+
+export async function updateAppraisal(id: string, payload: any) {
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Unauthorized");
+  }
+
+  const { error } = await supabase
+    .from("properties")
+    .update({
+      contact_name: payload.contact_name,
+
+      contact_phone: payload.contact_phone,
+
+      legal_status: payload.legal_status,
+
+      business_advantage: payload.business_advantage,
+
+      environment: payload.environment,
+
+      land_ont_area: payload.land_ont_area
+        ? Number(payload.land_ont_area)
+        : null,
+
+      land_cln_area: payload.land_cln_area
+        ? Number(payload.land_cln_area)
+        : null,
+
+      frontage_width: payload.frontage_width
+        ? Number(payload.frontage_width)
+        : null,
+
+      max_depth: payload.max_depth ? Number(payload.max_depth) : null,
+
+      land_shape: payload.land_shape,
+
+      asset_on_land: payload.asset_on_land,
+
+      appraisal_completed_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) {
+    throw error;
+  }
+}

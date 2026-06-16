@@ -208,13 +208,25 @@ export default function PropertyForm({ mode, initialData }: Props) {
               ? "Tạo bài đăng Batdongsan"
               : "Cập nhật thông tin bài đăng"}
           </p>
+
+          {mode === "create" && (
+            <p className="mt-2 text-sm text-yellow-400/80">
+              ⚠️ Tin đăng sẽ được tạo trước, thông tin thẩm định sẽ bổ sung sau
+              trong trang chi tiết.
+            </p>
+          )}
         </div>
 
         {/* CONTENT */}
         <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
           {/* LEFT */}
           <div className="space-y-6">
-            <PropertyBasicForm form={form} setForm={setForm} errors={errors} />
+            <PropertyBasicForm
+              form={form}
+              setForm={setForm}
+              errors={errors}
+              mode={mode}
+            />
 
             <PropertyImageUpload form={form} setForm={setForm} />
 

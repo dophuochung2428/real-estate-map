@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import PropertyCard from "@/components/property/property-card";
 
@@ -11,7 +11,11 @@ export default function MyPropertiesList({
 }: {
   initialProperties: any[];
 }) {
-  const [properties, setProperties] = useState(initialProperties);
+  const [properties, setProperties] = useState<any[]>(initialProperties);
+
+  useEffect(() => {
+    setProperties(initialProperties);
+  }, [initialProperties]);
 
   usePropertiesRealtime((payload) => {
     const { eventType, new: newRow, old } = payload;

@@ -53,4 +53,25 @@ export interface Property {
   thumbnail_url?: string;
 
   images?: PropertyImage[];
+
+  contact_name?: string;
+  contact_phone?: string;
+
+  legal_status?: boolean;
+
+  business_advantage?: boolean;
+
+  environment?: string;
+
+  land_ont_area?: number;
+  land_cln_area?: number;
+
+  frontage_width?: number;
+  max_depth?: number;
+
+  land_shape?: string;
+
+  asset_on_land?: string;
+
+  appraisal_completed_at?: string | null;
 }

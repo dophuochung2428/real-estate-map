@@ -3,10 +3,10 @@ import { useEffect } from "react";
 
 type Props = {
   form: any;
-
   setForm: any;
-
   errors: Record<string, string>;
+
+  mode?: "create" | "edit";
 };
 
 const geocode = async (address: string) => {
@@ -24,7 +24,12 @@ const geocode = async (address: string) => {
   };
 };
 
-export default function PropertyBasicForm({ form, setForm, errors }: Props) {
+export default function PropertyBasicForm({
+  form,
+  setForm,
+  errors,
+  mode,
+}: Props) {
   const { provinces, districts, fetchDistricts } = useVietnamAddress();
 
   const updateMapLocation = async (district?: string, province?: string) => {
@@ -299,6 +304,46 @@ export default function PropertyBasicForm({ form, setForm, errors }: Props) {
           )}
         </div>
       </div>
+
+      {mode === "edit" && (
+        <>
+          <hr className="my-6 border-[var(--border)]" />
+
+          <h2 className="mb-6 text-2xl font-bold">Thông tin thẩm định</h2>
+
+          <div>
+            <label className="mb-2 block font-medium">Tên liên hệ</label>
+
+            <input
+              value={form.contact_name ?? ""}
+              onChange={(e) =>
+                setForm((prev: any) => ({
+                  ...prev,
+                  contact_name: e.target.value,
+                }))
+              }
+              className="h-12 w-full rounded-2xl border border-[var(--border)] bg-transparent px-4"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block font-medium">
+              Số điện thoại liên hệ
+            </label>
+
+            <input
+              value={form.contact_phone ?? ""}
+              onChange={(e) =>
+                setForm((prev: any) => ({
+                  ...prev,
+                  contact_phone: e.target.value,
+                }))
+              }
+              className="h-12 w-full rounded-2xl border border-[var(--border)] bg-transparent px-4"
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }

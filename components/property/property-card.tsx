@@ -133,7 +133,7 @@ export default function PropertyCard({ property }: { property: any }) {
 
           {/* RIGHT */}
           <div className="flex items-center justify-between gap-5 lg:flex-col lg:items-end">
-            <div className="flex flex-col items-end gap-3">
+            <div className="flex flex-col items-end gap-2">
               <p className="text-2xl font-bold text-red-400">
                 {formatPrice(property.price)}
               </p>
@@ -143,12 +143,39 @@ export default function PropertyCard({ property }: { property: any }) {
               >
                 {status.label}
               </span>
+
+              <span
+                className={`rounded-full border px-3 py-1 text-xs ${
+                  property.appraisal_completed_at
+                    ? "border-green-500/20 bg-green-500/10 text-green-400"
+                    : "border-yellow-500/20 bg-yellow-500/10 text-yellow-400"
+                }`}
+              >
+                {property.appraisal_completed_at
+                  ? "✓ Đã thẩm định"
+                  : "⏳ Chưa thẩm định"}
+              </span>
             </div>
 
             {/* ACTIONS */}
             <div className="flex gap-2">
               {["active", "pending", "rejected"].includes(property.status) && (
                 <>
+                  {/* APPRAISAL */}
+                  <Link
+                    href={`/dashboard/properties/${property.id}/appraisal`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="
+    rounded-xl border border-purple-500/20
+    px-4 py-2 text-sm text-purple-400
+    transition hover:bg-purple-500/10
+  "
+                  >
+                    {property.appraisal_completed_at
+                      ? "Xem thẩm định"
+                      : "Thẩm định"}
+                  </Link>
+
                   {/* EDIT */}
                   <Link
                     href={`/dashboard/properties/${property.id}/edit`}
