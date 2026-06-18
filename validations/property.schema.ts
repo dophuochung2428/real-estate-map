@@ -1,6 +1,8 @@
-import { z } from "zod";
 
-export const propertySchema = z.object({
+import { z } from "zod";
+import { appraisalSchema } from "./appraisal.schema";
+
+const basePropertySchema = z.object({
   title: z.string().trim().min(10, "Vui lòng nhập tiêu đề"),
 
   price: z
@@ -71,3 +73,6 @@ export const propertySchema = z.object({
     )
     .min(1, "Phải có ít nhất 1 ảnh"),
 });
+
+// Merge appraisal fields so they are preserved during validation
+export const propertySchema = basePropertySchema.merge(appraisalSchema);

@@ -16,10 +16,11 @@ import PropertyPreviewCard from "@/components/property/create/property-preview-c
 
 import { propertySchema } from "@/validations/property.schema";
 
-import { createProperty, updateProperty } from "@/services/property.service";
+import { createProperty, updateProperty, updateAppraisal } from "@/services/property.service";
 
 import { CreatePropertyPayload } from "@/types/create-property";
 import { uploadImage, deleteImage } from "@/services/image-upload.service";
+import PropertyAppraisalFields from "@/components/property/create/property-appraisal-fields";
 
 const PropertyMapPicker = dynamic(
   () => import("@/components/property/create/property-map-picker"),
@@ -48,6 +49,18 @@ const initialForm: CreatePropertyPayload = {
   description: "",
   amenities: [],
   images: [],
+  // appraisal defaults
+  contact_name: "",
+  contact_phone: "",
+  legal_status: null,
+  business_advantage: null,
+  environment: "",
+  land_ont_area: "",
+  land_cln_area: "",
+  frontage_width: "",
+  max_depth: "",
+  land_shape: "",
+  asset_on_land: "",
 };
 
 export default function PropertyForm({ mode, initialData }: Props) {
@@ -172,6 +185,41 @@ export default function PropertyForm({ mode, initialData }: Props) {
 
           await updateProperty(initialData.id, payload);
 
+          // If appraisal fields changed, call updateAppraisal to preserve appraisal update logic
+          const appraisalFields = [
+            "contact_name",
+            "contact_phone",
+            "legal_status",
+            "business_advantage",
+            "environment",
+            "land_ont_area",
+            "land_cln_area",
+            "frontage_width",
+            "max_depth",
+            "land_shape",
+            "asset_on_land",
+          ];
+
+          const hasAppraisalChanged = appraisalFields.some((f) => {
+            const before = initialData?.[f] ?? "";
+            const after = (payload as any)[f] ?? "";
+
+            // Normalize boolean/nulls and strings for comparison
+            return String(before) !== String(after);
+          });
+
+          if (hasAppraisalChanged) {
+            const appraisalPayload: any = {};
+
+            appraisalFields.forEach((f) => {
+              if (typeof (payload as any)[f] !== "undefined") {
+                appraisalPayload[f] = (payload as any)[f];
+              }
+            });
+
+            await updateAppraisal(initialData.id, appraisalPayload);
+          }
+
           toast.success("Cập nhật thành công");
 
           router.push("/dashboard/properties");
@@ -210,9 +258,8 @@ export default function PropertyForm({ mode, initialData }: Props) {
           </p>
 
           {mode === "create" && (
-            <p className="mt-2 text-sm text-yellow-400/80">
-              ⚠️ Tin đăng sẽ được tạo trước, thông tin thẩm định sẽ bổ sung sau
-              trong trang chi tiết.
+            <p className="mt-2 text-sm text-green-400/80">
+              Bạn có thể nhập cả thông tin thẩm định ở bên dưới trước khi gửi.
             </p>
           )}
         </div>
@@ -231,6 +278,9 @@ export default function PropertyForm({ mode, initialData }: Props) {
             <PropertyImageUpload form={form} setForm={setForm} />
 
             <PropertyMapPicker form={form} setForm={setForm} />
+
+            {/* Appraisal fields included for both create and edit flows */}
+            <PropertyAppraisalFields form={form} setForm={setForm} />
           </div>
 
           {/* RIGHT */}

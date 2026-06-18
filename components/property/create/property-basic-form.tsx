@@ -108,7 +108,7 @@ export default function PropertyBasicForm({
                   price: value,
                 }));
               }}
-              placeholder="3 tỷ..."
+              placeholder="vnđ..."
               className={`h-12 w-full rounded-2xl border bg-transparent px-4 outline-none
   ${errors.price ? "border-red-500" : "border-[var(--border)]"}`}
             />
@@ -131,7 +131,7 @@ export default function PropertyBasicForm({
                   area: value,
                 }));
               }}
-              placeholder="120m²..."
+              placeholder="m²..."
               className={`h-12 w-full rounded-2xl border bg-transparent px-4 outline-none
   ${errors.area ? "border-red-500" : "border-[var(--border)]"}`}
             />
@@ -304,46 +304,6 @@ export default function PropertyBasicForm({
           )}
         </div>
       </div>
-
-      {mode === "edit" && (
-        <>
-          <hr className="my-6 border-[var(--border)]" />
-
-          <h2 className="mb-6 text-2xl font-bold">Thông tin thẩm định</h2>
-
-          <div>
-            <label className="mb-2 block font-medium">Tên liên hệ</label>
-
-            <input
-              value={form.contact_name ?? ""}
-              onChange={(e) =>
-                setForm((prev: any) => ({
-                  ...prev,
-                  contact_name: e.target.value,
-                }))
-              }
-              className="h-12 w-full rounded-2xl border border-[var(--border)] bg-transparent px-4"
-            />
-          </div>
-
-          <div>
-            <label className="mb-2 block font-medium">
-              Số điện thoại liên hệ
-            </label>
-
-            <input
-              value={form.contact_phone ?? ""}
-              onChange={(e) =>
-                setForm((prev: any) => ({
-                  ...prev,
-                  contact_phone: e.target.value,
-                }))
-              }
-              className="h-12 w-full rounded-2xl border border-[var(--border)] bg-transparent px-4"
-            />
-          </div>
-        </>
-      )}
     </div>
   );
 }

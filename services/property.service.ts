@@ -38,6 +38,47 @@ export async function createProperty(payload: any) {
 
       amenities: payload.amenities,
 
+      // Persist appraisal fields if included in create payload
+      contact_name: payload.contact_name ?? null,
+
+      contact_phone: payload.contact_phone ?? null,
+
+      legal_status:
+        typeof payload.legal_status === "undefined"
+          ? null
+          : payload.legal_status,
+
+      business_advantage:
+        typeof payload.business_advantage === "undefined"
+          ? null
+          : payload.business_advantage,
+
+      environment: payload.environment ?? null,
+
+      land_ont_area: payload.land_ont_area ? Number(payload.land_ont_area) : null,
+
+      land_cln_area: payload.land_cln_area ? Number(payload.land_cln_area) : null,
+
+      frontage_width: payload.frontage_width
+        ? Number(payload.frontage_width)
+        : null,
+
+      max_depth: payload.max_depth ? Number(payload.max_depth) : null,
+
+      land_shape: payload.land_shape ?? null,
+
+      asset_on_land: payload.asset_on_land ?? null,
+
+      // If any appraisal field present, mark as completed
+      appraisal_completed_at:
+        (payload.contact_name || payload.contact_phone || payload.environment ||
+          payload.land_ont_area || payload.land_cln_area || payload.frontage_width ||
+          payload.max_depth || payload.land_shape || payload.asset_on_land ||
+          typeof payload.legal_status !== "undefined" ||
+          typeof payload.business_advantage !== "undefined")
+          ? new Date().toISOString()
+          : null,
+
       user_id: user.id,
       status: "pending",
     })

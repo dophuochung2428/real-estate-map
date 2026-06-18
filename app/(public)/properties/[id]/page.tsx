@@ -4,6 +4,7 @@ import MainHeader from "@/components/layout/header/main-header";
 
 import PropertyGallery from "@/components/property/detail/property-gallery";
 import PropertyInfo from "@/components/property/detail/property-info";
+import PropertyAppraisalSummary from "@/components/property/detail/property-appraisal-summary";
 import PropertySidebar from "@/components/property/detail/property-sidebar";
 import PropertyMap from "@/components/property/detail/property-map";
 import SimilarProperties from "@/components/property/detail/similar-properties";
@@ -71,6 +72,8 @@ export default async function PropertyDetailPage({
           {/* LEFT */}
           <div className="space-y-8">
             <PropertyInfo property={property} />
+
+            <PropertyAppraisalSummary property={property} />
 
             <PropertyMap property={property} />
 
