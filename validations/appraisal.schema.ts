@@ -11,9 +11,9 @@ export const appraisalSchema = z.object({
 
   environment: z.string().optional(),
 
-  land_ont_area: z.string().optional(),
+  land_area_type: z.enum(["ONT", "CLN"]).nullable().optional(),
 
-  land_cln_area: z.string().optional(),
+  land_area: z.string().optional(),
 
   frontage_width: z.string().optional(),
 

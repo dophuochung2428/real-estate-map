@@ -8,9 +8,8 @@ export interface PropertyAppraisalPayload {
 
   environment: string;
 
-  land_ont_area: string;
-
-  land_cln_area: string;
+  land_area_type: "ONT" | "CLN" | null;
+  land_area: string;
 
   frontage_width: string;
 

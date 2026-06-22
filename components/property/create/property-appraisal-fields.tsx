@@ -20,7 +20,10 @@ export default function PropertyAppraisalFields({
           <input
             value={form.contact_name}
             onChange={(e) =>
-              setForm((prev: any) => ({ ...prev, contact_name: e.target.value }))
+              setForm((prev: any) => ({
+                ...prev,
+                contact_name: e.target.value,
+              }))
             }
             className="h-12 w-full rounded-2xl border border-[var(--border)] bg-transparent px-4 outline-none"
           />
@@ -32,7 +35,10 @@ export default function PropertyAppraisalFields({
           <input
             value={form.contact_phone}
             onChange={(e) =>
-              setForm((prev: any) => ({ ...prev, contact_phone: e.target.value }))
+              setForm((prev: any) => ({
+                ...prev,
+                contact_phone: e.target.value,
+              }))
             }
             className="h-12 w-full rounded-2xl border border-[var(--border)] bg-transparent px-4 outline-none"
           />
@@ -64,7 +70,11 @@ export default function PropertyAppraisalFields({
           <label className="mb-2 block font-medium">Lợi thế kinh doanh</label>
 
           <select
-            value={form.business_advantage === null ? "" : String(form.business_advantage)}
+            value={
+              form.business_advantage === null
+                ? ""
+                : String(form.business_advantage)
+            }
             onChange={(e) =>
               setForm((prev: any) => ({
                 ...prev,
@@ -96,40 +106,48 @@ export default function PropertyAppraisalFields({
         </div>
 
         <div className="grid gap-5 md:grid-cols-2">
-          <div>
-            <label className="mb-2 block font-medium">Diện tích ONT</label>
+          <div className="grid gap-5 md:grid-cols-2">
+            <div>
+              <label className="mb-2 block font-medium">Loại diện tích</label>
 
-            <input
-              value={form.land_ont_area}
-              onChange={(e) =>
-                setForm((prev: any) => ({
-                  ...prev,
-                  land_ont_area: e.target.value.replace(/[^\d.]/g, ""),
-                }))
-              }
-              className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
-            />
-          </div>
+              <select
+                value={form.land_area_type ?? ""}
+                onChange={(e) =>
+                  setForm((prev: any) => ({
+                    ...prev,
+                    land_area_type: e.target.value || null,
+                  }))
+                }
+                className="h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4"
+              >
+                <option value="">Chọn loại diện tích</option>
+                <option value="ONT">ONT</option>
+                <option value="CLN">CLN</option>
+              </select>
+            </div>
 
-          <div>
-            <label className="mb-2 block font-medium">Diện tích CLN</label>
+            <div>
+              <label className="mb-2 block font-medium">Diện tích</label>
 
-            <input
-              value={form.land_cln_area}
-              onChange={(e) =>
-                setForm((prev: any) => ({
-                  ...prev,
-                  land_cln_area: e.target.value.replace(/[^\d.]/g, ""),
-                }))
-              }
-              className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
-            />
+              <input
+                value={form.land_area}
+                onChange={(e) =>
+                  setForm((prev: any) => ({
+                    ...prev,
+                    land_area: e.target.value.replace(/[^\d.]/g, ""),
+                  }))
+                }
+                className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
+              />
+            </div>
           </div>
         </div>
 
         <div className="grid gap-5 md:grid-cols-2">
           <div>
-            <label className="mb-2 block font-medium">Chiều rộng mặt tiền</label>
+            <label className="mb-2 block font-medium">
+              Chiều rộng mặt tiền
+            </label>
 
             <input
               value={form.frontage_width}
@@ -190,7 +208,10 @@ export default function PropertyAppraisalFields({
             rows={4}
             value={form.asset_on_land}
             onChange={(e) =>
-              setForm((prev: any) => ({ ...prev, asset_on_land: e.target.value }))
+              setForm((prev: any) => ({
+                ...prev,
+                asset_on_land: e.target.value,
+              }))
             }
             className="w-full rounded-2xl border border-[var(--border)] bg-transparent p-4 outline-none"
           />

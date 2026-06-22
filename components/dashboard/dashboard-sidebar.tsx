@@ -10,6 +10,7 @@ import {
   Bell,
   Settings,
   LogOut,
+  FileSpreadsheet,
 } from "lucide-react";
 
 import { usePathname } from "next/navigation";
@@ -28,6 +29,12 @@ const menuItems = [
     label: "Bất động sản",
     icon: Building2,
   },
+
+  // {
+  //   href: "/dashboard/market-comparison",
+  //   label: "Thẩm định giá",
+  //   icon: FileSpreadsheet,
+  // },
 
   // DEVELOPING
   // {

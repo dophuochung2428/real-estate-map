@@ -16,7 +16,11 @@ import PropertyPreviewCard from "@/components/property/create/property-preview-c
 
 import { propertySchema } from "@/validations/property.schema";
 
-import { createProperty, updateProperty, updateAppraisal } from "@/services/property.service";
+import {
+  createProperty,
+  updateProperty,
+  updateAppraisal,
+} from "@/services/property.service";
 
 import { CreatePropertyPayload } from "@/types/create-property";
 import { uploadImage, deleteImage } from "@/services/image-upload.service";
@@ -55,8 +59,8 @@ const initialForm: CreatePropertyPayload = {
   legal_status: null,
   business_advantage: null,
   environment: "",
-  land_ont_area: "",
-  land_cln_area: "",
+  land_area_type: null, // "ONT" | "CLN"
+  land_area: "",
   frontage_width: "",
   max_depth: "",
   land_shape: "",
@@ -192,8 +196,8 @@ export default function PropertyForm({ mode, initialData }: Props) {
             "legal_status",
             "business_advantage",
             "environment",
-            "land_ont_area",
-            "land_cln_area",
+            "land_area_type",
+            "land_area",
             "frontage_width",
             "max_depth",
             "land_shape",

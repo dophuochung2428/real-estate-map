@@ -54,9 +54,9 @@ export default async function EditPropertyPage({
 
         environment: property.environment ?? "",
 
-        land_ont_area: property.land_ont_area?.toString() ?? "",
+        land_area_type: property.land_area_type ?? null,
 
-        land_cln_area: property.land_cln_area?.toString() ?? "",
+        land_area: property.land_area?.toString() ?? "",
 
         frontage_width: property.frontage_width?.toString() ?? "",
 

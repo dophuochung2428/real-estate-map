@@ -23,9 +23,8 @@ export default function PropertyAppraisalForm({ property }: { property: any }) {
 
     environment: property.environment ?? "",
 
-    land_ont_area: String(property.land_ont_area ?? ""),
-
-    land_cln_area: String(property.land_cln_area ?? ""),
+    land_area_type: property.land_area_type ?? null,
+    land_area: String(property.land_area ?? ""),
 
     frontage_width: String(property.frontage_width ?? ""),
 
@@ -335,34 +334,37 @@ export default function PropertyAppraisalForm({ property }: { property: any }) {
               <div className="grid gap-5 md:grid-cols-2">
                 <div>
                   <label className="mb-2 block font-medium">
-                    Diện tích ONT
+                    Loại diện tích
                   </label>
 
-                  <input
-                    value={form.land_ont_area}
+                  <select
+                    value={form.land_area_type ?? ""}
                     onChange={(e) =>
                       setForm((prev) => ({
                         ...prev,
-                        land_ont_area: e.target.value.replace(/[^\d.]/g, ""),
+                        land_area_type: e.target.value || null,
                       }))
                     }
                     className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
-                  />
+                  >
+                    <option value="">Chọn loại diện tích</option>
+                    <option value="ONT">ONT</option>
+                    <option value="CLN">CLN</option>
+                  </select>
                 </div>
 
                 <div>
-                  <label className="mb-2 block font-medium">
-                    Diện tích CLN
-                  </label>
+                  <label className="mb-2 block font-medium">Diện tích</label>
 
                   <input
-                    value={form.land_cln_area}
+                    value={form.land_area}
                     onChange={(e) =>
                       setForm((prev) => ({
                         ...prev,
-                        land_cln_area: e.target.value.replace(/[^\d.]/g, ""),
+                        land_area: e.target.value.replace(/[^\d.]/g, ""),
                       }))
                     }
+                    placeholder="Nhập diện tích"
                     className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
                   />
                 </div>

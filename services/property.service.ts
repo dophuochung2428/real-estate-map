@@ -55,9 +55,9 @@ export async function createProperty(payload: any) {
 
       environment: payload.environment ?? null,
 
-      land_ont_area: payload.land_ont_area ? Number(payload.land_ont_area) : null,
+      land_area_type: payload.land_area_type ?? null,
 
-      land_cln_area: payload.land_cln_area ? Number(payload.land_cln_area) : null,
+      land_area: payload.land_area ? Number(payload.land_area) : null,
 
       frontage_width: payload.frontage_width
         ? Number(payload.frontage_width)
@@ -71,11 +71,17 @@ export async function createProperty(payload: any) {
 
       // If any appraisal field present, mark as completed
       appraisal_completed_at:
-        (payload.contact_name || payload.contact_phone || payload.environment ||
-          payload.land_ont_area || payload.land_cln_area || payload.frontage_width ||
-          payload.max_depth || payload.land_shape || payload.asset_on_land ||
-          typeof payload.legal_status !== "undefined" ||
-          typeof payload.business_advantage !== "undefined")
+        payload.contact_name ||
+        payload.contact_phone ||
+        payload.environment ||
+        payload.land_area ||
+        payload.land_area_type ||
+        payload.frontage_width ||
+        payload.max_depth ||
+        payload.land_shape ||
+        payload.asset_on_land ||
+        typeof payload.legal_status !== "undefined" ||
+        typeof payload.business_advantage !== "undefined"
           ? new Date().toISOString()
           : null,
 
@@ -308,13 +314,9 @@ export async function updateAppraisal(id: string, payload: any) {
 
       environment: payload.environment,
 
-      land_ont_area: payload.land_ont_area
-        ? Number(payload.land_ont_area)
-        : null,
+      land_area_type: payload.land_area_type ?? null,
 
-      land_cln_area: payload.land_cln_area
-        ? Number(payload.land_cln_area)
-        : null,
+      land_area: payload.land_area ? Number(payload.land_area) : null,
 
       frontage_width: payload.frontage_width
         ? Number(payload.frontage_width)

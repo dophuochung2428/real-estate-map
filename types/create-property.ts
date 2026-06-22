@@ -39,8 +39,8 @@ export interface CreatePropertyPayload {
 
   environment?: string;
 
-  land_ont_area?: string;
-  land_cln_area?: string;
+  land_area_type: "ONT" | "CLN" | null;
+  land_area: string;
 
   frontage_width?: string;
   max_depth?: string;
@@ -60,8 +60,8 @@ export interface UpdateAppraisalPayload {
 
   environment?: string;
 
-  land_ont_area?: number;
-  land_cln_area?: number;
+  land_area_type?: "ONT" | "CLN" | null;
+  land_area?: number;
 
   frontage_width?: number;
   max_depth?: number;
