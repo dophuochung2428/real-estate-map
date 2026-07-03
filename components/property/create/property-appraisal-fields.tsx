@@ -121,7 +121,10 @@ export default function PropertyAppraisalFields({
                 className="h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4"
               >
                 <option value="">Chọn loại diện tích</option>
+                <option value="ODT">ODT</option>
                 <option value="ONT">ONT</option>
+                <option value="LUC">LUC</option>
+                <option value="BHK">BHK</option>
                 <option value="CLN">CLN</option>
               </select>
             </div>

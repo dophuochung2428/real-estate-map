@@ -59,7 +59,7 @@ const initialForm: CreatePropertyPayload = {
   legal_status: null,
   business_advantage: null,
   environment: "",
-  land_area_type: null, // "ONT" | "CLN"
+  land_area_type: null, // "ODT" | "ONT" | "LUC" | "BHK" | "CLN"
   land_area: "",
   frontage_width: "",
   max_depth: "",

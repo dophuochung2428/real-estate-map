@@ -63,7 +63,7 @@ export interface Property {
 
   environment?: string;
 
-  land_area_type?: "ONT" | "CLN" | null;
+  land_area_type?: "ODT" | "ONT" | "LUC" | "BHK" | "CLN" | null;
   land_area?: number;
 
   frontage_width?: number;

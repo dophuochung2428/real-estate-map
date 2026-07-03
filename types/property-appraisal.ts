@@ -8,7 +8,7 @@ export interface PropertyAppraisalPayload {
 
   environment: string;
 
-  land_area_type: "ONT" | "CLN" | null;
+  land_area_type: "ODT" | "ONT" | "LUC" | "BHK" | "CLN" | null;
   land_area: string;
 
   frontage_width: string;
