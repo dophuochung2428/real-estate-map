@@ -6,5 +6,15 @@ export async function POST(request: NextRequest) {
 
   const data = await searchComparableProperties(form);
 
+  console.table(
+    data.slice(0, 10).map((item: any, index: number) => ({
+      rank: index + 1,
+      score: item.score,
+      district: item.district,
+      province: item.province,
+      area: item.area,
+    })),
+  );
+
   return NextResponse.json(data);
 }

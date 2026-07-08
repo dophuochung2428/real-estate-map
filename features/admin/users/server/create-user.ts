@@ -4,10 +4,12 @@ export async function createUserService({
   email,
   full_name,
   role,
+  redirectTo,
 }: {
   email: string;
   full_name: string;
   role: "admin" | "staff" | "customer";
+  redirectTo?: string;
 }) {
   const supabase = supabaseAdmin;
 
@@ -16,6 +18,7 @@ export async function createUserService({
       full_name,
       role,
     },
+    redirectTo,
   });
 
   if (error) throw error;

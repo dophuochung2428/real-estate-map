@@ -1,8 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { ComparableProperty } from "@/lib/valuation/filter";
 import { ValuationSearchForm } from "@/types/valuation";
-import { Property } from "@/types/property";
+
+type ComparablePropertyWithMeta = ComparableProperty & {
+  source?: string;
+  contact?: string;
+  created_at?: string | null;
+};
 
 export default function ValuationWorkspace() {
   const [form, setForm] = useState<ValuationSearchForm>({
@@ -34,27 +40,30 @@ export default function ValuationWorkspace() {
     assetOnLand: "",
   });
 
-  const [comparables, setComparables] = useState<Property[]>([]);
+  const [comparables, setComparables] = useState<ComparablePropertyWithMeta[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
   async function handleSearch() {
+    const { source: _source, contact: _contact, ...searchPayload } = form;
+
     const response = await fetch("/api/valuation/search", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(form),
+      body: JSON.stringify(searchPayload),
     });
 
-    const result = await response.json();
+    const result = (await response.json()) as ComparablePropertyWithMeta[];
 
     setComparables(result);
-
-    console.log(result);
-    console.log("Comparables:", comparables.length);
   }
 
   function updateField(key: string, value: string) {
+    if (key === "source" || key === "contact") {
+      return;
+    }
+
     setForm((prev) => ({
       ...prev,
       [key]: value,
@@ -147,7 +156,7 @@ export default function ValuationWorkspace() {
                   p-3
                 "
               >
-                TSSS 1
+                {getComparableHeaderLabel(1, comparables[0])}
               </th>
 
               <th
@@ -158,7 +167,7 @@ export default function ValuationWorkspace() {
                   p-3
                 "
               >
-                TSSS 2
+                {getComparableHeaderLabel(2, comparables[1])}
               </th>
 
               <th
@@ -169,30 +178,32 @@ export default function ValuationWorkspace() {
                   p-3
                 "
               >
-                TSSS 3
+                {getComparableHeaderLabel(3, comparables[2])}
               </th>
             </tr>
           </thead>
 
           <tbody>
-            <EditableInputRow
+            <ReadOnlyComparisonRow
               stt="1"
               label="Nguồn tin"
-              value={form.source}
-              onChange={(v) => updateField("source", v)}
+              fieldKey="source"
+              comparables={comparables}
             />
 
-            <EditableInputRow
+            <ReadOnlyComparisonRow
               stt="2"
               label="Liên hệ"
-              value={form.contact}
-              onChange={(v) => updateField("contact", v)}
+              fieldKey="contact"
+              comparables={comparables}
             />
 
             <EditableInputRow
               stt="3"
               label="Tình trạng giao dịch / Thời điểm"
               value={form.appraisalDate}
+              fieldKey="appraisalDate"
+              comparables={comparables}
               onChange={(v) => updateField("appraisalDate", v)}
             />
 
@@ -200,6 +211,8 @@ export default function ValuationWorkspace() {
               stt="4"
               label="Địa chỉ"
               value={form.address}
+              fieldKey="address"
+              comparables={comparables}
               onChange={(v) => updateField("address", v)}
             />
 
@@ -207,6 +220,8 @@ export default function ValuationWorkspace() {
               stt="5"
               label="Tình trạng pháp lý"
               value={form.legalStatus}
+              fieldKey="legalStatus"
+              comparables={comparables}
               onChange={(v) => updateField("legalStatus", v)}
               options={[
                 {
@@ -224,6 +239,8 @@ export default function ValuationWorkspace() {
               stt="6"
               label="Vị trí khu vực, lợi thế kinh doanh"
               value={form.businessAdvantage}
+              fieldKey="businessAdvantage"
+              comparables={comparables}
               onChange={(v) => updateField("businessAdvantage", v)}
               options={[
                 {
@@ -241,6 +258,8 @@ export default function ValuationWorkspace() {
               stt="7"
               label="Vị trí giao thông"
               value={form.trafficLocation}
+              fieldKey="trafficLocation"
+              comparables={comparables}
               onChange={(v) => updateField("trafficLocation", v)}
             />
 
@@ -248,6 +267,8 @@ export default function ValuationWorkspace() {
               stt="8"
               label="An ninh, môi trường sống"
               value={form.environment}
+              fieldKey="environment"
+              comparables={comparables}
               onChange={(v) => updateField("environment", v)}
             />
 
@@ -255,6 +276,8 @@ export default function ValuationWorkspace() {
               stt="9"
               label="Diện tích thửa đất (m²)"
               value={form.area}
+              fieldKey="area"
+              comparables={comparables}
               onChange={(v) => updateField("area", v)}
             />
 
@@ -262,6 +285,8 @@ export default function ValuationWorkspace() {
               stt="10"
               label="Mục đích sử dụng đất"
               value={form.landAreaType}
+              fieldKey="landAreaType"
+              comparables={comparables}
               onChange={(v) => updateField("landAreaType", v)}
               options={[
                 {
@@ -295,6 +320,8 @@ export default function ValuationWorkspace() {
                   : "Diện tích đất theo mục đích sử dụng (m²)"
               }
               value={form.landArea}
+              fieldKey="landArea"
+              comparables={comparables}
               onChange={(v) => updateField("landArea", v)}
             />
 
@@ -302,6 +329,8 @@ export default function ValuationWorkspace() {
               stt="12"
               label="Chiều rộng mặt tiền tiếp giáp đường chính (m)"
               value={form.frontageWidth}
+              fieldKey="frontageWidth"
+              comparables={comparables}
               onChange={(v) => updateField("frontageWidth", v)}
             />
 
@@ -309,6 +338,8 @@ export default function ValuationWorkspace() {
               stt="13"
               label="Chiều sâu dài nhất (m)"
               value={form.maxDepth}
+              fieldKey="maxDepth"
+              comparables={comparables}
               onChange={(v) => updateField("maxDepth", v)}
             />
 
@@ -316,6 +347,8 @@ export default function ValuationWorkspace() {
               stt="14"
               label="Hình thể thửa đất"
               value={form.landShape}
+              fieldKey="landShape"
+              comparables={comparables}
               onChange={(v) => updateField("landShape", v)}
             />
 
@@ -323,6 +356,8 @@ export default function ValuationWorkspace() {
               stt="15"
               label="Tài sản trên đất"
               value={form.assetOnLand}
+              fieldKey="assetOnLand"
+              comparables={comparables}
               onChange={(v) => updateField("assetOnLand", v)}
             />
           </tbody>
@@ -336,11 +371,15 @@ function EditableInputRow({
   stt,
   label,
   value,
+  fieldKey,
+  comparables,
   onChange,
 }: {
   stt: string;
   label: string;
   value: string;
+  fieldKey: string;
+  comparables: ComparablePropertyWithMeta[];
   onChange: (value: string) => void;
 }) {
   return (
@@ -395,9 +434,65 @@ function EditableInputRow({
         />
       </td>
 
-      <td className="border border-[var(--border)] p-3"></td>
-      <td className="border border-[var(--border)] p-3"></td>
-      <td className="border border-[var(--border)] p-3"></td>
+      <ComparableValueCell comparable={comparables[0]} fieldKey={fieldKey} />
+      <ComparableValueCell comparable={comparables[1]} fieldKey={fieldKey} />
+      <ComparableValueCell comparable={comparables[2]} fieldKey={fieldKey} />
+    </tr>
+  );
+}
+
+function ReadOnlyComparisonRow({
+  stt,
+  label,
+  fieldKey,
+  comparables,
+}: {
+  stt: string;
+  label: string;
+  fieldKey: string;
+  comparables: ComparablePropertyWithMeta[];
+}) {
+  return (
+    <tr>
+      <td
+        className="
+          border
+          border-[var(--border)]
+          p-3
+          text-center
+          text-[var(--foreground)]
+        "
+      >
+        {stt}
+      </td>
+
+      <td
+        className="
+          border
+          border-[var(--border)]
+          p-3
+          font-medium
+          text-[var(--foreground)]
+        "
+      >
+        {label}
+      </td>
+
+      <td
+        className="
+          border
+          border-[var(--border)]
+          p-2
+        "
+      >
+        <div className="rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-[var(--foreground)]/70">
+          -
+        </div>
+      </td>
+
+      <ComparableValueCell comparable={comparables[0]} fieldKey={fieldKey} />
+      <ComparableValueCell comparable={comparables[1]} fieldKey={fieldKey} />
+      <ComparableValueCell comparable={comparables[2]} fieldKey={fieldKey} />
     </tr>
   );
 }
@@ -406,12 +501,16 @@ function EditableSelectRow({
   stt,
   label,
   value,
+  fieldKey,
+  comparables,
   onChange,
   options,
 }: {
   stt: string;
   label: string;
   value: string;
+  fieldKey: string;
+  comparables: ComparablePropertyWithMeta[];
   onChange: (value: string) => void;
   options: {
     value: string;
@@ -475,9 +574,90 @@ function EditableSelectRow({
         </select>
       </td>
 
-      <td className="border border-[var(--border)] p-3"></td>
-      <td className="border border-[var(--border)] p-3"></td>
-      <td className="border border-[var(--border)] p-3"></td>
+      <ComparableValueCell comparable={comparables[0]} fieldKey={fieldKey} />
+      <ComparableValueCell comparable={comparables[1]} fieldKey={fieldKey} />
+      <ComparableValueCell comparable={comparables[2]} fieldKey={fieldKey} />
     </tr>
   );
+}
+
+function ComparableValueCell({
+  comparable,
+  fieldKey,
+}: {
+  comparable?: ComparablePropertyWithMeta;
+  fieldKey: string;
+}) {
+  return (
+    <td className="border border-[var(--border)] p-3 text-[var(--foreground)]">
+      {getComparableValue(comparable, fieldKey)}
+    </td>
+  );
+}
+
+function getComparableHeaderLabel(
+  index: number,
+  comparable?: ComparablePropertyWithMeta,
+) {
+  if (!comparable?.score) {
+    return `TSSS ${index}`;
+  }
+
+  return `TSSS ${index} (${Math.round(comparable.score)} điểm)`;
+}
+
+function getComparableValue(
+  comparable: ComparablePropertyWithMeta | undefined,
+  fieldKey: string,
+) {
+  if (!comparable) {
+    return "";
+  }
+
+  switch (fieldKey) {
+    case "source":
+      return comparable.source ?? "";
+    case "contact":
+      return comparable.contact ?? "";
+    case "appraisalDate":
+      return comparable.created_at
+        ? new Date(comparable.created_at).toLocaleDateString("vi-VN")
+        : "";
+    case "address":
+      return comparable.address ?? "";
+    case "legalStatus":
+      return comparable.legal_status === undefined
+        ? ""
+        : comparable.legal_status
+          ? "Có"
+          : "Không";
+    case "businessAdvantage":
+      return comparable.business_advantage === undefined
+        ? ""
+        : comparable.business_advantage
+          ? "Có lợi thế"
+          : "Không có lợi thế";
+    case "trafficLocation":
+      return "";
+    case "environment":
+      return "";
+    case "area":
+      return comparable.area ? `${comparable.area} m²` : "";
+    case "landAreaType":
+      return comparable.land_area_type ?? "";
+    case "landArea":
+      return comparable.land_area !== undefined ? `${comparable.land_area}` : "";
+    case "frontageWidth":
+      return comparable.frontage_width !== undefined
+        ? `${comparable.frontage_width} m`
+        : "";
+    case "maxDepth":
+      return comparable.max_depth !== undefined ? `${comparable.max_depth} m` : "";
+    case "landShape":
+      return comparable.land_shape ?? "";
+    case "assetOnLand":
+      return comparable.asset_on_land ?? "";
+    default:
+      return "";
+  }
 }
