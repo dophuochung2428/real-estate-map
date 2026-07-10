@@ -89,24 +89,46 @@ export function calculateScore(property: Property, form: ValuationSearchForm) {
   let score = 0;
 
   const formLocation = extractLocation(form.address);
+  const propertyLocation = extractLocation(property.address);
+
   const formProvince = normalizeAdministrativeName(formLocation.province);
+  const propertyProvince = normalizeAdministrativeName(propertyLocation.province || property.province);
   const formDistrict = normalizeAdministrativeName(formLocation.district);
-  const propertyProvince = normalizeAdministrativeName(property.province);
-  const propertyDistrict = normalizeAdministrativeName(property.district);
+  const propertyDistrict = normalizeAdministrativeName(propertyLocation.district || property.district);
 
   // LOCATION
-  if (formProvince && formProvince === propertyProvince) {
+  if (formDistrict && formDistrict === propertyDistrict) {
+    score += 40;
+  } else if (formProvince && formProvince === propertyProvince) {
     score += 10;
   }
 
-  if (formDistrict && formDistrict === propertyDistrict) {
-    score += 25;
+  // LEGAL STATUS
+  if (form.legalStatus !== "") {
+    const expectedLegalStatus = form.legalStatus === "true";
+
+    if (property.legal_status === expectedLegalStatus) {
+      score += 20;
+    } else {
+      score -= 30;
+    }
   }
 
   // CREATED AT / RECENCY
   const propertyCreatedAt = (property as Property & { created_at?: string | null }).created_at;
 
   score += calculateCreatedAtScore(propertyCreatedAt);
+
+  // AREA
+  const formArea = Number(form.area);
+  const propertyArea = property.area;
+
+  if (formArea > 0 && propertyArea > 0) {
+    score += calculateSimilarityScore(
+      calculatePercentageDifference(formArea, propertyArea),
+      8,
+    );
+  }
 
   // LAND AREA
   const formLandArea = Number(form.landArea);
@@ -115,7 +137,7 @@ export function calculateScore(property: Property, form: ValuationSearchForm) {
   if (formLandArea > 0 && propertyLandArea !== undefined && propertyLandArea > 0) {
     score += calculateSimilarityScore(
       calculatePercentageDifference(formLandArea, propertyLandArea),
-      15,
+      12,
     );
   }
 
@@ -124,7 +146,7 @@ export function calculateScore(property: Property, form: ValuationSearchForm) {
     form.businessAdvantage !== "" &&
     property.business_advantage === (form.businessAdvantage === "true")
   ) {
-    score += 10;
+    score += 5;
   }
 
   // FRONTAGE
@@ -138,7 +160,7 @@ export function calculateScore(property: Property, form: ValuationSearchForm) {
   ) {
     score += calculateSimilarityScore(
       calculatePercentageDifference(formFrontageWidth, propertyFrontageWidth),
-      10,
+      8,
     );
   }
 
@@ -153,7 +175,7 @@ export function calculateScore(property: Property, form: ValuationSearchForm) {
   ) {
     score += calculateSimilarityScore(
       calculatePercentageDifference(formMaxDepth, propertyMaxDepth),
-      10,
+      8,
     );
   }
 
@@ -162,7 +184,7 @@ export function calculateScore(property: Property, form: ValuationSearchForm) {
   const propertyLandShape = normalizeText(property.land_shape);
 
   if (formLandShape && propertyLandShape && formLandShape === propertyLandShape) {
-    score += 5;
+    score += 3;
   }
 
   // ASSET ON LAND
@@ -170,6 +192,14 @@ export function calculateScore(property: Property, form: ValuationSearchForm) {
   const propertyAssetOnLand = normalizeText(property.asset_on_land);
 
   if (formAssetOnLand && propertyAssetOnLand && formAssetOnLand === propertyAssetOnLand) {
+    score += 3;
+  }
+
+  // ENVIRONMENT
+  const formEnvironment = normalizeText(form.environment);
+  const propertyEnvironment = normalizeText(property.environment);
+
+  if (formEnvironment && propertyEnvironment && formEnvironment === propertyEnvironment) {
     score += 5;
   }
 

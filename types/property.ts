@@ -62,6 +62,7 @@ export interface Property {
   business_advantage?: boolean;
 
   environment?: string;
+  traffic_location?: string | null;
 
   land_area_type?: "ODT" | "ONT" | "LUC" | "BHK" | "CLN" | null;
   land_area?: number;

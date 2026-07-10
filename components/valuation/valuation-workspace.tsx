@@ -40,23 +40,37 @@ export default function ValuationWorkspace() {
     assetOnLand: "",
   });
 
-  const [comparables, setComparables] = useState<ComparablePropertyWithMeta[]>([]);
+  const [comparables, setComparables] = useState<ComparablePropertyWithMeta[]>(
+    [],
+  );
   const [isSearching, setIsSearching] = useState(false);
 
   async function handleSearch() {
-    const { source: _source, contact: _contact, ...searchPayload } = form;
+    try {
+      setIsSearching(true);
 
-    const response = await fetch("/api/valuation/search", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(searchPayload),
-    });
+      const { source: _source, contact: _contact, ...searchPayload } = form;
 
-    const result = (await response.json()) as ComparablePropertyWithMeta[];
+      const response = await fetch("/api/valuation/search", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(searchPayload),
+      });
 
-    setComparables(result);
+      if (!response.ok) {
+        throw new Error("Search failed");
+      }
+
+      const result = (await response.json()) as ComparablePropertyWithMeta[];
+
+      setComparables(result);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSearching(false);
+    }
   }
 
   function updateField(key: string, value: string) {
@@ -95,14 +109,17 @@ export default function ValuationWorkspace() {
 
         <div className="flex gap-2">
           <button
-            className="
-              rounded-xl
-              bg-[var(--primary)]
-              px-4
-              py-2
-              text-white
-            "
             onClick={handleSearch}
+            disabled={isSearching}
+            className="
+    rounded-xl
+    bg-[var(--primary)]
+    px-4
+    py-2
+    text-white
+    disabled:cursor-not-allowed
+    disabled:opacity-60
+  "
           >
             {isSearching ? "Đang tìm..." : "Tìm TSSS"}
           </button>
@@ -638,21 +655,25 @@ function getComparableValue(
           ? "Có lợi thế"
           : "Không có lợi thế";
     case "trafficLocation":
-      return "";
+      return comparable.traffic_location ?? "";
     case "environment":
-      return "";
+      return comparable.environment ?? "";
     case "area":
       return comparable.area ? `${comparable.area} m²` : "";
     case "landAreaType":
       return comparable.land_area_type ?? "";
     case "landArea":
-      return comparable.land_area !== undefined ? `${comparable.land_area}` : "";
+      return comparable.land_area !== undefined
+        ? `${comparable.land_area}`
+        : "";
     case "frontageWidth":
       return comparable.frontage_width !== undefined
         ? `${comparable.frontage_width} m`
         : "";
     case "maxDepth":
-      return comparable.max_depth !== undefined ? `${comparable.max_depth} m` : "";
+      return comparable.max_depth !== undefined
+        ? `${comparable.max_depth} m`
+        : "";
     case "landShape":
       return comparable.land_shape ?? "";
     case "assetOnLand":

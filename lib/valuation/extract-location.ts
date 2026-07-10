@@ -1,22 +1,16 @@
-import { normalizeAddress } from "./normalize-address";
-
 export interface LocationResult {
-  commune: string;
+  district: string;
   province: string;
 }
 
-export function extractLocation(address: string) {
+export function extractLocation(address: string): LocationResult {
   const text = address.toLowerCase();
 
-  const provinceMatch = text.match(/tỉnh\s+([^,.()\n]+)/i);
-
-  const districtMatch = text.match(/(xã|phường|thị trấn)\s+([^,.()\n]+)/i);
+  const districtMatch = text.match(/(xã|phường|thị trấn|quận|huyện|thị xã|đặc khu)\s+([^,.()\n]+)/i);
+  const provinceMatch = text.match(/(tỉnh|thành phố)\s+([^,.()\n]+)/i);
 
   return {
-    province: provinceMatch ? provinceMatch[1].trim() : "",
-
-    district: districtMatch
-      ? `${districtMatch[1]} ${districtMatch[2]}`.trim()
-      : "",
+    district: districtMatch ? districtMatch[2].trim() : "",
+    province: provinceMatch ? provinceMatch[2].trim() : "",
   };
 }
