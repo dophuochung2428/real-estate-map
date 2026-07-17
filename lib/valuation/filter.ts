@@ -1,24 +1,31 @@
 import { Property } from "@/types/property";
 import { ValuationSearchForm } from "@/types/valuation";
 import { calculateScore, normalizeText } from "./score";
-import { extractLocation } from "./extract-location";
-import { normalizeAdministrativeName } from "./normalize-administrative";
+import { geocodeAddress } from "./geocode";
+import { calculateDistanceKm } from "./distance";
 
 export type ComparableProperty = Property & {
   score: number;
+  distanceKm: number;
 };
 
 function applyOrdering(properties: ComparableProperty[]): ComparableProperty[] {
-  return [...properties].sort((a, b) => b.score - a.score);
+  return [...properties].sort((a, b) => {
+    if (b.score !== a.score) {
+      return b.score - a.score;
+    }
+
+    return a.distanceKm - b.distanceKm;
+  });
 }
 
 function scoreProperties(
-  properties: Property[],
+  properties: (Property & { distanceKm: number })[],
   form: ValuationSearchForm,
 ): ComparableProperty[] {
   return properties.map((property) => ({
     ...property,
-    score: calculateScore(property, form),
+    score: calculateScore(property, form, property.distanceKm),
   }));
 }
 
@@ -47,60 +54,68 @@ export async function filterComparableProperties(
   properties: Property[],
   form: ValuationSearchForm,
 ): Promise<ComparableProperty[]> {
-  const formLocation = extractLocation(form.address);
+  const targetLocation = await geocodeAddress(form.address);
 
-  const formDistrict = normalizeAdministrativeName(formLocation.district);
-
-  const formProvince = normalizeAdministrativeName(formLocation.province);
+  if (!targetLocation) {
+    return [];
+  }
 
   // HARD FILTER: LAND AREA TYPE
   const normalizedLandAreaType = normalizeText(form.landAreaType);
 
-  const filteredProperties = normalizedLandAreaType
-    ? properties.filter(
-        (property) =>
-          normalizeText(property.land_area_type) === normalizedLandAreaType,
-      )
-    : properties;
+  const filteredProperties = properties;
 
-  const sameDistrict = filteredProperties.filter(
-    (property) =>
-      formDistrict &&
-      normalizeAdministrativeName(property.district) === formDistrict,
+  const propertiesWithDistance = filteredProperties.map((property) => ({
+    ...property,
+    distanceKm: calculateDistanceKm(
+      targetLocation.lat,
+      targetLocation.lng,
+      property.lat,
+      property.lng,
+    ),
+  }));
+
+  let candidateProperties = propertiesWithDistance.filter(
+    (p) => p.distanceKm <= 5,
   );
 
-  // Nếu đã có >= 3 BĐS cùng xã/phường
-  // chỉ so sánh trong nhóm này
-  if (sameDistrict.length >= 3) {
-    return prioritizeLegalStatus(
-      scoreProperties(sameDistrict, form),
-      form,
-    ).slice(0, 3);
+  if (candidateProperties.length < 3) {
+    candidateProperties = propertiesWithDistance.filter(
+      (p) => p.distanceKm <= 10,
+    );
   }
 
-  const sameProvince = filteredProperties.filter(
-    (property) =>
-      !sameDistrict.some((d) => d.id === property.id) &&
-      formProvince &&
-      normalizeAdministrativeName(property.province) === formProvince,
-  );
-
-  // Nếu cùng district + cùng province đã đủ
-  if (sameDistrict.length + sameProvince.length >= 3) {
-    return prioritizeLegalStatus(
-      scoreProperties([...sameDistrict, ...sameProvince], form),
-      form,
-    ).slice(0, 3);
+  if (candidateProperties.length < 3) {
+    candidateProperties = propertiesWithDistance.filter(
+      (p) => p.distanceKm <= 20,
+    );
   }
 
-  const others = filteredProperties.filter(
-    (property) =>
-      !sameDistrict.some((d) => d.id === property.id) &&
-      !sameProvince.some((p) => p.id === property.id),
-  );
+  if (candidateProperties.length < 3) {
+    candidateProperties = propertiesWithDistance.filter(
+      (p) => p.distanceKm <= 50,
+    );
+  }
 
-  return prioritizeLegalStatus(
-    scoreProperties([...sameDistrict, ...sameProvince, ...others], form),
-    form,
-  ).slice(0, 3);
+  if (candidateProperties.length < 3) {
+    candidateProperties = propertiesWithDistance;
+  }
+
+  const scoredProperties = scoreProperties(candidateProperties, form);
+
+  // const scoredProperties = scoreProperties(propertiesWithDistance, form);
+
+  // console.table(
+  //   candidateProperties
+  //     .sort((a, b) => a.distanceKm - b.distanceKm)
+  //     .slice(0, 20)
+  //     .map((p) => ({
+  //       distanceKm: p.distanceKm.toFixed(2),
+  //       area: p.area,
+  //       district: p.district,
+  //       address: p.address,
+  //     })),
+  // );
+
+  return prioritizeLegalStatus(scoredProperties, form).slice(0, 50);
 }

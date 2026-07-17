@@ -1,7 +1,5 @@
 import { Property } from "@/types/property";
 import { ValuationSearchForm } from "@/types/valuation";
-import { normalizeAdministrativeName } from "./normalize-administrative";
-import { extractLocation } from "./extract-location";
 
 function calculatePercentageDifference(a: number, b: number) {
   if (!Number.isFinite(a) || !Number.isFinite(b) || a <= 0 || b <= 0) {
@@ -53,22 +51,9 @@ function calculateCreatedAtScore(createdAt?: string | null) {
     (Date.now() - createdDate.getTime()) / (1000 * 60 * 60 * 24),
   );
 
-  if (diffInDays <= 30) {
-    return 10;
-  }
-
-  if (diffInDays <= 90) {
-    return 8;
-  }
-
-  if (diffInDays <= 180) {
-    return 5;
-  }
-
-  if (diffInDays <= 365) {
-    return 2;
-  }
-
+  if (diffInDays <= 30) return 3;
+  if (diffInDays <= 90) return 2;
+  if (diffInDays <= 180) return 1;
   return 0;
 }
 
@@ -85,22 +70,15 @@ export function normalizeText(value?: string | null) {
     .trim();
 }
 
-export function calculateScore(property: Property, form: ValuationSearchForm) {
+export function calculateScore(
+  property: Property,
+  form: ValuationSearchForm,
+  distanceKm?: number,
+) {
   let score = 0;
 
-  const formLocation = extractLocation(form.address);
-  const propertyLocation = extractLocation(property.address);
-
-  const formProvince = normalizeAdministrativeName(formLocation.province);
-  const propertyProvince = normalizeAdministrativeName(propertyLocation.province || property.province);
-  const formDistrict = normalizeAdministrativeName(formLocation.district);
-  const propertyDistrict = normalizeAdministrativeName(propertyLocation.district || property.district);
-
-  // LOCATION
-  if (formDistrict && formDistrict === propertyDistrict) {
-    score += 40;
-  } else if (formProvince && formProvince === propertyProvince) {
-    score += 10;
+  if (distanceKm !== undefined) {
+    score += calculateDistanceScore(distanceKm);
   }
 
   // LEGAL STATUS
@@ -108,14 +86,26 @@ export function calculateScore(property: Property, form: ValuationSearchForm) {
     const expectedLegalStatus = form.legalStatus === "true";
 
     if (property.legal_status === expectedLegalStatus) {
-      score += 20;
-    } else {
-      score -= 30;
+      score += 15;
     }
   }
 
+  // LAND AREA TYPE
+  const formLandAreaType = normalizeText(form.landAreaType);
+  const propertyLandAreaType = normalizeText(property.land_area_type);
+
+  if (
+    formLandAreaType &&
+    propertyLandAreaType &&
+    formLandAreaType === propertyLandAreaType
+  ) {
+    score += 15;
+  }
+
   // CREATED AT / RECENCY
-  const propertyCreatedAt = (property as Property & { created_at?: string | null }).created_at;
+  const propertyCreatedAt = (
+    property as Property & { created_at?: string | null }
+  ).created_at;
 
   score += calculateCreatedAtScore(propertyCreatedAt);
 
@@ -134,10 +124,14 @@ export function calculateScore(property: Property, form: ValuationSearchForm) {
   const formLandArea = Number(form.landArea);
   const propertyLandArea = property.land_area;
 
-  if (formLandArea > 0 && propertyLandArea !== undefined && propertyLandArea > 0) {
+  if (
+    formLandArea > 0 &&
+    propertyLandArea !== undefined &&
+    propertyLandArea > 0
+  ) {
     score += calculateSimilarityScore(
       calculatePercentageDifference(formLandArea, propertyLandArea),
-      12,
+      20,
     );
   }
 
@@ -146,7 +140,7 @@ export function calculateScore(property: Property, form: ValuationSearchForm) {
     form.businessAdvantage !== "" &&
     property.business_advantage === (form.businessAdvantage === "true")
   ) {
-    score += 5;
+    score += 2;
   }
 
   // FRONTAGE
@@ -160,7 +154,7 @@ export function calculateScore(property: Property, form: ValuationSearchForm) {
   ) {
     score += calculateSimilarityScore(
       calculatePercentageDifference(formFrontageWidth, propertyFrontageWidth),
-      8,
+      12,
     );
   }
 
@@ -183,7 +177,11 @@ export function calculateScore(property: Property, form: ValuationSearchForm) {
   const formLandShape = normalizeText(form.landShape);
   const propertyLandShape = normalizeText(property.land_shape);
 
-  if (formLandShape && propertyLandShape && formLandShape === propertyLandShape) {
+  if (
+    formLandShape &&
+    propertyLandShape &&
+    formLandShape === propertyLandShape
+  ) {
     score += 3;
   }
 
@@ -191,17 +189,35 @@ export function calculateScore(property: Property, form: ValuationSearchForm) {
   const formAssetOnLand = normalizeText(form.assetOnLand);
   const propertyAssetOnLand = normalizeText(property.asset_on_land);
 
-  if (formAssetOnLand && propertyAssetOnLand && formAssetOnLand === propertyAssetOnLand) {
-    score += 3;
+  if (
+    formAssetOnLand &&
+    propertyAssetOnLand &&
+    formAssetOnLand === propertyAssetOnLand
+  ) {
+    score += 1;
   }
 
   // ENVIRONMENT
   const formEnvironment = normalizeText(form.environment);
   const propertyEnvironment = normalizeText(property.environment);
 
-  if (formEnvironment && propertyEnvironment && formEnvironment === propertyEnvironment) {
-    score += 5;
+  if (
+    formEnvironment &&
+    propertyEnvironment &&
+    formEnvironment === propertyEnvironment
+  ) {
+    score += 2;
   }
 
   return Math.max(0, Math.min(100, Number(score.toFixed(2))));
+}
+
+function calculateDistanceScore(distanceKm: number) {
+  if (distanceKm <= 1) return 40;
+  if (distanceKm <= 3) return 35;
+  if (distanceKm <= 5) return 30;
+  if (distanceKm <= 10) return 20;
+  if (distanceKm <= 20) return 10;
+
+  return 0;
 }

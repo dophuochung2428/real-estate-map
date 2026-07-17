@@ -30,11 +30,11 @@ const menuItems = [
     icon: Building2,
   },
 
-  // {
-  //   href: "/dashboard/market-comparison",
-  //   label: "Thẩm định giá",
-  //   icon: FileSpreadsheet,
-  // },
+  {
+    href: "/dashboard/market-comparison",
+    label: "Thẩm định giá",
+    icon: FileSpreadsheet,
+  },
 
   // DEVELOPING
   // {

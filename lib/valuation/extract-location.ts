@@ -6,7 +6,9 @@ export interface LocationResult {
 export function extractLocation(address: string): LocationResult {
   const text = address.toLowerCase();
 
-  const districtMatch = text.match(/(xã|phường|thị trấn|quận|huyện|thị xã|đặc khu)\s+([^,.()\n]+)/i);
+  const districtMatch = text.match(
+    /(xã|phường|thị trấn|quận|huyện|thị xã|đặc khu)\s+([^,.()\n]+)/i,
+  );
   const provinceMatch = text.match(/(tỉnh|thành phố)\s+([^,.()\n]+)/i);
 
   return {

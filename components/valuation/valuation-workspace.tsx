@@ -3,11 +3,20 @@
 import { useState } from "react";
 import { ComparableProperty } from "@/lib/valuation/filter";
 import { ValuationSearchForm } from "@/types/valuation";
+import { Filter } from "lucide-react";
 
 type ComparablePropertyWithMeta = ComparableProperty & {
   source?: string;
   contact?: string;
   created_at?: string | null;
+};
+
+const LAND_SHAPE_LABELS: Record<string, string> = {
+  square: "Vuông",
+  rectangle: "Chữ nhật",
+  expanding_back: "Nở hậu",
+  narrowing_back: "Tóp hậu",
+  irregular: "Không đều",
 };
 
 export default function ValuationWorkspace() {
@@ -40,10 +49,65 @@ export default function ValuationWorkspace() {
     assetOnLand: "",
   });
 
+  const [candidates, setCandidates] = useState<ComparablePropertyWithMeta[]>(
+    [],
+  );
+
+  const [selectingColumn, setSelectingColumn] = useState<number | null>(null);
+
   const [comparables, setComparables] = useState<ComparablePropertyWithMeta[]>(
     [],
   );
   const [isSearching, setIsSearching] = useState(false);
+
+  const [isExporting, setIsExporting] = useState(false);
+
+  const canExport = comparables[0] && comparables[1] && comparables[2];
+
+  async function handleExport() {
+    if (!canExport) {
+      alert("Vui lòng chọn đủ 3 tài sản so sánh.");
+      return;
+    }
+
+    try {
+      setIsExporting(true);
+
+      const response = await fetch("/api/valuation/export", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          form,
+          comparables,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Export failed");
+      }
+
+      const blob = await response.blob();
+
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+
+      a.href = url;
+      a.download = "tham-dinh-gia.xlsx";
+
+      a.click();
+
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(error);
+
+      alert("Xuất Excel thất bại.");
+    } finally {
+      setIsExporting(false);
+    }
+  }
 
   async function handleSearch() {
     try {
@@ -65,12 +129,28 @@ export default function ValuationWorkspace() {
 
       const result = (await response.json()) as ComparablePropertyWithMeta[];
 
-      setComparables(result);
+      setCandidates(result);
+
+      setComparables(result.slice(0, 3));
     } catch (error) {
       console.error(error);
     } finally {
       setIsSearching(false);
     }
+  }
+
+  function handleComparableChange(columnIndex: number, propertyId: string) {
+    const selected = candidates.find((item) => item.id === propertyId);
+
+    if (!selected) {
+      return;
+    }
+
+    const next = [...comparables];
+
+    next[columnIndex] = selected;
+
+    setComparables(next);
   }
 
   function updateField(key: string, value: string) {
@@ -112,16 +192,32 @@ export default function ValuationWorkspace() {
             onClick={handleSearch}
             disabled={isSearching}
             className="
-    rounded-xl
-    bg-[var(--primary)]
-    px-4
-    py-2
-    text-white
-    disabled:cursor-not-allowed
-    disabled:opacity-60
-  "
+              rounded-xl
+              bg-[var(--primary)]
+              px-4
+              py-2
+              text-white
+              disabled:cursor-not-allowed
+              disabled:opacity-60
+            "
           >
             {isSearching ? "Đang tìm..." : "Tìm TSSS"}
+          </button>
+          <button
+            onClick={handleExport}
+            disabled={isExporting || !canExport}
+            title={!canExport ? "Cần chọn đủ 3 tài sản so sánh" : undefined}
+            className="
+    rounded-xl
+    border
+    border-[var(--border)]
+    px-4
+    py-2
+    disabled:cursor-not-allowed
+    disabled:opacity-50
+  "
+          >
+            {isExporting ? "Đang xuất..." : "Xuất Excel"}
           </button>
         </div>
       </div>
@@ -167,13 +263,17 @@ export default function ValuationWorkspace() {
 
               <th
                 className="
-                  border
-                  border-[var(--border)]
-                  bg-[var(--hover)]
-                  p-3
-                "
+    border
+    border-[var(--border)]
+    bg-[var(--hover)]
+    p-3
+  "
               >
-                {getComparableHeaderLabel(1, comparables[0])}
+                <ComparableHeader
+                  index={1}
+                  comparable={comparables[0]}
+                  onOpen={() => setSelectingColumn(0)}
+                />
               </th>
 
               <th
@@ -184,7 +284,11 @@ export default function ValuationWorkspace() {
                   p-3
                 "
               >
-                {getComparableHeaderLabel(2, comparables[1])}
+                <ComparableHeader
+                  index={2}
+                  comparable={comparables[1]}
+                  onOpen={() => setSelectingColumn(1)}
+                />
               </th>
 
               <th
@@ -195,7 +299,11 @@ export default function ValuationWorkspace() {
                   p-3
                 "
               >
-                {getComparableHeaderLabel(3, comparables[2])}
+                <ComparableHeader
+                  index={3}
+                  comparable={comparables[2]}
+                  onOpen={() => setSelectingColumn(2)}
+                />
               </th>
             </tr>
           </thead>
@@ -215,13 +323,11 @@ export default function ValuationWorkspace() {
               comparables={comparables}
             />
 
-            <EditableInputRow
+            <ReadOnlyComparisonRow
               stt="3"
               label="Tình trạng giao dịch / Thời điểm"
-              value={form.appraisalDate}
               fieldKey="appraisalDate"
               comparables={comparables}
-              onChange={(v) => updateField("appraisalDate", v)}
             />
 
             <EditableInputRow
@@ -380,6 +486,220 @@ export default function ValuationWorkspace() {
           </tbody>
         </table>
       </div>
+      {selectingColumn !== null && (
+        <div
+          className="
+      fixed
+      inset-0
+      z-50
+      flex
+      items-center
+      justify-center
+      bg-black/60
+      backdrop-blur-sm
+    "
+        >
+          <div
+            className="
+        max-h-[80vh]
+        w-[900px]
+        overflow-hidden
+        rounded-2xl
+        border
+        border-[var(--border)]
+        bg-[var(--card)]
+        text-[var(--foreground)]
+        shadow-2xl
+      "
+          >
+            <div
+              className="
+          flex
+          items-center
+          justify-between
+          border-b
+          border-[var(--border)]
+          bg-[var(--card)]
+          px-5
+          py-4
+        "
+            >
+              <h3 className="text-lg font-semibold">
+                Chọn bất động sản cho TSSS {selectingColumn! + 1}
+              </h3>
+
+              {comparables[selectingColumn] && (
+                <div
+                  className="
+      mt-3
+      rounded-lg
+      border
+      border-[var(--border)]
+      bg-[var(--hover)]
+      p-3
+      text-sm
+    "
+                >
+                  <div className="font-medium">Đang chọn:</div>
+
+                  <div>{comparables[selectingColumn].address}</div>
+
+                  <div className="text-xs opacity-70">
+                    Điểm: {comparables[selectingColumn].score}
+                    {" • "}
+                    Khoảng cách:{" "}
+                    {comparables[selectingColumn].distanceKm.toFixed(2)} km
+                  </div>
+                </div>
+              )}
+
+              <button
+                onClick={() => setSelectingColumn(null)}
+                className="
+            rounded-lg
+            border
+            border-[var(--border)]
+            px-3
+            py-1
+            hover:bg-[var(--hover)]
+          "
+              >
+                Đóng
+              </button>
+            </div>
+
+            <div className="max-h-[65vh] overflow-auto">
+              <table className="w-full border-collapse text-sm">
+                <thead className="sticky top-0 z-10 bg-[var(--card)]">
+                  <tr>
+                    <th className="border border-[var(--border)] p-3">Điểm</th>
+
+                    <th className="border border-[var(--border)] p-3">
+                      Khoảng cách
+                    </th>
+
+                    <th className="border border-[var(--border)] p-3">
+                      Địa chỉ
+                    </th>
+
+                    <th className="border border-[var(--border)] p-3">
+                      Thao tác
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {candidates.map((item) => {
+                    const isCurrent =
+                      comparables[selectingColumn!]?.id === item.id;
+
+                    const usedBy = comparables.findIndex(
+                      (c) => c?.id === item.id,
+                    );
+
+                    return (
+                      <tr
+                        key={item.id}
+                        className={`
+      transition-colors
+      ${
+        isCurrent
+          ? "border-l-4 border-green-500 bg-[var(--hover)]"
+          : "hover:bg-[var(--hover)]"
+      }
+    `}
+                      >
+                        <td
+                          className="
+                    border
+                    border-[var(--border)]
+                    p-3
+                    text-center
+                  "
+                        >
+                          {item.score}
+                        </td>
+
+                        <td
+                          className="
+                    border
+                    border-[var(--border)]
+                    p-3
+                    text-center
+                  "
+                        >
+                          {item.distanceKm?.toFixed(2)} km
+                        </td>
+
+                        <td
+                          className="
+                    border
+                    border-[var(--border)]
+                    p-3
+                  "
+                        >
+                          {item.address}
+                        </td>
+
+                        <td
+                          className="
+    border
+    border-[var(--border)]
+    p-3
+    text-center
+  "
+                        >
+                          {usedBy >= 0 && (
+                            <div className="mb-2 flex justify-center">
+                              <span
+                                className={`
+        rounded-full
+        px-2
+        py-1
+        text-xs
+        text-white
+        ${isCurrent ? "bg-green-600" : "bg-blue-500"}
+      `}
+                              >
+                                {isCurrent
+                                  ? `Đang chọn (TSSS ${usedBy + 1})`
+                                  : `TSSS ${usedBy + 1}`}
+                              </span>
+                            </div>
+                          )}
+
+                          <button
+                            disabled={isCurrent}
+                            className="
+  rounded-lg
+  bg-[var(--primary)]
+  px-3
+  py-2
+  text-white
+  transition-all
+  hover:opacity-90
+  disabled:bg-green-600
+  disabled:opacity-100
+  disabled:cursor-not-allowed
+"
+                            onClick={() => {
+                              handleComparableChange(selectingColumn!, item.id);
+
+                              setSelectingColumn(null);
+                            }}
+                          >
+                            {isCurrent ? "Đang chọn" : "Chọn"}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -612,17 +932,36 @@ function ComparableValueCell({
   );
 }
 
-function getComparableHeaderLabel(
-  index: number,
-  comparable?: ComparablePropertyWithMeta,
-) {
-  if (!comparable?.score) {
-    return `TSSS ${index}`;
-  }
+function ComparableHeader({
+  index,
+  comparable,
+  onOpen,
+}: {
+  index: number;
+  comparable?: ComparablePropertyWithMeta;
+  onOpen: () => void;
+}) {
+  return (
+    <div className="flex items-center justify-center gap-2">
+      <span>{getComparableHeaderLabel(index, comparable)}</span>
 
-  return `TSSS ${index} (${Math.round(comparable.score)} điểm)`;
+      <button
+        type="button"
+        onClick={onOpen}
+        className="
+    rounded-md
+    border
+    border-[var(--border)]
+    p-1
+    hover:bg-[var(--hover)]
+  "
+        title="Chọn BĐS so sánh"
+      >
+        <Filter size={14} />
+      </button>
+    </div>
+  );
 }
-
 function getComparableValue(
   comparable: ComparablePropertyWithMeta | undefined,
   fieldKey: string,
@@ -634,8 +973,13 @@ function getComparableValue(
   switch (fieldKey) {
     case "source":
       return comparable.source ?? "";
-    case "contact":
-      return comparable.contact ?? "";
+    case "contact": {
+      const parts = [comparable.contact_name, comparable.contact_phone].filter(
+        Boolean,
+      );
+
+      return parts.join(" - ");
+    }
     case "appraisalDate":
       return comparable.created_at
         ? new Date(comparable.created_at).toLocaleDateString("vi-VN")
@@ -655,7 +999,9 @@ function getComparableValue(
           ? "Có lợi thế"
           : "Không có lợi thế";
     case "trafficLocation":
-      return comparable.traffic_location ?? "";
+      return comparable.distanceKm !== undefined
+        ? `Cách TSTĐ ${comparable.distanceKm.toFixed(2)} km`
+        : "";
     case "environment":
       return comparable.environment ?? "";
     case "area":
@@ -675,10 +1021,23 @@ function getComparableValue(
         ? `${comparable.max_depth} m`
         : "";
     case "landShape":
-      return comparable.land_shape ?? "";
+      return comparable.land_shape
+        ? (LAND_SHAPE_LABELS[comparable.land_shape] ?? comparable.land_shape)
+        : "";
     case "assetOnLand":
       return comparable.asset_on_land ?? "";
     default:
       return "";
   }
+}
+
+function getComparableHeaderLabel(
+  index: number,
+  comparable?: ComparablePropertyWithMeta,
+) {
+  if (!comparable) {
+    return `TSSS ${index}`;
+  }
+
+  return `TSSS ${index} (${comparable.score}đ)`;
 }
