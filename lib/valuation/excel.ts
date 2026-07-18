@@ -77,7 +77,7 @@ export async function buildValuationWorkbook(
     [
       "4",
       "Địa chỉ",
-      form.address,
+      "",
       comparables[0]?.address ?? "",
       comparables[1]?.address ?? "",
       comparables[2]?.address ?? "",

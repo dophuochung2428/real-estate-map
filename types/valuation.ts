@@ -25,4 +25,7 @@ export interface ValuationSearchForm {
   landShape: string;
 
   assetOnLand: string;
+
+  latitude: string;
+  longitude: string;
 }

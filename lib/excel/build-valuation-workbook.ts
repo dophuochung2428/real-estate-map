@@ -113,7 +113,7 @@ export async function buildValuationWorkbook(form: any, comparables: any[]) {
     c3.created_at,
   );
 
-  addRow("4", "Địa chỉ", form.address, c1.address, c2.address, c3.address);
+  addRow("4", "Địa chỉ", "", c1.address, c2.address, c3.address);
 
   const legalStatusText = (value: boolean | null | undefined) =>
     value

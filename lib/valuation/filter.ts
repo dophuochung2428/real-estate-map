@@ -1,7 +1,6 @@
 import { Property } from "@/types/property";
 import { ValuationSearchForm } from "@/types/valuation";
 import { calculateScore, normalizeText } from "./score";
-import { geocodeAddress } from "./geocode";
 import { calculateDistanceKm } from "./distance";
 
 export type ComparableProperty = Property & {
@@ -54,9 +53,10 @@ export async function filterComparableProperties(
   properties: Property[],
   form: ValuationSearchForm,
 ): Promise<ComparableProperty[]> {
-  const targetLocation = await geocodeAddress(form.address);
+  const targetLat = Number(form.latitude);
+  const targetLng = Number(form.longitude);
 
-  if (!targetLocation) {
+  if (Number.isNaN(targetLat) || Number.isNaN(targetLng)) {
     return [];
   }
 
@@ -68,8 +68,8 @@ export async function filterComparableProperties(
   const propertiesWithDistance = filteredProperties.map((property) => ({
     ...property,
     distanceKm: calculateDistanceKm(
-      targetLocation.lat,
-      targetLocation.lng,
+      targetLat,
+      targetLng,
       property.lat,
       property.lng,
     ),
@@ -101,21 +101,19 @@ export async function filterComparableProperties(
     candidateProperties = propertiesWithDistance;
   }
 
-  const scoredProperties = scoreProperties(candidateProperties, form);
+  const topCandidates = prioritizeLegalStatus(
+    scoreProperties(candidateProperties, form),
+    form,
+  ).slice(0, 3);
 
-  // const scoredProperties = scoreProperties(propertiesWithDistance, form);
+  const nearestProperties = scoreProperties(propertiesWithDistance, form).sort(
+    (a, b) => a.distanceKm - b.distanceKm,
+  );
 
-  // console.table(
-  //   candidateProperties
-  //     .sort((a, b) => a.distanceKm - b.distanceKm)
-  //     .slice(0, 20)
-  //     .map((p) => ({
-  //       distanceKm: p.distanceKm.toFixed(2),
-  //       area: p.area,
-  //       district: p.district,
-  //       address: p.address,
-  //     })),
-  // );
+  const selectedIds = new Set(topCandidates.map((p) => p.id));
 
-  return prioritizeLegalStatus(scoredProperties, form).slice(0, 50);
+  return [
+    ...topCandidates,
+    ...nearestProperties.filter((p) => !selectedIds.has(p.id)),
+  ].slice(0, 50);
 }

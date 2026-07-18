@@ -47,6 +47,9 @@ export default function ValuationWorkspace() {
     landShape: "",
 
     assetOnLand: "",
+
+    latitude: "",
+    longitude: "",
   });
 
   const [candidates, setCandidates] = useState<ComparablePropertyWithMeta[]>(
@@ -330,14 +333,56 @@ export default function ValuationWorkspace() {
               comparables={comparables}
             />
 
-            <EditableInputRow
+            {/* <EditableInputRow
               stt="4"
               label="Địa chỉ"
               value={form.address}
               fieldKey="address"
               comparables={comparables}
               onChange={(v) => updateField("address", v)}
-            />
+            /> */}
+
+            <tr>
+              <td className="border border-[var(--border)] p-3 text-center">
+                4
+              </td>
+
+              <td className="border border-[var(--border)] p-3">Tọa độ</td>
+
+              <td className="border border-[var(--border)] p-3">
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <div className="mb-1 text-xs opacity-70">Lat</div>
+                    <input
+                      value={form.latitude}
+                      onChange={(e) => updateField("latitude", e.target.value)}
+                      className="w-full rounded-lg border border-[var(--border)] px-3 py-2"
+                    />
+                  </div>
+
+                  <div>
+                    <div className="mb-1 text-xs opacity-70">Lng</div>
+                    <input
+                      value={form.longitude}
+                      onChange={(e) => updateField("longitude", e.target.value)}
+                      className="w-full rounded-lg border border-[var(--border)] px-3 py-2"
+                    />
+                  </div>
+                </div>
+              </td>
+
+              <td className="border border-[var(--border)] p-3">
+                {comparables[0]?.address ?? "-"}
+              </td>
+
+              <td className="border border-[var(--border)] p-3">
+                {comparables[1]?.address ?? "-"}
+              </td>
+
+              <td className="border border-[var(--border)] p-3">
+                {comparables[2]?.address ?? "-"}
+              </td>
+            </tr>
 
             <EditableSelectRow
               stt="5"
