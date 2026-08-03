@@ -242,7 +242,7 @@ export async function buildValuationWorkbook(form: any, comparables: any[]) {
     "",
   );
 
-  addRow("17", "Giá bán/rao bán (đồng)", "", "", "", "");
+  addRow("17", "Giá bán/rao bán (đồng)", "", c1.price , c2.price, c3.price);
 
   addRow("18", "Giá thương lượng (đồng)", "", "", "", "");
 
@@ -797,7 +797,7 @@ export async function buildValuationWorkbook(form: any, comparables: any[]) {
     orientation: "landscape",
     paperSize: 9,
     fitToPage: true,
-    fitToWidth: 1,
+    fitToWidth: 1,  
     fitToHeight: 0,
   };
 
