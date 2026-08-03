@@ -244,7 +244,7 @@ export async function buildValuationWorkbook(form: any, comparables: any[]) {
 
   addRow("17", "Giá bán/rao bán (đồng)", "", c1.price , c2.price, c3.price);
 
-  addRow("18", "Giá thương lượng (đồng)", "", "", "", "");
+  addRow("18", "Giá thương lượng (đồng)", "", c1.price*0.9, c2.price*0.9, c3.price*0.9);
 
   addRow(
     "19",
