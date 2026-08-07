@@ -3,9 +3,15 @@ import { NextResponse } from "next/server";
 import { buildValuationWorkbook } from "@/lib/excel/build-valuation-workbook";
 
 export async function POST(req: Request) {
-  const { form, comparables } = await req.json();
+  const { form, comparables, negotiationRatios, adjustmentData } =
+    await req.json();
 
-  const workbook = await buildValuationWorkbook(form, comparables);
+  const workbook = await buildValuationWorkbook(
+    form,
+    comparables,
+    negotiationRatios,
+    adjustmentData,
+  );
 
   const buffer = await workbook.xlsx.writeBuffer();
 

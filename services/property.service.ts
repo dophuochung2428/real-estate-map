@@ -69,6 +69,28 @@ export async function createProperty(payload: any) {
 
       asset_on_land: payload.asset_on_land ?? null,
 
+      structure: payload.structure ?? null,
+
+      floors: payload.floors ? Number(payload.floors) : null,
+
+      usable_floor_area: payload.usable_floor_area
+        ? Number(payload.usable_floor_area)
+        : null,
+
+      remaining_value_ratio: payload.remaining_value_ratio
+        ? Number(payload.remaining_value_ratio)
+        : null,
+
+      construction_unit_price: payload.construction_unit_price
+        ? Number(payload.construction_unit_price)
+        : null,
+
+      resolution_land_price: payload.resolution_land_price ?? null,
+
+      odt_land_price: payload.odt_land_price
+        ? Number(payload.odt_land_price)
+        : null,
+
       // If any appraisal field present, mark as completed
       appraisal_completed_at:
         payload.contact_name ||
@@ -80,6 +102,13 @@ export async function createProperty(payload: any) {
         payload.max_depth ||
         payload.land_shape ||
         payload.asset_on_land ||
+        payload.structure ||
+        payload.floors ||
+        payload.usable_floor_area ||
+        payload.remaining_value_ratio ||
+        payload.construction_unit_price ||
+        payload.resolution_land_price ||
+        payload.odt_land_price ||
         typeof payload.legal_status !== "undefined" ||
         typeof payload.business_advantage !== "undefined"
           ? new Date().toISOString()
@@ -327,6 +356,28 @@ export async function updateAppraisal(id: string, payload: any) {
       land_shape: payload.land_shape,
 
       asset_on_land: payload.asset_on_land,
+
+      structure: payload.structure,
+
+      floors: payload.floors ? Number(payload.floors) : null,
+
+      usable_floor_area: payload.usable_floor_area
+        ? Number(payload.usable_floor_area)
+        : null,
+
+      remaining_value_ratio: payload.remaining_value_ratio
+        ? Number(payload.remaining_value_ratio)
+        : null,
+
+      construction_unit_price: payload.construction_unit_price
+        ? Number(payload.construction_unit_price)
+        : null,
+
+      resolution_land_price: payload.resolution_land_price ?? null,
+
+      odt_land_price: payload.odt_land_price
+        ? Number(payload.odt_land_price)
+        : null,
 
       appraisal_completed_at: new Date().toISOString(),
     })

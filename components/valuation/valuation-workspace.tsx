@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { ComparableProperty } from "@/lib/valuation/filter";
-import { ValuationSearchForm } from "@/types/valuation";
+import { ValuationDetailForm, ValuationSearchForm } from "@/types/valuation";
+import ValuationDetailSection from "@/components/valuation/valuation-detail-section";
 import { Filter } from "lucide-react";
+import ValuationAdjustmentTable from "./valuation-adjustment-table";
 
-type ComparablePropertyWithMeta = ComparableProperty & {
+export type ComparablePropertyWithMeta = ComparableProperty & {
   source?: string;
   contact?: string;
   created_at?: string | null;
@@ -20,7 +22,7 @@ const LAND_SHAPE_LABELS: Record<string, string> = {
 };
 
 export default function ValuationWorkspace() {
-  const [form, setForm] = useState<ValuationSearchForm>({
+  const [form, setForm] = useState<ValuationSearchForm & ValuationDetailForm>({
     source: "",
     contact: "",
 
@@ -50,6 +52,16 @@ export default function ValuationWorkspace() {
 
     latitude: "",
     longitude: "",
+
+    structure: "",
+    floors: "",
+    usable_floor_area: "",
+    remaining_value_ratio: "",
+    construction_unit_price: "",
+    resolution_land_price: "",
+    odt_land_price: "",
+
+    price: "",
   });
 
   const [candidates, setCandidates] = useState<ComparablePropertyWithMeta[]>(
@@ -65,7 +77,47 @@ export default function ValuationWorkspace() {
 
   const [isExporting, setIsExporting] = useState(false);
 
+  const [viewingComparable, setViewingComparable] =
+    useState<ComparablePropertyWithMeta | null>(null);
+
+  type ConstructionData = {
+    structure: string;
+    floors: string;
+    usableFloorArea: string;
+    remainingQuality: string;
+    constructionUnitPrice: string;
+  };
+
+  const [constructionData, setConstructionData] = useState<ConstructionData>({
+    structure: "",
+    floors: "",
+    usableFloorArea: "",
+    remainingQuality: "",
+    constructionUnitPrice: "",
+  });
+
   const canExport = comparables[0] && comparables[1] && comparables[2];
+
+  const [valuationResult, setValuationResult] = useState({
+    negotiatedPrices: ["", "", ""],
+    landUnitPrices: ["", "", ""],
+  });
+
+  const [adjustmentData, setAdjustmentData] = useState<{
+    ratios: number[][];
+    adjustments: number[][];
+    results: number[][];
+    sizeInputs: number[];
+    adjustmentRange: string[];
+  }>({
+    ratios: [],
+    adjustments: [],
+    results: [],
+    sizeInputs: [],
+    adjustmentRange: [],
+  });
+
+  const [negotiationRatios, setNegotiationRatios] = useState(["", "", "", ""]);
 
   async function handleExport() {
     if (!canExport) {
@@ -84,6 +136,8 @@ export default function ValuationWorkspace() {
         body: JSON.stringify({
           form,
           comparables,
+          negotiationRatios,
+          adjustmentData,
         }),
       });
 
@@ -528,8 +582,24 @@ export default function ValuationWorkspace() {
               comparables={comparables}
               onChange={(v) => updateField("assetOnLand", v)}
             />
+
+            <ValuationDetailSection
+              comparables={comparables}
+              form={form}
+              updateField={updateField}
+              negotiationRatios={negotiationRatios}
+              setNegotiationRatios={setNegotiationRatios}
+              setValuationResult={setValuationResult}
+            />
           </tbody>
         </table>
+
+        <ValuationAdjustmentTable
+          form={form}
+          comparables={comparables}
+          valuationResult={valuationResult}
+          setAdjustmentData={setAdjustmentData}
+        />
       </div>
       {selectingColumn !== null && (
         <div
@@ -714,6 +784,18 @@ export default function ValuationWorkspace() {
                           )}
 
                           <button
+                            onClick={() => setViewingComparable(item)}
+                            className="
+    rounded-lg
+    border
+    px-3
+    py-2
+  "
+                          >
+                            Xem
+                          </button>
+
+                          <button
                             disabled={isCurrent}
                             className="
   rounded-lg
@@ -745,11 +827,191 @@ export default function ValuationWorkspace() {
           </div>
         </div>
       )}
+      {viewingComparable && (
+        <div
+          className="
+      fixed
+      inset-0
+      z-[60]
+      flex
+      items-center
+      justify-center
+      bg-black/60
+      backdrop-blur-sm
+    "
+        >
+          <div
+            className="
+        w-[600px]
+        max-h-[85vh]
+        overflow-auto
+        rounded-2xl
+        border
+        border-[var(--border)]
+        bg-[var(--card)]
+        p-6
+        shadow-2xl
+      "
+          >
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="text-xl font-semibold">
+                Chi tiết tài sản so sánh
+              </h2>
+
+              <button
+                onClick={() => setViewingComparable(null)}
+                className="
+            rounded-lg
+            border
+            px-3
+            py-1
+            hover:bg-[var(--hover)]
+          "
+              >
+                Đóng
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <div className="text-xs opacity-60">Địa chỉ</div>
+                <div className="font-medium">
+                  {viewingComparable.address || "-"}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="text-xs opacity-60">Điểm phù hợp</div>
+                  <div className="font-semibold text-green-600">
+                    {viewingComparable.score} điểm
+                  </div>
+                </div>
+
+                <div>
+                  <div className="text-xs opacity-60">Khoảng cách</div>
+                  <div>{viewingComparable.distanceKm?.toFixed(2)} km</div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="text-xs opacity-60">Diện tích</div>
+                  <div>{viewingComparable.area ?? "-"} m²</div>
+                </div>
+
+                <div>
+                  <div className="text-xs opacity-60">Giá</div>
+                  <div>
+                    {viewingComparable.price
+                      ? `${viewingComparable.price} đồng`
+                      : "-"}
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="text-xs opacity-60">Loại diện tích đất</div>
+                  <div className="font-medium">
+                    {viewingComparable.land_area_type ?? "-"}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="text-xs opacity-60">
+                    Diện tích theo mục đích
+                  </div>
+                  <div className="font-medium">
+                    {viewingComparable.land_area
+                      ? `${viewingComparable.land_area} m²`
+                      : "-"}
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="text-xs opacity-60">Chiều rộng mặt tiền</div>
+                  <div className="font-medium">
+                    {viewingComparable.frontage_width
+                      ? `${viewingComparable.frontage_width} m`
+                      : "-"}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="text-xs opacity-60">Chiều sâu</div>
+                  <div className="font-medium">
+                    {viewingComparable.max_depth
+                      ? `${viewingComparable.max_depth} m`
+                      : "-"}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div className="text-xs opacity-60">Pháp lý</div>
+                <div>{viewingComparable.legal_status ? "Có" : "Không"}</div>
+              </div>
+
+              <div>
+                <div className="text-xs opacity-60">Hình thể đất</div>
+                <div>
+                  {LAND_SHAPE_LABELS[viewingComparable.land_shape ?? ""] ??
+                    viewingComparable.land_shape ??
+                    "-"}
+                </div>
+              </div>
+
+              <div>
+                <div className="text-xs opacity-60">Tài sản trên đất</div>
+                <div>{viewingComparable.asset_on_land || "-"}</div>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => setViewingComparable(null)}
+                className="
+            rounded-lg
+            border
+            px-4
+            py-2
+          "
+              >
+                Đóng
+              </button>
+
+              <button
+                onClick={() => {
+                  handleComparableChange(
+                    selectingColumn!,
+                    viewingComparable.id,
+                  );
+
+                  setViewingComparable(null);
+                  setSelectingColumn(null);
+                }}
+                className="
+            rounded-lg
+            bg-[var(--primary)]
+            px-4
+            py-2
+            text-white
+          "
+              >
+                Chọn TSSS này
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-function EditableInputRow({
+export function EditableInputRow({
   stt,
   label,
   value,
@@ -963,7 +1225,7 @@ function EditableSelectRow({
   );
 }
 
-function ComparableValueCell({
+export function ComparableValueCell({
   comparable,
   fieldKey,
 }: {
@@ -1071,6 +1333,35 @@ function getComparableValue(
         : "";
     case "assetOnLand":
       return comparable.asset_on_land ?? "";
+    case "price":
+      return comparable.price ? `${comparable.price} đồng` : "";
+
+    case "structure":
+      return comparable.structure ?? "";
+
+    case "floors":
+      return comparable.floors ?? "";
+
+    case "usable_floor_area":
+      return comparable.usable_floor_area
+        ? `${comparable.usable_floor_area} m²`
+        : "";
+
+    case "remaining_value_ratio":
+      return comparable.remaining_value_ratio
+        ? `${comparable.remaining_value_ratio}%`
+        : "";
+
+    case "construction_unit_price":
+      return comparable.construction_unit_price
+        ? `${comparable.construction_unit_price} đồng/m²`
+        : "";
+
+    case "resolution_land_price":
+      return comparable.resolution_land_price ?? "";
+
+    case "odt_land_price":
+      return comparable.odt_land_price ?? "";
     default:
       return "";
   }

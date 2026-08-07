@@ -65,6 +65,13 @@ const initialForm: CreatePropertyPayload = {
   max_depth: "",
   land_shape: "",
   asset_on_land: "",
+  structure: "",
+  floors: "",
+  usable_floor_area: "",
+  remaining_value_ratio: "",
+  construction_unit_price: "",
+  resolution_land_price: "",
+  odt_land_price: "",
 };
 
 export default function PropertyForm({ mode, initialData }: Props) {
@@ -202,6 +209,14 @@ export default function PropertyForm({ mode, initialData }: Props) {
             "max_depth",
             "land_shape",
             "asset_on_land",
+
+            "structure",
+            "floors",
+            "usable_floor_area",
+            "remaining_value_ratio",
+            "construction_unit_price",
+            "resolution_land_price",
+            "odt_land_price",
           ];
 
           const hasAppraisalChanged = appraisalFields.some((f) => {

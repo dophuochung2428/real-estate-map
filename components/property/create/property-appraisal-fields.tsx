@@ -219,6 +219,125 @@ export default function PropertyAppraisalFields({
             className="w-full rounded-2xl border border-[var(--border)] bg-transparent p-4 outline-none"
           />
         </div>
+
+        <div className="grid gap-5 md:grid-cols-2">
+          <div>
+            <label className="mb-2 block font-medium">Kết cấu</label>
+
+            <input
+              value={form.structure}
+              onChange={(e) =>
+                setForm((prev: any) => ({
+                  ...prev,
+                  structure: e.target.value,
+                }))
+              }
+              className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block font-medium">Số tầng</label>
+
+            <input
+              value={form.floors}
+              onChange={(e) =>
+                setForm((prev: any) => ({
+                  ...prev,
+                  floors: e.target.value.replace(/[^\d]/g, ""),
+                }))
+              }
+              className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
+            />
+          </div>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-2">
+          <div>
+            <label className="mb-2 block font-medium">
+              Diện tích sàn sử dụng (m²)
+            </label>
+
+            <input
+              value={form.usable_floor_area}
+              onChange={(e) =>
+                setForm((prev: any) => ({
+                  ...prev,
+                  usable_floor_area: e.target.value.replace(/[^\d.]/g, ""),
+                }))
+              }
+              className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block font-medium">
+              Tỉ lệ GTCL (%) đề xuất
+            </label>
+
+            <input
+              value={form.remaining_value_ratio}
+              onChange={(e) =>
+                setForm((prev: any) => ({
+                  ...prev,
+                  remaining_value_ratio: e.target.value.replace(/[^\d.]/g, ""),
+                }))
+              }
+              className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
+              placeholder="Ví dụ: 80"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="mb-2 block font-medium">
+            Đơn giá xây dựng (đồng/m²) đề xuất
+          </label>
+
+          <input
+            value={form.construction_unit_price}
+            onChange={(e) =>
+              setForm((prev: any) => ({
+                ...prev,
+                construction_unit_price: e.target.value.replace(/[^\d]/g, ""),
+              }))
+            }
+            className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block font-medium">
+            Đơn giá đất theo Nghị quyết số 16/2025/NQ-HĐND ngày 31/12/2025 của
+            Hội đồng nhân dân tỉnh An Giang
+          </label>
+
+          <input
+            value={form.resolution_land_price}
+            onChange={(e) =>
+              setForm((prev) => ({
+                ...prev,
+                resolution_land_price: e.target.value,
+              }))
+            }
+            className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block font-medium">Đất ODT (đồng/m²)</label>
+
+          <input
+            value={form.odt_land_price}
+            onChange={(e) =>
+              setForm((prev: any) => ({
+                ...prev,
+                odt_land_price: e.target.value.replace(/[^\d]/g, ""),
+              }))
+            }
+            className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
+          />
+        </div>
       </div>
     </div>
   );

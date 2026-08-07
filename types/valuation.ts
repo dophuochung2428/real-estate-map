@@ -29,3 +29,18 @@ export interface ValuationSearchForm {
   latitude: string;
   longitude: string;
 }
+
+export interface ValuationDetailForm {
+  structure: string;
+  floors: string;
+  usable_floor_area: string;
+  remaining_value_ratio: string;
+  construction_unit_price: string;
+
+  price: string;
+
+  negotiation_ratio?: string;
+
+  resolution_land_price: string;
+  odt_land_price: string;
+}

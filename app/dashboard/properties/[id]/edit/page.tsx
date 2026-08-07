@@ -66,6 +66,21 @@ export default async function EditPropertyPage({
 
         asset_on_land: property.asset_on_land ?? "",
 
+        structure: property.structure ?? "",
+
+        floors: property.floors?.toString() ?? "",
+
+        usable_floor_area: property.usable_floor_area?.toString() ?? "",
+
+        remaining_value_ratio: property.remaining_value_ratio?.toString() ?? "",
+
+        construction_unit_price:
+          property.construction_unit_price?.toString() ?? "",
+
+        resolution_land_price: property.resolution_land_price ?? "",
+
+        odt_land_price: property.odt_land_price?.toString() ?? "",
+
         appraisal_completed_at: property.appraisal_completed_at,
       }}
     />

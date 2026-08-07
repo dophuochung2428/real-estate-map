@@ -74,5 +74,17 @@ export interface Property {
 
   asset_on_land?: string;
 
+  structure?: string;
+  floors?: string;
+  usable_floor_area?: string;
+
+  remaining_value_ratio?: string;
+
+  construction_unit_price?: string;
+
+  resolution_land_price?: string;
+
+  odt_land_price?: string;
+
   appraisal_completed_at?: string | null;
 }

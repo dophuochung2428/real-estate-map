@@ -48,6 +48,14 @@ export interface CreatePropertyPayload {
   land_shape?: string;
 
   asset_on_land?: string;
+
+  structure?: string; // Kết cấu
+  floors?: string; // Số tầng
+  usable_floor_area?: string; // Diện tích sàn sử dụng
+  remaining_value_ratio?: string; // Tỉ lệ GTCL (%)
+  construction_unit_price?: string; // Đơn giá xây dựng
+  resolution_land_price?: string; // Đơn giá đất theo NQ 16
+  odt_land_price: string;
 }
 
 export interface UpdateAppraisalPayload {
@@ -69,4 +77,12 @@ export interface UpdateAppraisalPayload {
   land_shape?: string;
 
   asset_on_land?: string;
+
+  structure?: string; // Kết cấu
+  floors?: string; // Số tầng
+  usable_floor_area?: string; // Diện tích sàn sử dụng
+  remaining_value_ratio?: string; // Tỉ lệ GTCL (%)
+  construction_unit_price?: string; // Đơn giá xây dựng
+  resolution_land_price?: string; // Đơn giá đất theo NQ 16
+  odt_land_price?: string;
 }

@@ -8,7 +8,24 @@ const LAND_SHAPE_LABELS: Record<string, string> = {
   irregular: "Không đều",
 };
 
-export async function buildValuationWorkbook(form: any, comparables: any[]) {
+function parsePercent(value: string | number) {
+  if (value === undefined || value === null) return 0;
+
+  return Number(String(value).replace(/%/g, "").trim()) || 0;
+}
+
+export async function buildValuationWorkbook(
+  form: any,
+  comparables: any[],
+  negotiationRatios: string[],
+  adjustmentData: {
+    ratios: number[][];
+    adjustments: number[][];
+    results: number[][];
+    sizeInputs: number[];
+    adjustmentRange: string[]; // thêm
+  },
+) {
   const workbook = new ExcelJS.Workbook();
 
   const sheet = workbook.addWorksheet("Thẩm định giá", {
@@ -221,15 +238,36 @@ export async function buildValuationWorkbook(form: any, comparables: any[]) {
     c3.asset_on_land,
   );
 
-  addRow("14.1", "Kết cấu", "", "", "", "");
+  addRow("14.1", "Kết cấu", "", c1.structure, c2.structure, c3.structure);
 
-  addRow("14.2", "Số tầng", "", "", "", "");
+  addRow("14.2", "Số tầng", "", c1.floors, c2.floors, c3.floors);
 
-  addRow("14.3", "Diện tích sàn sử dụng (m²)", "", "", "", "");
+  addRow(
+    "14.3",
+    "Diện tích sàn sử dụng (m²)",
+    "",
+    c1.usable_floor_area,
+    c2.usable_floor_area,
+    c3.usable_floor_area,
+  );
 
-  addRow("14.4", "Tỷ lệ GTCL (%) đề xuất", "", "", "", "");
+  addRow(
+    "14.4",
+    "Tỷ lệ GTCL (%) đề xuất",
+    "",
+    c1.remaining_value_ratio + "%",
+    c2.remaining_value_ratio + "%",
+    c3.remaining_value_ratio + "%",
+  );
 
-  addRow("14.5", "Đơn giá xây dựng (đồng/m²) đề xuất", "", "", "", "");
+  addRow(
+    "14.5",
+    "Đơn giá xây dựng (đồng/m²) đề xuất",
+    "",
+    c1.construction_unit_price,
+    c2.construction_unit_price,
+    c3.construction_unit_price,
+  );
 
   addRow("15", "Tổng giá trị CTXD (đồng)", "", "", "", "");
 
@@ -237,14 +275,23 @@ export async function buildValuationWorkbook(form: any, comparables: any[]) {
     "16",
     "Chi phí chuyển mục đích sử dụng đất từ đất NN sang đất ODT (đồng)",
     "",
-    "",
-    "",
-    "",
+    0,
+    0,
+    0,
   );
 
-  addRow("17", "Giá bán/rao bán (đồng)", "", c1.price , c2.price, c3.price);
+  const negotiationRate = Number(form.negotiationRate ?? 90) / 100;
 
-  addRow("18", "Giá thương lượng (đồng)", "", c1.price*0.9, c2.price*0.9, c3.price*0.9);
+  addRow("17", "Giá bán/rao bán (đồng)", "", c1.price, c2.price, c3.price);
+
+  addRow(
+    "18",
+    "Giá thương lượng (đồng)",
+    "",
+    c1.price * (parsePercent(negotiationRatios[1]) / 100),
+    c2.price * (parsePercent(negotiationRatios[2]) / 100),
+    c3.price * (parsePercent(negotiationRatios[3]) / 100),
+  );
 
   addRow(
     "19",
@@ -428,8 +475,15 @@ export async function buildValuationWorkbook(form: any, comparables: any[]) {
 
   sheet.addRow(["", "", "", "", "", "", ""]);
 
-  sheet.addRow(["", "Tỷ lệ điều chỉnh", "", "", "", "", ""]); // 55
-
+  sheet.addRow([
+    "",
+    "Tỷ lệ điều chỉnh",
+    "",
+    "",
+    `${adjustmentData.ratios[0]?.[0] ?? 0}%`,
+    `${adjustmentData.ratios[0]?.[1] ?? 0}%`,
+    `${adjustmentData.ratios[0]?.[2] ?? 0}%`,
+  ]);
   sheet.addRow(["", "Mức điều chỉnh", "đồng/m²", "", "", "", ""]); // 56
 
   sheet.addRow(["", "Giá sau điều chỉnh", "đồng/m²", "", "", "", ""]); // 57
@@ -438,7 +492,15 @@ export async function buildValuationWorkbook(form: any, comparables: any[]) {
 
   sheet.addRow(["", "", "", "", "", "", ""]);
 
-  sheet.addRow(["", "Tỷ lệ điều chỉnh", "", "", "", "", ""]); // 59
+  sheet.addRow([
+    "",
+    "Tỷ lệ điều chỉnh",
+    "",
+    "",
+    `${adjustmentData.ratios[1]?.[0] ?? 0}%`,
+    `${adjustmentData.ratios[1]?.[1] ?? 0}%`,
+    `${adjustmentData.ratios[1]?.[2] ?? 0}%`,
+  ]);
 
   sheet.addRow(["", "Mức điều chỉnh", "đồng/m²", "", "", "", ""]); // 60
 
@@ -456,7 +518,15 @@ export async function buildValuationWorkbook(form: any, comparables: any[]) {
 
   sheet.addRow(["", "", "", "", "", "", ""]);
 
-  sheet.addRow(["", "Tỷ lệ điều chỉnh", "", "", "", "", ""]); // 63
+  sheet.addRow([
+    "",
+    "Tỷ lệ điều chỉnh",
+    "",
+    "",
+    `${adjustmentData.ratios[2]?.[0] ?? 0}%`,
+    `${adjustmentData.ratios[2]?.[1] ?? 0}%`,
+    `${adjustmentData.ratios[2]?.[2] ?? 0}%`,
+  ]);
 
   sheet.addRow(["", "Mức điều chỉnh", "đồng/m²", "", "", "", ""]); // 64
 
@@ -466,7 +536,15 @@ export async function buildValuationWorkbook(form: any, comparables: any[]) {
 
   sheet.addRow(["", "", "", "", "", "", ""]);
 
-  sheet.addRow(["", "Tỷ lệ điều chỉnh", "", "", "", "", ""]); // 67
+  sheet.addRow([
+    "",
+    "Tỷ lệ điều chỉnh",
+    "",
+    "",
+    `${adjustmentData.ratios[3]?.[0] ?? 0}%`,
+    `${adjustmentData.ratios[3]?.[1] ?? 0}%`,
+    `${adjustmentData.ratios[3]?.[2] ?? 0}%`,
+  ]);
 
   sheet.addRow(["", "Mức điều chỉnh", "đồng/m²", "", "", "", ""]); // 68
 
@@ -476,8 +554,15 @@ export async function buildValuationWorkbook(form: any, comparables: any[]) {
 
   sheet.addRow(["", "", "", "", "", "", ""]);
 
-  sheet.addRow(["", "Tỷ lệ điều chỉnh", "", "", "", "", ""]); // 71
-
+  sheet.addRow([
+    "",
+    "Tỷ lệ điều chỉnh",
+    "",
+    "",
+    `${adjustmentData.ratios[4]?.[0] ?? 0}%`,
+    `${adjustmentData.ratios[4]?.[1] ?? 0}%`,
+    `${adjustmentData.ratios[4]?.[2] ?? 0}%`,
+  ]);
   sheet.addRow(["", "Mức điều chỉnh", "đồng/m²", "", "", "", ""]); // 72
 
   sheet.addRow(["", "Giá sau điều chỉnh", "đồng/m²", "", "", "", ""]); // 73
@@ -524,8 +609,15 @@ export async function buildValuationWorkbook(form: any, comparables: any[]) {
 
   sheet.addRow(["", "", "", "", "", "", ""]);
 
-  sheet.addRow(["", "Tỷ lệ điều chỉnh", "", "", "", "", ""]); // 87
-
+  sheet.addRow([
+    "",
+    "Tỷ lệ điều chỉnh",
+    "",
+    "",
+    `${adjustmentData.ratios[8]?.[0] ?? 0}%`,
+    `${adjustmentData.ratios[8]?.[1] ?? 0}%`,
+    `${adjustmentData.ratios[8]?.[2] ?? 0}%`,
+  ]);
   sheet.addRow(["", "Mức điều chỉnh", "đồng/m²", "", "", "", ""]); // 88
 
   sheet.addRow(["", "Giá sau điều chỉnh", "đồng/m²", "", "", "", ""]); // 89
@@ -566,7 +658,15 @@ export async function buildValuationWorkbook(form: any, comparables: any[]) {
 
   sheet.addRow(["2", "Tổng số lần điều chỉnh", "lần", "", "", "", ""]); // 104
 
-  sheet.addRow(["3", "Biên độ điều chỉnh", "%", "", "", "", ""]); // 105
+  sheet.addRow([
+    "3",
+    "Biên độ điều chỉnh",
+    "%",
+    "",
+    adjustmentData.adjustmentRange[0] ?? "",
+    adjustmentData.adjustmentRange[1] ?? "",
+    adjustmentData.adjustmentRange[2] ?? "",
+  ]); // 105
 
   sheet.addRow([
     "4",
@@ -797,7 +897,7 @@ export async function buildValuationWorkbook(form: any, comparables: any[]) {
     orientation: "landscape",
     paperSize: 9,
     fitToPage: true,
-    fitToWidth: 1,  
+    fitToWidth: 1,
     fitToHeight: 0,
   };
 
@@ -900,9 +1000,9 @@ export async function buildValuationWorkbook(form: any, comparables: any[]) {
       formula: `${col}21*${col}22*${col}23`,
     };
 
-    sheet.getCell(`${col}25`).value = {
-      formula: `(${col}34-${col}14)*(${col}31-${col}32)+(${col}11-${col}34)*(${col}31*${col}36-${col}32*${col}37)`,
-    };
+    // sheet.getCell(`${col}25`).value = {
+    //   formula: `(${col}34-${col}14)*(${col}31-${col}32)+(${col}11-${col}34)*(${col}31*${col}36-${col}32*${col}37)`,
+    // };
 
     sheet.getCell(`${col}28`).value = {
       formula: `${col}27-${col}24+${col}25`,
@@ -1052,12 +1152,20 @@ export async function buildValuationWorkbook(form: any, comparables: any[]) {
     };
   });
 
+  sheet.getCell("H79").value = adjustmentData.sizeInputs[5] ?? 0; // C6
+  sheet.getCell("H84").value = adjustmentData.sizeInputs[6] ?? 0; // C7
+  sheet.getCell("H89").value = adjustmentData.sizeInputs[7] ?? 0; // C8
+
   sheet.getCell("I79").value = {
     formula: "ROUND((E79-$D$79)/$H$79,1)",
   };
 
   sheet.getCell("J79").value = {
     formula: "ROUND((F79-$D$79)/$H$79,1)",
+  };
+
+  sheet.getCell("K79").value = {
+    formula: "ROUND((G79-$D$79)/$H$79,1)",
   };
 
   ["E", "F", "G"].forEach((col) => {
@@ -1096,6 +1204,10 @@ export async function buildValuationWorkbook(form: any, comparables: any[]) {
     formula: "ROUND(($D$84-F84)/$H$84,1)",
   };
 
+  sheet.getCell("K84").value = {
+    formula: "ROUND(($D$84-G84)/$H$84,1)",
+  };
+
   ["E", "F", "G"].forEach((col) => {
     sheet.getCell(`${col}85`).value = {
       formula: `IF(${col}86=0,"tương đồng",IF(${col}86>0,"kém lợi thế hơn",IF(${col}86<0,"lợi thế hơn","")))`,
@@ -1130,6 +1242,10 @@ export async function buildValuationWorkbook(form: any, comparables: any[]) {
 
   sheet.getCell("J89").value = {
     formula: "ROUND((F89-$D$89)/$H$89,1)",
+  };
+
+  sheet.getCell("K89").value = {
+    formula: "ROUND((G89-$D$89)/$H$89,1)",
   };
 
   ["E", "F", "G"].forEach((col) => {
