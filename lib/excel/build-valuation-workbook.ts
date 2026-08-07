@@ -1013,6 +1013,16 @@ export async function buildValuationWorkbook(
     };
   });
 
+  const sourceRows = [57, 62, 67, 72, 77, 82, 87, 92, 97];
+
+  sourceRows.forEach((sourceRow, index) => {
+    const targetRow = 39 + index;
+
+    sheet.getCell(`G${targetRow}`).value = {
+      formula: `IF(AND(E${sourceRow}=0,F${sourceRow}=0,G${sourceRow}=0),"Không điều chỉnh","Có điều chỉnh")`,
+    };
+  });
+
   ["E", "F", "G"].forEach((col) => {
     sheet.getCell(`${col}51`).value = {
       formula: `${col}27`,
