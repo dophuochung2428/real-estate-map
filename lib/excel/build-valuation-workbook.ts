@@ -255,9 +255,9 @@ export async function buildValuationWorkbook(
     "14.4",
     "Tỷ lệ GTCL (%) đề xuất",
     "",
-    c1.remaining_value_ratio + "%",
-    c2.remaining_value_ratio + "%",
-    c3.remaining_value_ratio + "%",
+    c1.remaining_value_ratio != null ? `${c1.remaining_value_ratio}%` : "",
+    c2.remaining_value_ratio != null ? `${c2.remaining_value_ratio}%` : "",
+    c3.remaining_value_ratio != null ? `${c3.remaining_value_ratio}%` : "",
   );
 
   addRow(
@@ -997,7 +997,7 @@ export async function buildValuationWorkbook(
 
   ["E", "F", "G"].forEach((col) => {
     sheet.getCell(`${col}24`).value = {
-      formula: `${col}21*${col}22*${col}23`,
+      formula: `IF(OR(${col}21="",${col}22="",${col}23=""),0,${col}21*${col}22*${col}23)`,
     };
 
     // sheet.getCell(`${col}25`).value = {

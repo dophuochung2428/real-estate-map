@@ -21,6 +21,8 @@ interface Props {
   onAdjustmentChange?: (values: number[]) => void;
   onRatioChange?: (values: number[]) => void;
   onBaseValueChange?: (value: number) => void;
+
+  required?: boolean;
 }
 
 type CalculationType = "manual" | "size";
@@ -41,6 +43,7 @@ export default function AdjustmentFactor({
   onAdjustmentChange,
   onRatioChange,
   onBaseValueChange,
+  required = false,
 }: Props) {
   const [inputValue, setInputValue] = useState("");
   const [ratios, setRatios] = useState(["", "", ""]);
@@ -107,7 +110,11 @@ export default function AdjustmentFactor({
       <tr>
         <td className="border p-2 text-center font-bold">{code}</td>
 
-        <td className="border p-2 font-semibold">{title}</td>
+        <td className="border p-2 font-semibold">
+          {title}
+
+          {required && <span className="ml-1 text-red-500">*</span>}
+        </td>
 
         <td className="border p-2"></td>
 
@@ -140,14 +147,20 @@ export default function AdjustmentFactor({
 
                   onBaseValueChange?.(Number(value) || 0);
                 }}
-                className="
-          w-full
-          rounded
-          border
-          px-2
-          py-1
-          text-right
-        "
+                className={`
+                  w-full
+                  rounded
+                  border
+                  px-2
+                  py-1
+                  text-right
+                  outline-none
+                  ${
+                    required && !inputValue.trim()
+                      ? "border-red-500 focus:border-red-500"
+                      : "border-[var(--border)] focus:border-[var(--primary)]"
+                  }
+                `}
               />
             </td>
 

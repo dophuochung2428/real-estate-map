@@ -501,6 +501,7 @@ export default function ValuationWorkspace() {
               fieldKey="area"
               comparables={comparables}
               onChange={(v) => updateField("area", v)}
+              required
             />
 
             <EditableSelectRow
@@ -554,6 +555,7 @@ export default function ValuationWorkspace() {
               fieldKey="frontageWidth"
               comparables={comparables}
               onChange={(v) => updateField("frontageWidth", v)}
+              required
             />
 
             <EditableInputRow
@@ -563,6 +565,7 @@ export default function ValuationWorkspace() {
               fieldKey="maxDepth"
               comparables={comparables}
               onChange={(v) => updateField("maxDepth", v)}
+              required
             />
 
             <EditableInputRow
@@ -1018,6 +1021,7 @@ export function EditableInputRow({
   fieldKey,
   comparables,
   onChange,
+  required = false,
 }: {
   stt: string;
   label: string;
@@ -1025,7 +1029,10 @@ export function EditableInputRow({
   fieldKey: string;
   comparables: ComparablePropertyWithMeta[];
   onChange: (value: string) => void;
+  required?: boolean;
 }) {
+  const isEmpty = !value?.trim();
+
   return (
     <tr>
       <td
@@ -1050,6 +1057,8 @@ export function EditableInputRow({
         "
       >
         {label}
+
+        {required && <span className="ml-1 text-red-500">*</span>}
       </td>
 
       <td
@@ -1062,19 +1071,22 @@ export function EditableInputRow({
         <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="
+          className={`
             w-full
             rounded-lg
             border
-            border-[var(--border)]
             bg-[var(--background)]
             px-3
             py-2
             text-[var(--foreground)]
             outline-none
-
-            focus:border-[var(--primary)]
-          "
+            transition-colors
+            ${
+              required && isEmpty
+                ? "border-red-500 focus:border-red-500"
+                : "border-[var(--border)] focus:border-[var(--primary)]"
+            }
+          `}
         />
       </td>
 

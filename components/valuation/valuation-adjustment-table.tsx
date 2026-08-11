@@ -393,6 +393,7 @@ export default function ValuationAdjustmentTable({
                 onBaseValueChange={(value) =>
                   handleBaseValueChange(index, value)
                 }
+                required={["C6", "C7", "C8"].includes(factor.code)}
               />
             ))}
           </>

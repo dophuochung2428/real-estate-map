@@ -248,6 +248,7 @@ export default function PropertyAppraisalFields({
                 }))
               }
               className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
+              placeholder="Ví dụ: 2"
             />
           </div>
         </div>
@@ -267,6 +268,7 @@ export default function PropertyAppraisalFields({
                 }))
               }
               className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
+              placeholder="Ví dụ: 120"
             />
           </div>
 
@@ -303,6 +305,7 @@ export default function PropertyAppraisalFields({
               }))
             }
             className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
+            placeholder="Ví dụ: 5000000"
           />
         </div>
 
@@ -321,6 +324,7 @@ export default function PropertyAppraisalFields({
               }))
             }
             className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
+            placeholder="Ví dụ: Text"
           />
         </div>
 
