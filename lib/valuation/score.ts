@@ -91,14 +91,19 @@ export function calculateScore(
   }
 
   // LAND AREA TYPE
-  const formLandAreaType = normalizeText(form.landAreaType);
-  const propertyLandAreaType = normalizeText(property.land_area_type);
+  // LAND AREA TYPE
+  const formLandAreas = form.landAreas ?? [];
 
-  if (
-    formLandAreaType &&
-    propertyLandAreaType &&
-    formLandAreaType === propertyLandAreaType
-  ) {
+  const matchedLandAreas = property.landAreas?.filter((propertyLandArea) =>
+    formLandAreas.some(
+      (formLandArea) =>
+        formLandArea.type &&
+        normalizeText(formLandArea.type) ===
+          normalizeText(propertyLandArea.type),
+    ),
+  );
+
+  if (matchedLandAreas && matchedLandAreas.length > 0) {
     score += 15;
   }
 
@@ -121,18 +126,27 @@ export function calculateScore(
   }
 
   // LAND AREA
-  const formLandArea = Number(form.landArea);
-  const propertyLandArea = property.land_area;
+  // LAND AREA
+  for (const formLandArea of formLandAreas) {
+    if (!formLandArea.type || !formLandArea.area) continue;
 
-  if (
-    formLandArea > 0 &&
-    propertyLandArea !== undefined &&
-    propertyLandArea > 0
-  ) {
-    score += calculateSimilarityScore(
-      calculatePercentageDifference(formLandArea, propertyLandArea),
-      20,
+    const matchedLandArea = property.landAreas?.find(
+      (propertyLandArea) =>
+        normalizeText(propertyLandArea.type) ===
+        normalizeText(formLandArea.type),
     );
+
+    if (!matchedLandArea) continue;
+
+    const formArea = Number(formLandArea.area);
+    const propertyArea = matchedLandArea.area;
+
+    if (formArea > 0 && propertyArea > 0) {
+      score += calculateSimilarityScore(
+        calculatePercentageDifference(formArea, propertyArea),
+        20,
+      );
+    }
   }
 
   // BUSINESS

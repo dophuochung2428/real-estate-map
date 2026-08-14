@@ -1,3 +1,5 @@
+import { LandAreaFormItem, LandAreaItem } from "./property";
+
 export type UploadImage = {
   image_url: string;
   is_thumbnail: boolean;
@@ -39,8 +41,7 @@ export interface CreatePropertyPayload {
 
   environment?: string;
 
-  land_area_type: "ODT" | "ONT" | "LUC" | "BHK" | "CLN" | null;
-  land_area: string;
+  landAreas: LandAreaFormItem[];
 
   frontage_width?: string;
   max_depth?: string;
@@ -55,7 +56,6 @@ export interface CreatePropertyPayload {
   remaining_value_ratio?: string; // Tỉ lệ GTCL (%)
   construction_unit_price?: string; // Đơn giá xây dựng
   resolution_land_price?: string; // Đơn giá đất theo NQ 16
-  odt_land_price: string;
 }
 
 export interface UpdateAppraisalPayload {
@@ -68,8 +68,7 @@ export interface UpdateAppraisalPayload {
 
   environment?: string;
 
-  land_area_type?: "ODT" | "ONT" | "LUC" | "BHK" | "CLN" | null;
-  land_area?: number;
+  landAreas?: LandAreaItem[];
 
   frontage_width?: number;
   max_depth?: number;
@@ -84,5 +83,4 @@ export interface UpdateAppraisalPayload {
   remaining_value_ratio?: string; // Tỉ lệ GTCL (%)
   construction_unit_price?: string; // Đơn giá xây dựng
   resolution_land_price?: string; // Đơn giá đất theo NQ 16
-  odt_land_price?: string;
 }

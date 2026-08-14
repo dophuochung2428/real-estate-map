@@ -1,5 +1,6 @@
 import { useVietnamAddress } from "@/hooks/use-vietnam-address";
 import { useEffect } from "react";
+import SearchableSelect from "./SearchableSelect";
 
 type Props = {
   form: any;
@@ -164,11 +165,12 @@ export default function PropertyBasicForm({
           )}
         </div>
 
-        <select
+        <SearchableSelect
           value={form.province}
-          onChange={async (e) => {
-            const value = e.target.value;
-
+          options={provinces}
+          placeholder="Chọn tỉnh / thành"
+          error={errors.province}
+          onChange={async (value) => {
             const selected = provinces.find((p) => p.name === value);
 
             setForm((prev: any) => ({
@@ -183,27 +185,15 @@ export default function PropertyBasicForm({
               await updateMapLocation(undefined, value);
             }
           }}
-          className={`h-12 w-full rounded-2xl border bg-[var(--card)] px-4 text-[var(--foreground)] appearance-none
-  ${errors.province ? "border-red-500" : "border-[var(--border)]"}`}
-        >
-          <option value="">Chọn tỉnh / thành</option>
+        />
 
-          {provinces.map((p) => (
-            <option key={p.code} value={p.name}>
-              {p.name}
-            </option>
-          ))}
-        </select>
-        {errors.province && (
-          <p className="mt-2 text-sm text-red-500">{errors.province}</p>
-        )}
-
-        <select
+        <SearchableSelect
           value={form.district}
+          options={districts}
+          placeholder="Chọn quận / huyện"
           disabled={!form.province}
-          onChange={async (e) => {
-            const district = e.target.value;
-
+          error={errors.district}
+          onChange={async (district) => {
             setForm((prev: any) => ({
               ...prev,
               district,
@@ -211,20 +201,7 @@ export default function PropertyBasicForm({
 
             await updateMapLocation(district, form.province);
           }}
-          className={`h-12 w-full rounded-2xl border bg-[var(--card)] px-4 text-[var(--foreground)] appearance-none
-  ${errors.district ? "border-red-500" : "border-[var(--border)]"}`}
-        >
-          <option value="">Chọn quận / huyện</option>
-
-          {districts.map((d) => (
-            <option key={d.code} value={d.name}>
-              {d.name}
-            </option>
-          ))}
-        </select>
-        {errors.district && (
-          <p className="mt-2 text-sm text-red-500">{errors.district}</p>
-        )}
+        />
 
         <div>
           <label className="mb-2 block font-medium">Loại bất động sản</label>

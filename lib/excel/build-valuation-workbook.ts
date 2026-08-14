@@ -8,6 +8,27 @@ const LAND_SHAPE_LABELS: Record<string, string> = {
   irregular: "Không đều",
 };
 
+const getLandTypes = (property: any) => {
+  return (property?.landAreas ?? [])
+    .map((item: any) => item.type)
+    .filter(Boolean)
+    .join(" + ");
+};
+
+const getLandArea = (property: any, types: string[]) => {
+  return (property?.landAreas ?? [])
+    .filter((item: any) => types.includes(item.type))
+    .reduce((sum: number, item: any) => sum + Number(item.area || 0), 0);
+};
+
+const getLandUnitPrice = (property: any, types: string[]) => {
+  const landArea = (property?.landAreas ?? []).find((item: any) =>
+    types.includes(item.type),
+  );
+
+  return landArea?.unit_price ?? "";
+};
+
 function parsePercent(value: string | number) {
   if (value === undefined || value === null) return 0;
 
@@ -192,15 +213,38 @@ export async function buildValuationWorkbook(
   addRow(
     "10",
     "Mục đích sử dụng đất",
-    form.landAreaType,
-    c1.land_area_type,
-    c2.land_area_type,
-    c3.land_area_type,
+    form.landAreas?.[0]?.type ?? "",
+    getLandTypes(c1),
+    getLandTypes(c2),
+    getLandTypes(c3),
   );
 
-  addRow("10.1", "Đất ONT (m²)", "", "", "", "");
+  addRow(
+    "10.1",
+    "Đất ODT (m²)",
+    getLandArea(form, ["ODT"]),
+    getLandArea(c1, ["ODT"]),
+    getLandArea(c2, ["ODT"]),
+    getLandArea(c3, ["ODT"]),
+  );
 
-  addRow("10.2", "Đất CLN (m²)", "", "", "", "");
+  addRow(
+    "10.2",
+    "Đất CLN (m²)",
+    getLandArea(form, ["CLN"]),
+    getLandArea(c1, ["CLN"]),
+    getLandArea(c2, ["CLN"]),
+    getLandArea(c3, ["CLN"]),
+  );
+
+  addRow(
+    "10.3",
+    "Đất HNK/NTS/BHK (m²)",
+    getLandArea(form, ["HNK", "NTS", "BHK"]),
+    getLandArea(c1, ["HNK", "NTS", "BHK"]),
+    getLandArea(c2, ["HNK", "NTS", "BHK"]),
+    getLandArea(c3, ["HNK", "NTS", "BHK"]),
+  );
 
   addRow(
     "11",
@@ -272,8 +316,17 @@ export async function buildValuationWorkbook(
   addRow("15", "Tổng giá trị CTXD (đồng)", "", "", "", "");
 
   addRow(
+    "15",
+    "Chi phí chuyển mục đích sử dụng đất từ đất ODT sang đất CLN (đồng)",
+    "",
+    0,
+    0,
+    0,
+  );
+
+  addRow(
     "16",
-    "Chi phí chuyển mục đích sử dụng đất từ đất NN sang đất ODT (đồng)",
+    "Chi phí chuyển mục đích sử dụng đất từ đất NTS sang đất CLN (đồng)",
     "",
     0,
     0,
@@ -313,35 +366,36 @@ export async function buildValuationWorkbook(
     "",
   );
 
-  addRow("", "Đất ODT (đồng/m²)", "", "", "", "");
+  addRow(
+    "21.1",
+    "Đất ODT (đồng/m²)",
+    getLandUnitPrice(form, ["ODT"]),
+    getLandUnitPrice(c1, ["ODT"]),
+    getLandUnitPrice(c2, ["ODT"]),
+    getLandUnitPrice(c3, ["ODT"]),
+  );
 
-  addRow("", "Đất CLN (đồng/m²)", "", "", "", "");
   addRow(
-    "",
-    "Tổng quá trị QSDĐ đất theo bảng giá của HĐND tỉnh An Giang",
-    "",
-    "",
-    "",
-    "",
+    "21.2",
+    "Đất CLN (đồng/m²)",
+    getLandUnitPrice(form, ["CLN"]),
+    getLandUnitPrice(c1, ["CLN"]),
+    getLandUnitPrice(c2, ["CLN"]),
+    getLandUnitPrice(c3, ["CLN"]),
   );
+
   addRow(
-    "",
-    "Hạn mức chuyển đổi đất ở theo quyết định số …./QĐ-UBND của UBND tỉnh An Giang (m²)",
-    "",
-    "",
-    "",
-    "",
+    "21.3",
+    "Đất HNK/NTS/BHK (đồng/m²)",
+    getLandUnitPrice(form, ["HNK", "NTS", "BHK"]),
+    getLandUnitPrice(c1, ["HNK", "NTS", "BHK"]),
+    getLandUnitPrice(c2, ["HNK", "NTS", "BHK"]),
+    getLandUnitPrice(c3, ["HNK", "NTS", "BHK"]),
   );
-  addRow(
-    "",
-    "Hệ số điều chỉnh giá đất theo Quyết định số …./QĐ-UBND của UBND tỉnh An Giang",
-    "",
-    "",
-    "",
-    "",
-  );
-  addRow("", "Đất ODT", "", "", "", "");
-  addRow("", "Đất CLN/HNK", "", "", "", "");
+
+  addRow("", "", "", "", "", "");
+
+  addRow("", "", "", "", "", "");
 
   sheet.addRow(["Phân tích thông tin thu thập"]);
 
@@ -996,20 +1050,20 @@ export async function buildValuationWorkbook(
   // FORMULA
 
   ["E", "F", "G"].forEach((col) => {
-    sheet.getCell(`${col}24`).value = {
-      formula: `IF(OR(${col}21="",${col}22="",${col}23=""),0,${col}21*${col}22*${col}23)`,
+    sheet.getCell(`${col}25`).value = {
+      formula: `IF(OR(${col}22="",${col}23="",${col}24=""),0,${col}22*${col}23*${col}24)`,
     };
 
     // sheet.getCell(`${col}25`).value = {
     //   formula: `(${col}34-${col}14)*(${col}31-${col}32)+(${col}11-${col}34)*(${col}31*${col}36-${col}32*${col}37)`,
     // };
 
-    sheet.getCell(`${col}28`).value = {
-      formula: `${col}27-${col}24+${col}25`,
+    sheet.getCell(`${col}30`).value = {
+      formula: `${col}29-${col}25+${col}26`,
     };
 
-    sheet.getCell(`${col}29`).value = {
-      formula: `${col}28/${col}11`,
+    sheet.getCell(`${col}31`).value = {
+      formula: `${col}30/${col}11`,
     };
   });
 
@@ -1025,11 +1079,11 @@ export async function buildValuationWorkbook(
 
   ["E", "F", "G"].forEach((col) => {
     sheet.getCell(`${col}51`).value = {
-      formula: `${col}27`,
+      formula: `${col}29`,
     };
 
     sheet.getCell(`${col}52`).value = {
-      formula: `${col}29`,
+      formula: `${col}31`,
     };
 
     sheet.getCell(`${col}51`).numFmt = "#,##0";
@@ -1202,7 +1256,7 @@ export async function buildValuationWorkbook(
 
   ["D", "E", "F", "G"].forEach((col) => {
     sheet.getCell(`${col}84`).value = {
-      formula: `${col}15`,
+      formula: `${col}16`,
     };
   });
 
@@ -1242,7 +1296,7 @@ export async function buildValuationWorkbook(
 
   ["D", "E", "F", "G"].forEach((col) => {
     sheet.getCell(`${col}89`).value = {
-      formula: `${col}16`,
+      formula: `${col}17`,
     };
   });
 
@@ -1282,7 +1336,7 @@ export async function buildValuationWorkbook(
 
   ["D", "E", "F", "G"].forEach((col) => {
     sheet.getCell(`${col}94`).value = {
-      formula: `${col}17`,
+      formula: `${col}18`,
     };
   });
 
@@ -1383,13 +1437,13 @@ export async function buildValuationWorkbook(
   // ==========================
 
   ["E", "F", "G"].forEach((col) => {
-    sheet.getCell(`${col}26`).fill = {
+    sheet.getCell(`${col}28`).fill = {
       type: "pattern",
       pattern: "solid",
       fgColor: { argb: "E2F0D9" },
     };
 
-    sheet.getCell(`${col}27`).fill = {
+    sheet.getCell(`${col}29`).fill = {
       type: "pattern",
       pattern: "solid",
       fgColor: { argb: "FFFF00" },

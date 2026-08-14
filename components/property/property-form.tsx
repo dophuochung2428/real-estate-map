@@ -59,8 +59,13 @@ const initialForm: CreatePropertyPayload = {
   legal_status: null,
   business_advantage: null,
   environment: "",
-  land_area_type: null, // "ODT" | "ONT" | "LUC" | "BHK" | "CLN"
-  land_area: "",
+  landAreas: [
+    {
+      type: "",
+      area: "",
+      unit_price: "",
+    },
+  ],
   frontage_width: "",
   max_depth: "",
   land_shape: "",
@@ -71,7 +76,6 @@ const initialForm: CreatePropertyPayload = {
   remaining_value_ratio: "",
   construction_unit_price: "",
   resolution_land_price: "",
-  odt_land_price: "",
 };
 
 export default function PropertyForm({ mode, initialData }: Props) {
@@ -85,6 +89,22 @@ export default function PropertyForm({ mode, initialData }: Props) {
           price: String(initialData.price ?? ""),
 
           area: String(initialData.area ?? ""),
+
+          landAreas:
+            initialData.landAreas?.length > 0
+              ? initialData.landAreas.map((item: any) => ({
+                  type: item.type ?? "",
+                  area: String(item.area ?? ""),
+                  unit_price:
+                    item.unit_price == null ? "" : String(item.unit_price),
+                }))
+              : [
+                  {
+                    type: "",
+                    area: "",
+                    unit_price: "",
+                  },
+                ],
         }
       : initialForm,
   );
@@ -99,7 +119,14 @@ export default function PropertyForm({ mode, initialData }: Props) {
 
       const normalizedForm = {
         ...form,
+
         direction: form.direction ?? null,
+
+        landAreas: (form.landAreas ?? []).map((item: any) => ({
+          type: item.type,
+          area: Number(item.area),
+          unit_price: item.unit_price === "" ? null : Number(item.unit_price),
+        })),
       };
 
       const result = propertySchema.safeParse(normalizedForm);
@@ -203,8 +230,7 @@ export default function PropertyForm({ mode, initialData }: Props) {
             "legal_status",
             "business_advantage",
             "environment",
-            "land_area_type",
-            "land_area",
+            "landAreas",
             "frontage_width",
             "max_depth",
             "land_shape",
@@ -216,14 +242,31 @@ export default function PropertyForm({ mode, initialData }: Props) {
             "remaining_value_ratio",
             "construction_unit_price",
             "resolution_land_price",
-            "odt_land_price",
           ];
 
+          const normalizeLandAreas = (items: any[] = []) =>
+            [...items]
+              .map((item) => ({
+                type: item.type,
+                area: Number(item.area),
+                unit_price:
+                  item.unit_price == null || item.unit_price === ""
+                    ? null
+                    : Number(item.unit_price),
+              }))
+              .sort((a, b) => a.type.localeCompare(b.type));
+
           const hasAppraisalChanged = appraisalFields.some((f) => {
+            if (f === "landAreas") {
+              const before = normalizeLandAreas(initialData?.landAreas);
+              const after = normalizeLandAreas((payload as any).landAreas);
+
+              return JSON.stringify(before) !== JSON.stringify(after);
+            }
+
             const before = initialData?.[f] ?? "";
             const after = (payload as any)[f] ?? "";
 
-            // Normalize boolean/nulls and strings for comparison
             return String(before) !== String(after);
           });
 

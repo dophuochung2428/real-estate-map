@@ -4,6 +4,7 @@ import {
   ComparablePropertyWithMeta,
   EditableInputRow,
 } from "@/components/valuation/valuation-workspace";
+import { LandAreaFormItem, LandAreaItem, LandAreaType } from "@/types/property";
 import { ValuationDetailForm, ValuationSearchForm } from "@/types/valuation";
 
 import { useEffect, useState } from "react";
@@ -77,6 +78,32 @@ export default function ValuationDetailSection({
     negotiatedPrice(comparables[2]?.price, negotiationRatios[3]),
   ];
 
+  const updateLandUnitPrice = (type: LandAreaType, value: string) => {
+    const currentLandAreas = form.landAreas ?? [];
+
+    const exists = currentLandAreas.some((item) => item.type === type);
+
+    const nextLandAreas = exists
+      ? currentLandAreas.map((item) =>
+          item.type === type
+            ? {
+                ...item,
+                unit_price: value,
+              }
+            : item,
+        )
+      : [
+          ...currentLandAreas,
+          {
+            type,
+            area: "",
+            unit_price: value,
+          },
+        ];
+
+    updateField("landAreas", nextLandAreas as any);
+  };
+
   const landUnitPrices = [
     landUnitPrice(
       comparables[0]?.price,
@@ -121,52 +148,57 @@ export default function ValuationDetailSection({
   return (
     <>
       <EditableInputRow
-        stt="16"
+        stt="14.1"
         label="Kết cấu"
         value={form.structure}
         fieldKey="structure"
         comparables={comparables}
         onChange={(v) => updateField("structure", v)}
+        readOnly
       />
 
       <EditableInputRow
-        stt="17"
+        stt="14.2"
         label="Số tầng"
         value={form.floors}
         fieldKey="floors"
         comparables={comparables}
         onChange={(v) => updateField("floors", v)}
+        readOnly
       />
 
       <EditableInputRow
-        stt="18"
+        stt="14.3"
         label="Diện tích sàn sử dụng (m²)"
         value={form.usable_floor_area}
         fieldKey="usable_floor_area"
         comparables={comparables}
         onChange={(v) => updateField("usable_floor_area", v)}
+        readOnly
       />
 
       <EditableInputRow
-        stt="19"
+        stt="14.4"
         label="Tỷ lệ GTCL (%) đề xuất"
         value={form.remaining_value_ratio}
         fieldKey="remaining_value_ratio"
         comparables={comparables}
         onChange={(v) => updateField("remaining_value_ratio", v)}
+        readOnly
       />
 
       <EditableInputRow
-        stt="20"
+        stt="14.5"
         label="Đơn giá xây dựng (đồng/m²) đề xuất"
         value={form.construction_unit_price}
         fieldKey="construction_unit_price"
         comparables={comparables}
         onChange={(v) => updateField("construction_unit_price", v)}
+        readOnly
       />
 
       <CalculatedRow
-        stt="21"
+        stt="15"
         label="Tổng giá trị CTXD (đồng)"
         values={[
           constructionTotal(
@@ -196,16 +228,17 @@ export default function ValuationDetailSection({
       />
 
       <EditableInputRow
-        stt="22"
+        stt="17"
         label="Giá bán / rao bán (đồng)"
         value={form.price}
         fieldKey="price"
         comparables={comparables}
         onChange={(v) => updateField("price", v)}
+        readOnly
       />
 
       <NegotiationRow
-        stt="23"
+        stt="18"
         label="Giá thương lượng"
         prices={[
           Number(form.price),
@@ -221,8 +254,8 @@ export default function ValuationDetailSection({
       />
 
       <CalculatedRow
-        stt="24"
-        label="Giá sau khi chiết trừ công trình xây dựng (đồng)"
+        stt="19"
+        label="Giá sau khi chuyển mục đích sử dụng đất (đồng)"
         values={[
           landAfterConstruction(
             form.price,
@@ -267,7 +300,7 @@ export default function ValuationDetailSection({
       />
 
       <CalculatedRow
-        stt="25"
+        stt="20"
         label="Đơn giá QSDĐ ODT (đồng/m²)"
         values={[
           landUnitPrice(
@@ -317,7 +350,7 @@ export default function ValuationDetailSection({
       />
 
       <EditableInputRow
-        stt="26"
+        stt="21"
         label="Đơn giá đất theo Nghị quyết số 16/2025/NQ-HĐND ngày 30/12/2025 của HĐND tỉnh An Giang"
         value={form.resolution_land_price}
         fieldKey="resolution_land_price"
@@ -325,15 +358,110 @@ export default function ValuationDetailSection({
         onChange={(v) => updateField("resolution_land_price", v)}
       />
 
-      <EditableInputRow
-        stt="27"
+      <LandUnitPriceRow
+        stt="21.1"
         label="Đất ODT (đồng/m²)"
-        value={form.odt_land_price}
-        fieldKey="odt_land_price"
+        landType="ODT"
+        form={form}
         comparables={comparables}
-        onChange={(v) => updateField("odt_land_price", v)}
+        onChange={(value) => {
+          updateLandUnitPrice("ODT", value);
+        }}
+      />
+
+      <LandUnitPriceRow
+        stt="21.2"
+        label="Đất CLN (đồng/m²)"
+        landType="CLN"
+        form={form}
+        comparables={comparables}
+        onChange={(value) => {
+          updateLandUnitPrice("CLN", value);
+        }}
+      />
+
+      <LandUnitPriceRow
+        stt="21.3"
+        label="Đất LUC (đồng/m²)"
+        landType="LUC"
+        form={form}
+        comparables={comparables}
+        onChange={(value) => {
+          updateLandUnitPrice("LUC", value);
+        }}
       />
     </>
+  );
+}
+
+function LandUnitPriceRow({
+  stt,
+  label,
+  landType,
+  form,
+  comparables,
+  onChange,
+}: {
+  stt: string;
+  label: string;
+  landType: LandAreaType;
+  form: ValuationSearchForm & ValuationDetailForm;
+  comparables: ComparablePropertyWithMeta[];
+  onChange: (value: string) => void;
+}) {
+  // Giá TSTĐ đang nhập
+  const appraisalPrice = getLandUnitPrice(form.landAreas, landType);
+
+  // Giá của TSSS 1, 2, 3
+  const comparablePrices = comparables.map((comparable) =>
+    getLandUnitPrice(comparable.landAreas, landType),
+  );
+
+  return (
+    <tr>
+      {/* STT */}
+      <td className="border border-[var(--border)] p-3 text-center">{stt}</td>
+
+      {/* Nội dung */}
+      <td className="border border-[var(--border)] p-3 font-medium">{label}</td>
+
+      {/* TSTĐ - NHẬP */}
+      <td className="border border-[var(--border)] p-2">
+        <input
+          type="number"
+          value={appraisalPrice || ""}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="Nhập đơn giá"
+          className="
+            w-full
+            rounded-lg
+            border
+            border-[var(--border)]
+            bg-[var(--background)]
+            px-3
+            py-2
+            text-[var(--foreground)]
+            outline-none
+            focus:border-[var(--primary)]
+          "
+        />
+      </td>
+
+      {/* TSSS 1 - C1 */}
+      <td className="border border-[var(--border)] p-3 text-right">
+        {comparablePrices[0] ? comparablePrices[0].toLocaleString("vi-VN") : ""}
+      </td>
+
+      {/* TSSS 2 - C2 */}
+      <td className="border border-[var(--border)] p-3 text-right">
+        {comparablePrices[1] ? comparablePrices[1].toLocaleString("vi-VN") : ""}
+      </td>
+
+      {/* TSSS 3 - C3 */}
+      <td className="border border-[var(--border)] p-3 text-right">
+        {comparablePrices[2] ? comparablePrices[2].toLocaleString("vi-VN") : ""}
+      </td>
+    </tr>
   );
 }
 
@@ -363,6 +491,19 @@ function CalculatedRow({
 
 function parsePercent(value: string) {
   return Number(value.replace(/%/g, "").trim()) || 0;
+}
+
+function getLandUnitPrice(
+  landAreas: (LandAreaFormItem | LandAreaItem)[] | undefined,
+  type: LandAreaType,
+): number {
+  if (!landAreas?.length) {
+    return 0;
+  }
+
+  const item = landAreas.find((landArea) => landArea.type === type);
+
+  return Number(item?.unit_price || 0);
 }
 
 function NegotiationRow({

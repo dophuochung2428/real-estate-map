@@ -1,3 +1,5 @@
+import { LandAreaItem } from "./property";
+
 export interface PropertyAppraisalPayload {
   contact_name: string;
   contact_phone: string;
@@ -8,8 +10,7 @@ export interface PropertyAppraisalPayload {
 
   environment: string;
 
-  land_area_type: "ODT" | "ONT" | "LUC" | "BHK" | "CLN" | null;
-  land_area: string;
+  landAreas: LandAreaItem[];
 
   frontage_width: string;
 

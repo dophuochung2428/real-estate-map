@@ -55,10 +55,6 @@ export async function createProperty(payload: any) {
 
       environment: payload.environment ?? null,
 
-      land_area_type: payload.land_area_type ?? null,
-
-      land_area: payload.land_area ? Number(payload.land_area) : null,
-
       frontage_width: payload.frontage_width
         ? Number(payload.frontage_width)
         : null,
@@ -87,17 +83,12 @@ export async function createProperty(payload: any) {
 
       resolution_land_price: payload.resolution_land_price ?? null,
 
-      odt_land_price: payload.odt_land_price
-        ? Number(payload.odt_land_price)
-        : null,
-
       // If any appraisal field present, mark as completed
       appraisal_completed_at:
         payload.contact_name ||
         payload.contact_phone ||
         payload.environment ||
-        payload.land_area ||
-        payload.land_area_type ||
+        payload.landAreas?.length ||
         payload.frontage_width ||
         payload.max_depth ||
         payload.land_shape ||
@@ -108,7 +99,6 @@ export async function createProperty(payload: any) {
         payload.remaining_value_ratio ||
         payload.construction_unit_price ||
         payload.resolution_land_price ||
-        payload.odt_land_price ||
         typeof payload.legal_status !== "undefined" ||
         typeof payload.business_advantage !== "undefined"
           ? new Date().toISOString()
@@ -122,6 +112,26 @@ export async function createProperty(payload: any) {
 
   if (error) {
     throw error;
+  }
+
+  if (payload.landAreas?.length) {
+    const landAreas = payload.landAreas.map((item: any) => ({
+      property_id: property.id,
+      land_type: item.type,
+      area: Number(item.area),
+      unit_price:
+        item.unit_price == null || item.unit_price === ""
+          ? null
+          : Number(item.unit_price),
+    }));
+
+    const { error: landAreaError } = await supabase
+      .from("property_land_areas")
+      .insert(landAreas);
+
+    if (landAreaError) {
+      throw landAreaError;
+    }
   }
 
   if (payload.images?.length) {
@@ -330,6 +340,7 @@ export async function updateAppraisal(id: string, payload: any) {
     throw new Error("Unauthorized");
   }
 
+  // UPDATE APPRAISAL FIELDS
   const { error } = await supabase
     .from("properties")
     .update({
@@ -342,10 +353,6 @@ export async function updateAppraisal(id: string, payload: any) {
       business_advantage: payload.business_advantage,
 
       environment: payload.environment,
-
-      land_area_type: payload.land_area_type ?? null,
-
-      land_area: payload.land_area ? Number(payload.land_area) : null,
 
       frontage_width: payload.frontage_width
         ? Number(payload.frontage_width)
@@ -375,10 +382,6 @@ export async function updateAppraisal(id: string, payload: any) {
 
       resolution_land_price: payload.resolution_land_price ?? null,
 
-      odt_land_price: payload.odt_land_price
-        ? Number(payload.odt_land_price)
-        : null,
-
       appraisal_completed_at: new Date().toISOString(),
     })
     .eq("id", id)
@@ -386,5 +389,37 @@ export async function updateAppraisal(id: string, payload: any) {
 
   if (error) {
     throw error;
+  }
+
+  // DELETE OLD LAND AREAS
+  if (Array.isArray(payload.landAreas)) {
+    const { error: deleteLandAreaError } = await supabase
+      .from("property_land_areas")
+      .delete()
+      .eq("property_id", id);
+
+    if (deleteLandAreaError) {
+      throw deleteLandAreaError;
+    }
+
+    if (payload.landAreas.length > 0) {
+      const landAreas = payload.landAreas.map((item: any) => ({
+        property_id: id,
+        land_type: item.type,
+        area: Number(item.area),
+        unit_price:
+          item.unit_price == null || item.unit_price === ""
+            ? null
+            : Number(item.unit_price),
+      }));
+
+      const { error: landAreaError } = await supabase
+        .from("property_land_areas")
+        .insert(landAreas);
+
+      if (landAreaError) {
+        throw landAreaError;
+      }
+    }
   }
 }

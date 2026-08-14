@@ -61,7 +61,6 @@ export async function filterComparableProperties(
   }
 
   // HARD FILTER: LAND AREA TYPE
-  const normalizedLandAreaType = normalizeText(form.landAreaType);
 
   const filteredProperties = properties;
 

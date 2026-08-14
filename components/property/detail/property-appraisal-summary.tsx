@@ -87,15 +87,52 @@ export default function PropertyAppraisalSummary({
           label="Môi trường"
           value={formatValue(property.environment)}
         />
-        <SummaryRow
-          label="Loại diện tích"
-          value={formatValue(property.land_area_type)}
-        />
+        <div className="lg:col-span-2">
+          <p className="mb-3 text-sm text-[var(--muted-foreground)]">
+            Thông tin đất
+          </p>
 
-        <SummaryRow
-          label="Diện tích"
-          value={formatValue(property.land_area, " m²")}
-        />
+          <div className="grid gap-4 md:grid-cols-2">
+            {(property.landAreas ?? []).map((item: any, index: number) => (
+              <div
+                key={`${item.type}-${index}`}
+                className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-5"
+              >
+                <p className="text-sm text-[var(--muted-foreground)]">
+                  Loại đất
+                </p>
+
+                <p className="mt-2 text-lg font-semibold text-[var(--foreground)]">
+                  {item.type}
+                </p>
+
+                <div className="mt-4 grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-[var(--muted-foreground)]">
+                      Diện tích
+                    </p>
+
+                    <p className="mt-1 font-semibold">
+                      {formatValue(item.area, " m²")}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-[var(--muted-foreground)]">
+                      Đơn giá
+                    </p>
+
+                    <p className="mt-1 font-semibold">
+                      {item.unit_price != null
+                        ? `${Number(item.unit_price).toLocaleString("vi-VN")} đồng/m²`
+                        : "-"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
         <SummaryRow
           label="Chiều rộng mặt tiền"
           value={formatValue(property.frontage_width, " m")}

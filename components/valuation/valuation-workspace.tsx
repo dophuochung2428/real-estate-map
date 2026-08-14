@@ -6,6 +6,7 @@ import { ValuationDetailForm, ValuationSearchForm } from "@/types/valuation";
 import ValuationDetailSection from "@/components/valuation/valuation-detail-section";
 import { Filter } from "lucide-react";
 import ValuationAdjustmentTable from "./valuation-adjustment-table";
+import { LandAreaFormItem, LandAreaType } from "@/types/property";
 
 export type ComparablePropertyWithMeta = ComparableProperty & {
   source?: string;
@@ -20,6 +21,29 @@ const LAND_SHAPE_LABELS: Record<string, string> = {
   narrowing_back: "Tóp hậu",
   irregular: "Không đều",
 };
+
+const LAND_AREA_TYPES: LandAreaType[] = ["ODT", "ONT", "LUC", "BHK", "CLN"];
+
+function getLandArea(
+  landAreas: LandAreaFormItem[] | undefined,
+  types: LandAreaType[],
+): string {
+  if (!landAreas?.length) {
+    return "";
+  }
+
+  const total = landAreas
+    .filter((item) => {
+      return item.type !== "" && types.includes(item.type);
+    })
+    .reduce((sum, item) => {
+      const area = Number(item.area);
+
+      return sum + (Number.isFinite(area) ? area : 0);
+    }, 0);
+
+  return total > 0 ? String(total) : "";
+}
 
 export default function ValuationWorkspace() {
   const [form, setForm] = useState<ValuationSearchForm & ValuationDetailForm>({
@@ -40,8 +64,7 @@ export default function ValuationWorkspace() {
 
     area: "",
 
-    landAreaType: "",
-    landArea: "",
+    landAreas: [],
 
     frontageWidth: "",
     maxDepth: "",
@@ -59,8 +82,6 @@ export default function ValuationWorkspace() {
     remaining_value_ratio: "",
     construction_unit_price: "",
     resolution_land_price: "",
-    odt_land_price: "",
-
     price: "",
   });
 
@@ -219,6 +240,32 @@ export default function ValuationWorkspace() {
       ...prev,
       [key]: value,
     }));
+  }
+
+  function updateLandArea(type: LandAreaType, value: string) {
+    setForm((prev) => {
+      const landAreas = [...prev.landAreas];
+
+      const index = landAreas.findIndex((item) => item.type === type);
+
+      if (index >= 0) {
+        landAreas[index] = {
+          ...landAreas[index],
+          area: value,
+        };
+      } else {
+        landAreas.push({
+          type,
+          area: value,
+          unit_price: "",
+        });
+      }
+
+      return {
+        ...prev,
+        landAreas,
+      };
+    });
   }
 
   return (
@@ -507,10 +554,32 @@ export default function ValuationWorkspace() {
             <EditableSelectRow
               stt="10"
               label="Mục đích sử dụng đất"
-              value={form.landAreaType}
-              fieldKey="landAreaType"
+              value={form.landAreas[0]?.type ?? ""}
+              fieldKey="landAreas"
               comparables={comparables}
-              onChange={(v) => updateField("landAreaType", v)}
+              onChange={(v) => {
+                setForm((prev) => {
+                  const landAreas = [...prev.landAreas];
+
+                  if (landAreas.length === 0) {
+                    landAreas.push({
+                      type: v as LandAreaType,
+                      area: "",
+                      unit_price: "",
+                    });
+                  } else {
+                    landAreas[0] = {
+                      ...landAreas[0],
+                      type: v as LandAreaType | "",
+                    };
+                  }
+
+                  return {
+                    ...prev,
+                    landAreas,
+                  };
+                });
+              }}
               options={[
                 {
                   value: "ODT",
@@ -536,20 +605,34 @@ export default function ValuationWorkspace() {
             />
 
             <EditableInputRow
-              stt="11"
-              label={
-                form.landAreaType
-                  ? `Diện tích đất ${form.landAreaType} (m²)`
-                  : "Diện tích đất theo mục đích sử dụng (m²)"
-              }
-              value={form.landArea}
-              fieldKey="landArea"
+              stt="10.1"
+              label="Đất ODT (m²)"
+              value={getLandArea(form.landAreas, ["ODT"])}
+              fieldKey="odtLandArea"
               comparables={comparables}
-              onChange={(v) => updateField("landArea", v)}
+              onChange={(v) => updateLandArea("ODT", v)}
             />
 
             <EditableInputRow
-              stt="12"
+              stt="10.2"
+              label="Đất CLN (m²)"
+              value={getLandArea(form.landAreas, ["CLN"])}
+              fieldKey="clnLandArea"
+              comparables={comparables}
+              onChange={(v) => updateLandArea("CLN", v)}
+            />
+
+            <EditableInputRow
+              stt="10.3"
+              label="Đất HNK/NTS/BHK (m²)"
+              value={getLandArea(form.landAreas, ["BHK"])}
+              fieldKey="hnkNtsBhkLandArea"
+              comparables={comparables}
+              onChange={(v) => updateLandArea("BHK", v)}
+            />
+
+            <EditableInputRow
+              stt="11"
               label="Chiều rộng mặt tiền tiếp giáp đường chính (m)"
               value={form.frontageWidth}
               fieldKey="frontageWidth"
@@ -559,7 +642,7 @@ export default function ValuationWorkspace() {
             />
 
             <EditableInputRow
-              stt="13"
+              stt="12"
               label="Chiều sâu dài nhất (m)"
               value={form.maxDepth}
               fieldKey="maxDepth"
@@ -569,7 +652,7 @@ export default function ValuationWorkspace() {
             />
 
             <EditableInputRow
-              stt="14"
+              stt="13"
               label="Hình thể thửa đất"
               value={form.landShape}
               fieldKey="landShape"
@@ -578,7 +661,7 @@ export default function ValuationWorkspace() {
             />
 
             <EditableInputRow
-              stt="15"
+              stt="14"
               label="Tài sản trên đất"
               value={form.assetOnLand}
               fieldKey="assetOnLand"
@@ -913,24 +996,37 @@ export default function ValuationWorkspace() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <div className="text-xs opacity-60">Loại diện tích đất</div>
-                  <div className="font-medium">
-                    {viewingComparable.land_area_type ?? "-"}
-                  </div>
+              <div>
+                <div className="mb-2 text-xs opacity-60">
+                  Diện tích theo mục đích sử dụng đất
                 </div>
 
-                <div>
-                  <div className="text-xs opacity-60">
-                    Diện tích theo mục đích
+                {viewingComparable.landAreas?.length ? (
+                  <div className="space-y-2">
+                    {viewingComparable.landAreas.map((landArea) => (
+                      <div
+                        key={landArea.type}
+                        className="
+            flex
+            items-center
+            justify-between
+            rounded-lg
+            border
+            border-[var(--border)]
+            bg-[var(--background)]
+            px-3
+            py-2
+          "
+                      >
+                        <span className="font-medium">{landArea.type}</span>
+
+                        <span>{landArea.area} m²</span>
+                      </div>
+                    ))}
                   </div>
-                  <div className="font-medium">
-                    {viewingComparable.land_area
-                      ? `${viewingComparable.land_area} m²`
-                      : "-"}
-                  </div>
-                </div>
+                ) : (
+                  <div>-</div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -1022,6 +1118,7 @@ export function EditableInputRow({
   comparables,
   onChange,
   required = false,
+  readOnly = false,
 }: {
   stt: string;
   label: string;
@@ -1030,6 +1127,7 @@ export function EditableInputRow({
   comparables: ComparablePropertyWithMeta[];
   onChange: (value: string) => void;
   required?: boolean;
+  readOnly?: boolean;
 }) {
   const isEmpty = !value?.trim();
 
@@ -1070,6 +1168,7 @@ export function EditableInputRow({
       >
         <input
           value={value}
+          readOnly={readOnly}
           onChange={(e) => onChange(e.target.value)}
           className={`
             w-full
@@ -1081,11 +1180,13 @@ export function EditableInputRow({
             text-[var(--foreground)]
             outline-none
             transition-colors
-            ${
-              required && isEmpty
-                ? "border-red-500 focus:border-red-500"
-                : "border-[var(--border)] focus:border-[var(--primary)]"
-            }
+    ${
+      readOnly
+        ? "cursor-default border-[var(--border)] opacity-70"
+        : required && isEmpty
+          ? "border-red-500 focus:border-red-500"
+          : "border-[var(--border)] focus:border-[var(--primary)]"
+    }
           `}
         />
       </td>
@@ -1325,12 +1426,17 @@ function getComparableValue(
       return comparable.environment ?? "";
     case "area":
       return comparable.area ? `${comparable.area} m²` : "";
-    case "landAreaType":
-      return comparable.land_area_type ?? "";
-    case "landArea":
-      return comparable.land_area !== undefined
-        ? `${comparable.land_area}`
-        : "";
+    case "landAreas":
+      return getComparableLandAreaTypes(comparable);
+
+    case "odtLandArea":
+      return getComparableLandArea(comparable, ["ODT"]);
+
+    case "clnLandArea":
+      return getComparableLandArea(comparable, ["CLN"]);
+
+    case "hnkNtsBhkLandArea":
+      return getComparableLandArea(comparable, ["BHK"]);
     case "frontageWidth":
       return comparable.frontage_width !== undefined
         ? `${comparable.frontage_width} m`
@@ -1371,12 +1477,37 @@ function getComparableValue(
 
     case "resolution_land_price":
       return comparable.resolution_land_price ?? "";
-
-    case "odt_land_price":
-      return comparable.odt_land_price ?? "";
-    default:
-      return "";
   }
+}
+
+function getComparableLandAreaTypes(
+  comparable: ComparablePropertyWithMeta,
+): string {
+  if (!comparable.landAreas?.length) {
+    return "";
+  }
+
+  return comparable.landAreas
+    .map((item) => item.type)
+    .filter(Boolean)
+    .join(" + ");
+}
+
+function getComparableLandArea(
+  comparable: ComparablePropertyWithMeta,
+  types: LandAreaType[],
+): string {
+  if (!comparable.landAreas?.length) {
+    return "";
+  }
+
+  const total = comparable.landAreas
+    .filter((item) => types.includes(item.type))
+    .reduce((sum, item) => {
+      return sum + item.area;
+    }, 0);
+
+  return total > 0 ? `${total} m²` : "";
 }
 
 function getComparableHeaderLabel(

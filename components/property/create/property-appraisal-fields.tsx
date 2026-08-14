@@ -105,44 +105,181 @@ export default function PropertyAppraisalFields({
           />
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2">
-          <div className="grid gap-5 md:grid-cols-2">
-            <div>
-              <label className="mb-2 block font-medium">Loại diện tích</label>
+        <div>
+          <label className="mb-2 block font-medium">Thông tin đất</label>
 
-              <select
-                value={form.land_area_type ?? ""}
-                onChange={(e) =>
+          <div className="space-y-4">
+            {(form.landAreas ?? []).map((item: any, index: number) => {
+              const selectedTypes = (form.landAreas ?? [])
+                .map((land: any, i: number) => (i !== index ? land.type : null))
+                .filter(Boolean);
+
+              return (
+                <div
+                  key={index}
+                  className="grid items-end gap-4 md:grid-cols-[1fr_1fr_1fr_auto]"
+                >
+                  {/* LOẠI ĐẤT */}
+                  <div>
+                    <label className="mb-2 block text-sm text-[var(--muted)]">
+                      Loại đất
+                    </label>
+
+                    <select
+                      value={item.type ?? ""}
+                      onChange={(e) =>
+                        setForm((prev: any) => {
+                          const landAreas = [...(prev.landAreas ?? [])];
+
+                          landAreas[index] = {
+                            ...landAreas[index],
+                            type: e.target.value,
+                          };
+
+                          return {
+                            ...prev,
+                            landAreas,
+                          };
+                        })
+                      }
+                      className="h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4"
+                    >
+                      <option value="">Chọn loại đất</option>
+
+                      <option
+                        value="ODT"
+                        disabled={selectedTypes.includes("ODT")}
+                      >
+                        ODT
+                      </option>
+
+                      <option
+                        value="ONT"
+                        disabled={selectedTypes.includes("ONT")}
+                      >
+                        ONT
+                      </option>
+
+                      <option
+                        value="LUC"
+                        disabled={selectedTypes.includes("LUC")}
+                      >
+                        LUC
+                      </option>
+
+                      <option
+                        value="BHK"
+                        disabled={selectedTypes.includes("BHK")}
+                      >
+                        BHK
+                      </option>
+
+                      <option
+                        value="CLN"
+                        disabled={selectedTypes.includes("CLN")}
+                      >
+                        CLN
+                      </option>
+                    </select>
+                  </div>
+
+                  {/* DIỆN TÍCH */}
+                  <div>
+                    <label className="mb-2 block text-sm text-[var(--muted)]">
+                      Diện tích (m²)
+                    </label>
+
+                    <input
+                      value={item.area ?? ""}
+                      onChange={(e) =>
+                        setForm((prev: any) => {
+                          const landAreas = [...(prev.landAreas ?? [])];
+
+                          landAreas[index] = {
+                            ...landAreas[index],
+                            area: e.target.value.replace(/[^\d.]/g, ""),
+                          };
+
+                          return {
+                            ...prev,
+                            landAreas,
+                          };
+                        })
+                      }
+                      className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
+                      placeholder="Ví dụ: 100"
+                    />
+                  </div>
+
+                  {/* ĐƠN GIÁ */}
+                  <div>
+                    <label className="mb-2 block text-sm text-[var(--muted)]">
+                      Đơn giá (đồng/m²)
+                    </label>
+
+                    <input
+                      value={item.unit_price ?? ""}
+                      onChange={(e) =>
+                        setForm((prev: any) => {
+                          const landAreas = [...(prev.landAreas ?? [])];
+
+                          landAreas[index] = {
+                            ...landAreas[index],
+                            unit_price: e.target.value.replace(/[^\d]/g, ""),
+                          };
+
+                          return {
+                            ...prev,
+                            landAreas,
+                          };
+                        })
+                      }
+                      className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
+                      placeholder="Ví dụ: 5000000"
+                    />
+                  </div>
+
+                  {/* XÓA */}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setForm((prev: any) => ({
+                        ...prev,
+                        landAreas: (prev.landAreas ?? []).filter(
+                          (_: any, i: number) => i !== index,
+                        ),
+                      }))
+                    }
+                    className="h-12 rounded-2xl border border-red-500/30 px-4 text-red-400 hover:bg-red-500/10"
+                  >
+                    Xóa
+                  </button>
+                </div>
+              );
+            })}
+
+            {/* THÊM LOẠI ĐẤT */}
+            {(form.landAreas ?? []).length < 5 && (
+              <button
+                type="button"
+                onClick={() =>
                   setForm((prev: any) => ({
                     ...prev,
-                    land_area_type: e.target.value || null,
+                    landAreas: [
+                      ...(prev.landAreas ?? []),
+                      {
+                        type: "",
+                        area: "",
+                        unit_price: "",
+                      },
+                    ],
                   }))
                 }
-                className="h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4"
+                className="rounded-2xl border border-dashed border-[var(--border)] px-5 py-3 font-medium hover:bg-[var(--card)]"
               >
-                <option value="">Chọn loại diện tích</option>
-                <option value="ODT">ODT</option>
-                <option value="ONT">ONT</option>
-                <option value="LUC">LUC</option>
-                <option value="BHK">BHK</option>
-                <option value="CLN">CLN</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="mb-2 block font-medium">Diện tích</label>
-
-              <input
-                value={form.land_area}
-                onChange={(e) =>
-                  setForm((prev: any) => ({
-                    ...prev,
-                    land_area: e.target.value.replace(/[^\d.]/g, ""),
-                  }))
-                }
-                className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
-              />
-            </div>
+                + Thêm loại đất
+              </button>
+            )}
           </div>
         </div>
 
@@ -325,21 +462,6 @@ export default function PropertyAppraisalFields({
             }
             className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
             placeholder="Ví dụ: Text"
-          />
-        </div>
-
-        <div>
-          <label className="mb-2 block font-medium">Đất ODT (đồng/m²)</label>
-
-          <input
-            value={form.odt_land_price}
-            onChange={(e) =>
-              setForm((prev: any) => ({
-                ...prev,
-                odt_land_price: e.target.value.replace(/[^\d]/g, ""),
-              }))
-            }
-            className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
           />
         </div>
       </div>

@@ -1,3 +1,5 @@
+import { LandAreaFormItem } from "./property";
+
 export interface ValuationSearchForm {
   source: string;
   contact: string;
@@ -16,8 +18,7 @@ export interface ValuationSearchForm {
 
   area: string;
 
-  landAreaType: string;
-  landArea: string;
+  landAreas: LandAreaFormItem[];
 
   frontageWidth: string;
   maxDepth: string;
@@ -42,5 +43,4 @@ export interface ValuationDetailForm {
   negotiation_ratio?: string;
 
   resolution_land_price: string;
-  odt_land_price: string;
 }

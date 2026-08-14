@@ -122,6 +122,12 @@ export async function getPropertyById(id: string) {
         is_thumbnail,
         created_at
       ),
+      property_land_areas (
+        id,
+        land_type,
+        area,
+        unit_price
+      ),
       owner:profiles (
         id,
         full_name,
@@ -136,7 +142,15 @@ export async function getPropertyById(id: string) {
     throw result.error;
   }
 
-  return result.data;
+  return {
+    ...result.data,
+
+    landAreas: (result.data.property_land_areas ?? []).map((item: any) => ({
+      type: item.land_type,
+      area: item.area,
+      unit_price: item.unit_price,
+    })),
+  };
 }
 
 export async function addRecentlyViewed(propertyId: string) {

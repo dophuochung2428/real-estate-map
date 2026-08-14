@@ -54,9 +54,12 @@ export default async function EditPropertyPage({
 
         environment: property.environment ?? "",
 
-        land_area_type: property.land_area_type ?? null,
-
-        land_area: property.land_area?.toString() ?? "",
+        landAreas:
+          property.landAreas?.map((item: any) => ({
+            type: item.type ?? "",
+            area: item.area?.toString() ?? "",
+            unit_price: item.unit_price?.toString() ?? "",
+          })) || [],
 
         frontage_width: property.frontage_width?.toString() ?? "",
 
@@ -78,8 +81,6 @@ export default async function EditPropertyPage({
           property.construction_unit_price?.toString() ?? "",
 
         resolution_land_price: property.resolution_land_price ?? "",
-
-        odt_land_price: property.odt_land_price?.toString() ?? "",
 
         appraisal_completed_at: property.appraisal_completed_at,
       }}

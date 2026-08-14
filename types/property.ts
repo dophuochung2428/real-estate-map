@@ -31,6 +31,20 @@ export interface PropertyImage {
   created_at?: string;
 }
 
+export type LandAreaType = "ODT" | "ONT" | "LUC" | "BHK" | "CLN";
+
+export interface LandAreaItem {
+  type: LandAreaType;
+  area: number;
+  unit_price: number | null;
+}
+
+export interface LandAreaFormItem {
+  type: LandAreaType | "";
+  area: string;
+  unit_price: string;
+}
+
 export interface Property {
   id: string;
   title: string;
@@ -64,8 +78,7 @@ export interface Property {
   environment?: string;
   traffic_location?: string | null;
 
-  land_area_type?: "ODT" | "ONT" | "LUC" | "BHK" | "CLN" | null;
-  land_area?: number;
+  landAreas?: LandAreaItem[];
 
   frontage_width?: number;
   max_depth?: number;
@@ -83,8 +96,6 @@ export interface Property {
   construction_unit_price?: string;
 
   resolution_land_price?: string;
-
-  odt_land_price?: string;
 
   appraisal_completed_at?: string | null;
 }
