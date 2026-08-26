@@ -1,6 +1,9 @@
 import { z } from "zod";
 
 export const appraisalSchema = z.object({
+  source: z.string().optional(),
+
+  state_unit_price: z.number().nullable().optional(),
   contact_name: z.string().optional(),
   contact_phone: z.string().optional(),
 

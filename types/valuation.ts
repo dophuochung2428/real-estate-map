@@ -2,6 +2,7 @@ import { LandAreaFormItem } from "./property";
 
 export interface ValuationSearchForm {
   source: string;
+  state_unit_price: string;
   contact: string;
 
   appraisalDate: string;

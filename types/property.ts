@@ -98,4 +98,7 @@ export interface Property {
   resolution_land_price?: string;
 
   appraisal_completed_at?: string | null;
+
+  source?: string; // Nguồn tin
+  state_unit_price?: number | null;
 }

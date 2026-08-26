@@ -430,6 +430,24 @@ export default function PropertyAppraisalFields({
 
         <div>
           <label className="mb-2 block font-medium">
+            Đơn giá nhà nước (đồng/m²)
+          </label>
+
+          <input
+            value={form.state_unit_price ?? ""}
+            onChange={(e) =>
+              setForm((prev: any) => ({
+                ...prev,
+                state_unit_price: e.target.value.replace(/[^\d]/g, ""),
+              }))
+            }
+            className="h-12 w-full rounded-2xl border border-[var(--border)] px-4"
+            placeholder="Ví dụ: 5000000"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block font-medium">
             Đơn giá xây dựng (đồng/m²) đề xuất
           </label>
 

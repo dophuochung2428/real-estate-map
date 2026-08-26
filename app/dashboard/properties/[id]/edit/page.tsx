@@ -38,6 +38,8 @@ export default async function EditPropertyPage({
         description: property.description,
         amenities: property.amenities || [],
 
+        source: property.source ?? "",
+
         images:
           property.property_images?.map((img: any) => ({
             image_url: img.image_url,
@@ -79,6 +81,8 @@ export default async function EditPropertyPage({
 
         construction_unit_price:
           property.construction_unit_price?.toString() ?? "",
+
+        state_unit_price: property.state_unit_price?.toString() ?? "",
 
         resolution_land_price: property.resolution_land_price ?? "",
 

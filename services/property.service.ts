@@ -30,6 +30,8 @@ export async function createProperty(payload: any) {
       lat: payload.lat,
       lng: payload.lng,
 
+      source: payload.source ?? null,
+
       thumbnail_url:
         payload.images.find((x: any) => x.is_thumbnail)?.image_url ??
         payload.images?.[0]?.image_url,
@@ -81,6 +83,11 @@ export async function createProperty(payload: any) {
         ? Number(payload.construction_unit_price)
         : null,
 
+      state_unit_price:
+        payload.state_unit_price == null || payload.state_unit_price === ""
+          ? null
+          : Number(payload.state_unit_price),
+
       resolution_land_price: payload.resolution_land_price ?? null,
 
       // If any appraisal field present, mark as completed
@@ -98,6 +105,7 @@ export async function createProperty(payload: any) {
         payload.usable_floor_area ||
         payload.remaining_value_ratio ||
         payload.construction_unit_price ||
+        payload.state_unit_price ||
         payload.resolution_land_price ||
         typeof payload.legal_status !== "undefined" ||
         typeof payload.business_advantage !== "undefined"
@@ -262,6 +270,8 @@ export async function updateProperty(id: string, payload: any) {
       description: payload.description,
       amenities: payload.amenities,
 
+      source: payload.source ?? null,
+
       thumbnail_url:
         payload.images.find((x: any) => x.is_thumbnail)?.image_url ??
         payload.images?.[0]?.image_url,
@@ -379,6 +389,11 @@ export async function updateAppraisal(id: string, payload: any) {
       construction_unit_price: payload.construction_unit_price
         ? Number(payload.construction_unit_price)
         : null,
+
+      state_unit_price:
+        payload.state_unit_price == null || payload.state_unit_price === ""
+          ? null
+          : Number(payload.state_unit_price),
 
       resolution_land_price: payload.resolution_land_price ?? null,
 

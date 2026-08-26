@@ -56,6 +56,9 @@ export interface CreatePropertyPayload {
   remaining_value_ratio?: string; // Tỉ lệ GTCL (%)
   construction_unit_price?: string; // Đơn giá xây dựng
   resolution_land_price?: string; // Đơn giá đất theo NQ 16
+
+  source?: string;
+  state_unit_price?: string;
 }
 
 export interface UpdateAppraisalPayload {
@@ -83,4 +86,6 @@ export interface UpdateAppraisalPayload {
   remaining_value_ratio?: string; // Tỉ lệ GTCL (%)
   construction_unit_price?: string; // Đơn giá xây dựng
   resolution_land_price?: string; // Đơn giá đất theo NQ 16
+
+  state_unit_price?: number | null;
 }

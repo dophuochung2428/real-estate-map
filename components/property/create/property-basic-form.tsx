@@ -203,6 +203,32 @@ export default function PropertyBasicForm({
           }}
         />
 
+        {/* SOURCE */}
+        <div>
+          <label className="mb-2 block font-medium">Nguồn tin</label>
+
+          <input
+            value={form.source ?? ""}
+            onChange={(e) =>
+              setForm((prev: any) => ({
+                ...prev,
+                source: e.target.value,
+              }))
+            }
+            placeholder="Nhập nguồn tin..."
+            className={`h-12 w-full rounded-2xl border bg-transparent px-4 outline-none
+      ${
+        errors.source
+          ? "border-red-500 focus:ring-4 focus:ring-red-100"
+          : "border-[var(--border)]"
+      }`}
+          />
+
+          {errors.source && (
+            <p className="mt-2 text-sm text-red-500">{errors.source}</p>
+          )}
+        </div>
+
         <div>
           <label className="mb-2 block font-medium">Loại bất động sản</label>
 

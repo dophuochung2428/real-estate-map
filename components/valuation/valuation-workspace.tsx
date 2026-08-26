@@ -48,6 +48,7 @@ function getLandArea(
 export default function ValuationWorkspace() {
   const [form, setForm] = useState<ValuationSearchForm & ValuationDetailForm>({
     source: "",
+    state_unit_price: "",
     contact: "",
 
     appraisalDate: "",
@@ -780,6 +781,10 @@ export default function ValuationWorkspace() {
                     </th>
 
                     <th className="border border-[var(--border)] p-3">
+                      Đơn giá Nhà nước
+                    </th>
+
+                    <th className="border border-[var(--border)] p-3">
                       Địa chỉ
                     </th>
 
@@ -834,12 +839,25 @@ export default function ValuationWorkspace() {
 
                         <td
                           className="
-                    border
-                    border-[var(--border)]
-                    p-3
-                  "
+    border
+    border-[var(--border)]
+    p-3
+    text-center
+  "
                         >
-                          {item.address}
+                          {item.state_unit_price != null
+                            ? `${item.state_unit_price.toLocaleString("vi-VN")} đ/m²`
+                            : "-"}
+                        </td>
+
+                        <td
+                          className="
+    border
+    border-[var(--border)]
+    p-3
+  "
+                        >
+                          {item.address ?? "-"}
                         </td>
 
                         <td
@@ -1419,9 +1437,7 @@ function getComparableValue(
           ? "Có lợi thế"
           : "Không có lợi thế";
     case "trafficLocation":
-      return comparable.distanceKm !== undefined
-        ? `Cách TSTĐ ${comparable.distanceKm.toFixed(2)} km`
-        : "";
+      return comparable.description ?? "";
     case "environment":
       return comparable.environment ?? "";
     case "area":

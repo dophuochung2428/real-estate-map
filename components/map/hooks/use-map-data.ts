@@ -84,7 +84,7 @@ export function useMapData(initialData: Property[], filters: Filters) {
             .lte("lng", bounds.maxLng);
         }
 
-        const { data: result } = await query.limit(500);
+        const { data: result } = await query.limit(5000);
 
         setData(result || []);
         setIsInitialLoading(false);

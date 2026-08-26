@@ -54,6 +54,10 @@ const initialForm: CreatePropertyPayload = {
   amenities: [],
   images: [],
   // appraisal defaults
+
+  source: "",
+  state_unit_price: "",
+
   contact_name: "",
   contact_phone: "",
   legal_status: null,
@@ -121,6 +125,9 @@ export default function PropertyForm({ mode, initialData }: Props) {
         ...form,
 
         direction: form.direction ?? null,
+
+        state_unit_price:
+          form.state_unit_price === "" ? null : Number(form.state_unit_price),
 
         landAreas: (form.landAreas ?? []).map((item: any) => ({
           type: item.type,
@@ -242,6 +249,7 @@ export default function PropertyForm({ mode, initialData }: Props) {
             "remaining_value_ratio",
             "construction_unit_price",
             "resolution_land_price",
+            "state_unit_price",
           ];
 
           const normalizeLandAreas = (items: any[] = []) =>

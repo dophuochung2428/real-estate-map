@@ -67,6 +67,11 @@ export default function PropertyAppraisalSummary({
               : "-",
           )}
         />
+
+        <SummaryRow
+          label="Nguồn thông tin"
+          value={formatValue(property.source)}
+        />
         <SummaryRow
           label="Tên liên hệ"
           value={formatValue(property.contact_name)}
