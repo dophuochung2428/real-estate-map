@@ -967,18 +967,6 @@ export async function buildValuationWorkbook(
   // FORMAT DATA
   // ==========================
 
-  const formatNumber = (value: any) => {
-    if (value === null || value === undefined || value === "") {
-      return "";
-    }
-
-    if (typeof value === "number") {
-      return value.toLocaleString("vi-VN");
-    }
-
-    return value;
-  };
-
   const formatDate = (value: any) => {
     if (!value) {
       return "";
@@ -1002,29 +990,23 @@ export async function buildValuationWorkbook(
   // ==========================
 
   [
-    "C10",
-    "D10",
-    "E10",
-    "F10",
-
     "C11",
     "D11",
     "E11",
     "F11",
-
+    "G11",
     "C12",
     "D12",
     "E12",
     "F12",
-
+    "G12",
     "C13",
     "D13",
     "E13",
     "F13",
+    "G13",
   ].forEach((address) => {
-    const cell = sheet.getCell(address);
-
-    cell.value = formatNumber(cell.value);
+    sheet.getCell(address).numFmt = "#,##0";
   });
 
   // ==========================
@@ -1261,15 +1243,15 @@ export async function buildValuationWorkbook(
   });
 
   sheet.getCell("I84").value = {
-    formula: "ROUND(($D$84-E84)/$H$84,1)",
+    formula: "ROUND((E84-$D$84)/$H$84,1)",
   };
 
   sheet.getCell("J84").value = {
-    formula: "ROUND(($D$84-F84)/$H$84,1)",
+    formula: "ROUND((F84-$D$84)/$H$84,1)",
   };
 
   sheet.getCell("K84").value = {
-    formula: "ROUND(($D$84-G84)/$H$84,1)",
+    formula: "ROUND((G84-$D$84)/$H$84,1)",
   };
 
   ["E", "F", "G"].forEach((col) => {

@@ -127,6 +127,56 @@ export default function AdjustmentFactor({
         <td className="border p-2">{comparable3}</td>
       </tr>
 
+      {/* Thông số điều chỉnh - chỉ dành cho C6/C7/C8 */}
+      {calculationType === "size" && (
+        <tr>
+          <td className="border p-2"></td>
+
+          <td className="border p-2 text-sm text-slate-500">
+            Thông số điều chỉnh
+          </td>
+
+          <td className="border p-2"></td>
+
+          {/* TSTĐ - nhập */}
+          <td className="border p-2">
+            <input
+              type="number"
+              value={inputValue}
+              onChange={(e) => {
+                const value = e.target.value;
+
+                setInputValue(value);
+
+                onBaseValueChange?.(Number(value) || 0);
+              }}
+              className={`
+              w-full
+              rounded
+              border
+              bg-emerald-50
+              px-2
+              py-1
+              text-right
+              outline-none
+              ${
+                required && !inputValue.trim()
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-emerald-200 focus:border-emerald-400"
+              }
+            `}
+            />
+          </td>
+
+          {/* TSSS1 / TSSS2 / TSSS3 - kết quả thông số điều chỉnh */}
+          {comparableNumbers?.map((item, index) => (
+            <td key={index} className="border bg-emerald-50 p-2 text-right">
+              {inputValue ? calculateSizeRatio(item).toFixed(1) : ""}
+            </td>
+          ))}
+        </tr>
+      )}
+
       {/* Tỷ lệ điều chỉnh */}
       <tr>
         <td className="border p-2"></td>
@@ -138,33 +188,9 @@ export default function AdjustmentFactor({
         {calculationType === "size" ? (
           <>
             {/* TSTĐ */}
-            <td className="border p-2">
-              <input
-                value={inputValue}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setInputValue(value);
+            <td className="border p-2"></td>
 
-                  onBaseValueChange?.(Number(value) || 0);
-                }}
-                className={`
-                  w-full
-                  rounded
-                  border
-                  px-2
-                  py-1
-                  text-right
-                  outline-none
-                  ${
-                    required && !inputValue.trim()
-                      ? "border-red-500 focus:border-red-500"
-                      : "border-[var(--border)] focus:border-[var(--primary)]"
-                  }
-                `}
-              />
-            </td>
-
-            {/* TSSS1 */}
+            {/* TSSS1 / TSSS2 / TSSS3 */}
             {comparableNumbers?.map((item, index) => (
               <td key={index} className="border p-2 text-right">
                 {inputValue ? calculateSizeRatio(item).toFixed(1) + "%" : ""}
@@ -187,13 +213,13 @@ export default function AdjustmentFactor({
                     setRatios(next);
                   }}
                   className="
-            w-full
-            rounded
-            border
-            px-2
-            py-1
-            text-right
-          "
+                  w-full
+                  rounded
+                  border
+                  px-2
+                  py-1
+                  text-right
+                "
                 />
               </td>
             ))}
