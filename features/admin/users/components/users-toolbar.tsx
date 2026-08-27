@@ -12,9 +12,9 @@ export default function UsersToolbar() {
       <button
         onClick={() => setOpen(true)}
         className="
-    rounded-xl bg-black px-4 py-2 text-white
+    rounded-xl bg-[var(--primary)] px-4 py-2 text-white
     transition-all duration-200
-    hover:scale-[1.03] hover:bg-black/90
+    hover:scale-[1.03] hover:bg-[var(--primary-hover)]
     active:scale-95
     focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2
   "

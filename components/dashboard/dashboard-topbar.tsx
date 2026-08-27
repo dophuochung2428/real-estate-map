@@ -72,11 +72,11 @@ export default function DashboardTopbar({ user, profile }: Props) {
   };
 
   return (
-    <div className="sticky top-0 z-40 flex h-[72px] items-center justify-between border-b border-[var(--border)] bg-[var(--card)] px-6">
+    <div className="sticky top-0 z-40 flex h-[72px] items-center justify-between border-b border-[var(--border)] bg-white px-6">
       {/* LEFT */}
       <div>
         {isPropertiesPage ? (
-          <div className="flex h-11 w-[320px] items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4 transition  focus-within:border-[var(--primary)]">
+          <div className="flex h-11 w-[320px] items-center gap-3 rounded-2xl border border-[var(--border-strong)] bg-[var(--background)] px-4 transition  focus-within:border-[var(--primary)]">
             {isPending ? (
               <Loader2
                 size={18}

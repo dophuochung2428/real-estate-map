@@ -39,7 +39,7 @@ export default function PropertyPreviewCard({
         </div>
 
         <div className="p-4">
-          <h3 className="line-clamp-2 font-semibold text-white">
+          <h3 className="line-clamp-2 font-semibold text-[var(--foreground)]">
             {form.title || "Tiêu đề bài đăng"}
           </h3>
 
@@ -47,7 +47,7 @@ export default function PropertyPreviewCard({
             {form.price ? formatPrice(Number(form.price)) : "Giá"}
           </p>
 
-          <p className="mt-2 text-sm text-gray-300">
+          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
             {form.address || "Địa chỉ"}
           </p>
         </div>

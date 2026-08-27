@@ -113,12 +113,12 @@ export default function Callback() {
   }, [router, searchParams]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
-      <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-8 text-center text-slate-200 shadow-2xl">
-        <h1 className="text-xl font-semibold text-white">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--background)] px-4">
+      <div className="w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 text-center text-[var(--foreground)] shadow-2xl shadow-slate-900/10">
+        <h1 className="text-xl font-semibold text-[var(--foreground)]">
           {isError ? "Không thể kích hoạt tài khoản" : "Đang xác thực tài khoản..."}
         </h1>
-        <p className="mt-3 text-sm text-slate-400">{message}</p>
+        <p className="mt-3 text-sm text-[var(--muted-foreground)]">{message}</p>
 
         {isError ? (
           <button

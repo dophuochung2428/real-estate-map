@@ -250,7 +250,7 @@ export default function PropertyAppraisalFields({
                         ),
                       }))
                     }
-                    className="h-12 rounded-2xl border border-red-500/30 px-4 text-red-400 hover:bg-red-500/10"
+                    className="h-12 rounded-2xl border border-red-200 px-4 text-red-700 hover:bg-red-50"
                   >
                     Xóa
                   </button>

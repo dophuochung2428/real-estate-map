@@ -12,27 +12,27 @@ import { restoreProperty } from "@/services/property.service";
 const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
   active: {
     label: "Đang hiển thị",
-    className: "border-green-500/20 bg-green-500/10 text-green-400",
+    className: "border-green-200 bg-green-50 text-green-800",
   },
 
   pending: {
     label: "Chờ duyệt",
-    className: "border-yellow-500/20 bg-yellow-500/10 text-yellow-400",
+    className: "border-yellow-200 bg-yellow-50 text-yellow-800",
   },
 
   rejected: {
     label: "Bị từ chối",
-    className: "border-red-500/20 bg-red-500/10 text-red-400",
+    className: "border-red-200 bg-red-50 text-red-800",
   },
 
   deleted: {
     label: "Đã xóa",
-    className: "border-gray-500/20 bg-gray-500/10 text-gray-400",
+    className: "border-slate-200 bg-slate-50 text-slate-700",
   },
 
   sold: {
     label: "Đã bán",
-    className: "border-blue-500/20 bg-blue-500/10 text-blue-400",
+    className: "border-blue-200 bg-blue-50 text-blue-800",
   },
 };
 
@@ -66,7 +66,7 @@ export default function PropertyCard({ property }: { property: any }) {
 
   const status = STATUS_CONFIG[property.status] ?? {
     label: property.status,
-    className: "border-white/10 bg-white/5 text-white/60",
+    className: "border-[var(--border)] bg-[var(--surface)] text-[var(--muted-foreground)]",
   };
 
   const handleRestore = async (e: any) => {
@@ -90,16 +90,16 @@ export default function PropertyCard({ property }: { property: any }) {
         onClick={() => router.push(`/properties/${property.id}`)}
         className="
           group cursor-pointer overflow-hidden rounded-3xl
-          border border-white/10 bg-[var(--card)]
+          border border-[var(--border)] bg-[var(--card)]
           transition-all duration-300
-          hover:border-white/20 hover:bg-white/[0.07]
+          hover:border-[var(--border-strong)] hover:bg-[var(--hover)]
           hover:shadow-2xl hover:-translate-y-1
         "
       >
         <div className="flex flex-col gap-6 p-5 lg:flex-row lg:items-center lg:justify-between">
           {/* LEFT */}
           <div className="flex flex-1 gap-4">
-            <div className="relative h-24 w-24 overflow-hidden rounded-2xl bg-white/5">
+            <div className="relative h-24 w-24 overflow-hidden rounded-2xl bg-[var(--surface)]">
               {thumbnail ? (
                 <Image
                   src={thumbnail}
@@ -108,25 +108,25 @@ export default function PropertyCard({ property }: { property: any }) {
                   className="object-cover transition group-hover:scale-105"
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center text-xs text-gray-500">
+                <div className="flex h-full w-full items-center justify-center text-xs text-[var(--muted-foreground)]">
                   No image
                 </div>
               )}
             </div>
 
             <div className="min-w-0 flex-1">
-              <h2 className="line-clamp-2 text-xl font-bold text-white group-hover:text-red-400">
+              <h2 className="line-clamp-2 text-xl font-bold text-[var(--foreground)] group-hover:text-[var(--primary)]">
                 {property.title}
               </h2>
 
-              <p className="mt-2 line-clamp-1 text-sm text-gray-400">
+              <p className="mt-2 line-clamp-1 text-sm text-[var(--muted-foreground)]">
                 {property.address}
               </p>
             </div>
           </div>
           <div className="flex items-center justify-between gap-5 lg:flex-col lg:items-end">
             <div className="flex flex-col items-end gap-2">
-              <p className="text-2xl font-bold text-red-400">
+              <p className="text-2xl font-bold text-[var(--primary)]">
                 {formatPrice(property.price)}
               </p>
 
@@ -153,8 +153,8 @@ export default function PropertyCard({ property }: { property: any }) {
           rounded-xl border px-4 py-2 text-sm transition
           ${
             loadingEdit
-              ? "border-blue-400 bg-blue-500/20 text-white opacity-70"
-              : "border-white/10 text-gray-300 hover:bg-white/10 hover:text-white"
+              ? "border-blue-300 bg-blue-50 text-blue-800 opacity-70"
+              : "border-[var(--border)] text-slate-700 hover:bg-[var(--surface)] hover:text-[var(--foreground)]"
           }
         `}
                   >
@@ -168,9 +168,9 @@ export default function PropertyCard({ property }: { property: any }) {
                       setShowConfirm(true);
                     }}
                     className="
-          rounded-xl border border-red-500/20
-          px-4 py-2 text-sm text-red-400
-          transition hover:bg-red-500/10
+          rounded-xl border border-red-200
+          px-4 py-2 text-sm text-red-700
+          transition hover:bg-red-50
         "
                   >
                     Xóa
@@ -183,9 +183,9 @@ export default function PropertyCard({ property }: { property: any }) {
                   onClick={handleRestore}
                   disabled={loadingEdit}
                   className="
-      rounded-xl border border-green-500/20
-      px-4 py-2 text-sm text-green-400
-      transition hover:bg-green-500/10
+      rounded-xl border border-green-200
+      px-4 py-2 text-sm text-green-700
+      transition hover:bg-green-50
       disabled:opacity-60
     "
                 >
@@ -201,18 +201,18 @@ export default function PropertyCard({ property }: { property: any }) {
 
       {/* CONFIRM MODAL */}
       {showConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-          <div className="w-[90%] max-w-sm rounded-2xl bg-[#111] p-6 border border-white/10">
-            <h3 className="text-lg font-semibold text-white">Xác nhận xóa</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-[90%] max-w-sm rounded-2xl border border-[var(--border)] bg-white p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-[var(--foreground)]">Xác nhận xóa</h3>
 
-            <p className="mt-2 text-sm text-gray-400">
+            <p className="mt-2 text-sm text-[var(--muted-foreground)]">
               Bạn có chắc muốn xóa bất động sản này không?
             </p>
 
             <div className="mt-6 flex justify-end gap-2">
               <button
                 onClick={() => setShowConfirm(false)}
-                className="rounded-xl px-4 py-2 text-sm text-gray-300 hover:bg-white/10"
+                className="rounded-xl px-4 py-2 text-sm text-slate-700 hover:bg-[var(--surface)]"
               >
                 Hủy
               </button>
@@ -224,8 +224,8 @@ export default function PropertyCard({ property }: { property: any }) {
                   rounded-xl px-4 py-2 text-sm
                   ${
                     loadingDelete
-                      ? "bg-red-500/30 text-white cursor-not-allowed"
-                      : "bg-red-500 text-white hover:bg-red-600"
+                      ? "bg-red-200 text-red-800 cursor-not-allowed"
+                      : "bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)]"
                   }
                 `}
               >

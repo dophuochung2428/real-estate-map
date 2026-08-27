@@ -78,13 +78,13 @@ export default function PropertyImageUpload({
 
       {/* UPLOAD */}
       <label className="flex h-[220px] cursor-pointer flex-col items-center justify-center rounded-3xl border-2 border-dashed border-[var(--border)] transition hover:border-red-400">
-        <Upload size={42} className="mb-4 text-gray-400" />
+        <Upload size={42} className="mb-4 text-[var(--muted-foreground)]" />
 
         <p className="font-semibold">
           {loading ? "Đang upload..." : "Upload hình ảnh"}
         </p>
 
-        <p className="mt-2 text-sm text-gray-500">Chọn nhiều ảnh</p>
+        <p className="mt-2 text-sm text-[var(--muted-foreground)]">Chọn nhiều ảnh</p>
 
         <input
           type="file"
@@ -119,8 +119,8 @@ export default function PropertyImageUpload({
                   onClick={() => setThumbnail(image.image_url)}
                   className={`flex h-10 w-10 items-center justify-center rounded-full ${
                     image.is_thumbnail
-                      ? "bg-yellow-400 text-white"
-                      : "bg-white text-black"
+                      ? "bg-yellow-500 text-white"
+                      : "bg-white text-slate-900"
                   }`}
                 >
                   <Star
@@ -140,7 +140,7 @@ export default function PropertyImageUpload({
 
               {/* BADGE */}
               {image.is_thumbnail && (
-                <div className="absolute left-3 top-3 rounded-full bg-yellow-400 px-3 py-1 text-xs font-semibold text-black">
+                <div className="absolute left-3 top-3 rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-900">
                   Thumbnail
                 </div>
               )}

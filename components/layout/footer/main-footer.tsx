@@ -5,7 +5,7 @@ import { Building2, Mail, MapPin, Phone } from "lucide-react";
 
 export default function MainFooter() {
   return (
-    <footer className="border-t border-white/10 bg-[#0B1220] text-white">
+    <footer className="border-t border-[var(--border)] bg-[var(--surface)] text-[var(--foreground)]">
       {/* TOP */}
       <div className="mx-auto grid max-w-7xl gap-14 px-6 py-16 md:grid-cols-2 lg:grid-cols-[380px_1fr_1fr]">
         {/* BRAND */}
@@ -24,7 +24,7 @@ export default function MainFooter() {
 
           {/* TEXT */}
           <div className="mt-5">
-            <h3 className="text-xl font-semibold leading-tight text-white">
+            <h3 className="text-xl font-semibold leading-tight text-[var(--foreground)]">
               Chi nhánh Long Xuyên - An Giang
             </h3>
 
@@ -32,7 +32,7 @@ export default function MainFooter() {
               VCVN Valuation System
             </p> */}
 
-            <div className="mt-5 inline-flex items-center rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-xs font-medium text-cyan-300">
+            <div className="mt-5 inline-flex items-center rounded-full border border-cyan-600/20 bg-cyan-50 px-4 py-2 text-xs font-medium text-cyan-700">
               Dữ liệu khu vực Tây Nam Bộ
             </div>
           </div>
@@ -40,15 +40,15 @@ export default function MainFooter() {
 
         {/* ABOUT */}
         <div>
-          <h4 className="text-base font-semibold text-white">Về hệ thống</h4>
+          <h4 className="text-base font-semibold text-[var(--foreground)]">Về hệ thống</h4>
 
-          <p className="mt-6 text-sm leading-8 text-slate-400">
+          <p className="mt-6 text-sm leading-8 text-[var(--muted-foreground)]">
             Hệ thống hỗ trợ phân tích dữ liệu và định giá bất động sản phục vụ
             nghiệp vụ thẩm định giá, tra cứu thị trường và quản lý tài sản khu
             vực An Giang và Tây Nam Bộ.
           </p>
 
-          <p className="mt-5 text-sm leading-7 text-slate-500">
+          <p className="mt-5 text-sm leading-7 text-slate-600">
             Giải pháp hỗ trợ nghiệp vụ thẩm định giá nội bộ, dữ liệu thị trường
             và quản lý tài sản khu vực Tây Nam Bộ.
           </p>
@@ -78,11 +78,11 @@ export default function MainFooter() {
 
         {/* CONTACT */}
         <div>
-          <h4 className="text-base font-semibold text-white">Liên hệ</h4>
+          <h4 className="text-base font-semibold text-[var(--foreground)]">Liên hệ</h4>
 
-          <div className="mt-6 space-y-6 text-sm text-slate-400">
+          <div className="mt-6 space-y-6 text-sm text-[var(--muted-foreground)]">
             <div className="flex items-start gap-3">
-              <MapPin className="mt-1 h-4 w-4 shrink-0 text-cyan-400" />
+              <MapPin className="mt-1 h-4 w-4 shrink-0 text-cyan-700" />
 
               <p className="leading-6">
                 181 Lý Công Uẩn, Bình Khánh 7, Bình Đức, An Giang
@@ -90,22 +90,22 @@ export default function MainFooter() {
             </div>
 
             <div className="flex items-center gap-3">
-              <Phone className="h-4 w-4 text-cyan-400" />
+              <Phone className="h-4 w-4 text-cyan-700" />
 
               <p>0913 527 002</p>
             </div>
 
             <div className="flex items-center gap-3">
-              <Mail className="h-4 w-4 text-cyan-400" />
+              <Mail className="h-4 w-4 text-cyan-700" />
 
               <p>vcvnag@gmail.com</p>
             </div>
 
             <div className="flex items-start gap-3">
-              <Building2 className="mt-1 h-4 w-4 shrink-0 text-cyan-400" />
+              <Building2 className="mt-1 h-4 w-4 shrink-0 text-cyan-700" />
 
               <div>
-                <p className="font-medium leading-6 text-slate-200">
+                <p className="font-medium leading-6 text-[var(--foreground)]">
                   Công ty TNHH Thẩm định giá
                   <br />
                   Real Asset Value Việt Nam
@@ -116,16 +116,16 @@ export default function MainFooter() {
             </div>
 
             {/* MANAGER */}
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-sm">
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5 backdrop-blur-sm">
               <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
                 Phụ trách chi nhánh
               </p>
 
-              <p className="mt-3 text-base font-semibold text-slate-100">
+              <p className="mt-3 text-base font-semibold text-[var(--foreground)]">
                 Trần Văn Toản
               </p>
 
-              <p className="mt-1 text-sm text-slate-400">
+              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                 Giám đốc Chi nhánh{" "}
                 <span className="whitespace-nowrap">Long Xuyên</span>
               </p>
@@ -135,7 +135,7 @@ export default function MainFooter() {
       </div>
 
       {/* BOTTOM */}
-      <div className="border-t border-white/10">
+      <div className="border-t border-[var(--border)]">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-6 py-5 text-sm text-slate-500 md:flex-row">
           <div>
             <p>© 2026 VCVN Valuation System. All rights reserved.</p>

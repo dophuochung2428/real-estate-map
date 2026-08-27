@@ -32,11 +32,11 @@ export default async function PropertiesManagementPage({
       {/* HEADER */}
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-white p-4">
+          <h1 className="text-4xl font-bold text-[var(--foreground)] p-4">
             Quản lý tin đăng
           </h1>
 
-          <p className="mt-1 ml-6 text-gray-400">
+          <p className="mt-1 ml-6 text-[var(--muted-foreground)]">
             Danh sách bất động sản của bạn
           </p>
         </div>

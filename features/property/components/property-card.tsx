@@ -79,8 +79,8 @@ export function PropertyCard({
           className={cn(
             "absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center shadow-md transition-colors",
             property.saved
-              ? "bg-red-500 text-white"
-              : "bg-white text-gray-400 hover:text-red-500"
+              ? "bg-[var(--primary)] text-white"
+              : "bg-white text-slate-500 hover:text-[var(--primary)]"
           )}
           aria-label={property.saved ? "Bỏ lưu" : "Lưu tin"}
         >

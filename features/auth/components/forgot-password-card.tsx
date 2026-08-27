@@ -84,18 +84,18 @@ export const ForgotPasswordCard = () => {
 
   return (
     <div className="relative z-10 w-full max-w-md">
-      <div className="rounded-[32px] border border-white/10 bg-white/10 p-8 shadow-2xl backdrop-blur-xl">
+      <div className="rounded-[32px] border border-white/30 bg-white/90 p-8 shadow-2xl backdrop-blur-xl">
         {/* HEADER */}
         <div className="mb-8 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/10 backdrop-blur">
-            <Mail className="text-white" size={28} />
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--border)] bg-white backdrop-blur">
+            <Mail className="text-[var(--primary)]" size={28} />
           </div>
 
-          <h1 className="mt-5 text-3xl font-black tracking-tight text-white">
+          <h1 className="mt-5 text-3xl font-black tracking-tight text-[var(--foreground)]">
             Quên mật khẩu
           </h1>
 
-          <p className="mt-2 text-sm text-zinc-400">
+          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
             Nhập email để nhận liên kết khôi phục tài khoản
           </p>
         </div>
@@ -103,11 +103,11 @@ export const ForgotPasswordCard = () => {
         {/* FORM */}
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-300">Email</label>
+            <label className="text-sm font-medium text-[var(--foreground)]">Email</label>
 
             <div className="relative">
               <Mail
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
                 size={20}
               />
 
@@ -116,7 +116,7 @@ export const ForgotPasswordCard = () => {
                 placeholder="your@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-14 w-full rounded-2xl border border-white/10 bg-white/5 pl-12 pr-4 text-white outline-none placeholder:text-zinc-500 transition-all duration-200 focus:border-white/20 focus:bg-white/10 focus:ring-4 focus:ring-white/5"
+                className="h-14 w-full rounded-2xl border border-[var(--border)] bg-white pl-12 pr-4 text-[var(--foreground)] outline-none placeholder:text-slate-400 transition-all duration-200 focus:border-[var(--primary)] focus:bg-[var(--hover)] focus:ring-4 focus:ring-[var(--focus-ring)]"
               />
             </div>
           </div>
@@ -125,7 +125,7 @@ export const ForgotPasswordCard = () => {
           <button
             type="submit"
             disabled={isLoading || !email.trim()}
-            className={`flex h-14 w-full items-center justify-center rounded-2xl bg-white text-lg font-bold text-black transition-all duration-200 hover:scale-[1.01] hover:bg-zinc-200 ${
+            className={`flex h-14 w-full items-center justify-center rounded-2xl bg-[var(--primary)] text-lg font-bold text-white transition-all duration-200 hover:scale-[1.01] hover:bg-[var(--primary-hover)] ${
               isLoading ? "cursor-not-allowed opacity-70 hover:scale-100" : ""
             }`}
           >
@@ -144,8 +144,8 @@ export const ForgotPasswordCard = () => {
             <div
               className={`rounded-2xl border p-4 text-sm leading-relaxed ${
                 status === "success"
-                  ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-100"
-                  : "border-red-500/20 bg-red-500/10 text-red-100"
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                  : "border-red-200 bg-red-50 text-red-800"
               }`}
             >
               {message}
@@ -154,12 +154,12 @@ export const ForgotPasswordCard = () => {
         </form>
 
         {/* FOOTER */}
-        <div className="mt-8 border-t border-white/10 pt-6 text-center">
-          <p className="text-sm text-zinc-500">Nhớ mật khẩu rồi?</p>
+        <div className="mt-8 border-t border-[var(--border)] pt-6 text-center">
+          <p className="text-sm text-[var(--muted-foreground)]">Nhớ mật khẩu rồi?</p>
 
           <button
             onClick={() => router.push("/login")}
-            className="mt-2 font-semibold text-white transition hover:text-zinc-300"
+            className="mt-2 font-semibold text-[var(--primary)] transition hover:text-[var(--primary-hover)]"
           >
             Quay lại đăng nhập
           </button>

@@ -47,7 +47,7 @@ export default function MyPropertiesList({
 
   if (properties.length === 0) {
     return (
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-10 text-center text-gray-400">
+      <div className="rounded-2xl border border-[var(--border)] bg-white p-10 text-center text-[var(--muted-foreground)]">
         Chưa có tin đăng nào
       </div>
     );

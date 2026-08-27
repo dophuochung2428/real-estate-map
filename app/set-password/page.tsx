@@ -36,18 +36,18 @@ export default function SetPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 px-4">
-      <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-800 p-8 shadow-2xl">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--background)] px-4">
+      <div className="w-full max-w-md rounded-2xl border border-[var(--border)] bg-white p-8 shadow-xl shadow-slate-900/10">
         <div className="mb-6 text-center">
-          <h1 className="text-2xl font-bold text-white">Thiết lập mật khẩu</h1>
+          <h1 className="text-2xl font-bold text-[var(--foreground)]">Thiết lập mật khẩu</h1>
 
-          <p className="mt-2 text-sm text-slate-400">
+          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
             Nhập mật khẩu mới để kích hoạt tài khoản quản trị
           </p>
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-slate-300">
+          <label className="mb-2 block text-sm font-medium text-slate-700">
             Mật khẩu mới
           </label>
 
@@ -55,7 +55,7 @@ export default function SetPasswordPage() {
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Nhập mật khẩu..."
-              className="w-full rounded-xl border border-slate-600 bg-slate-900 px-4 py-3 pr-12 text-white placeholder:text-slate-500 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20"
+              className="w-full rounded-xl border border-[var(--border-strong)] bg-[var(--input)] px-4 py-3 pr-12 text-[var(--foreground)] placeholder:text-slate-400 outline-none transition focus:border-blue-600 focus:ring-4 focus:ring-blue-600/20"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -63,7 +63,7 @@ export default function SetPasswordPage() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-white"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-[var(--foreground)]"
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
@@ -73,7 +73,7 @@ export default function SetPasswordPage() {
         <button
           onClick={handleSetPassword}
           disabled={loading}
-          className="mt-6 w-full rounded-xl bg-blue-600 py-3 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
+          className="mt-6 w-full rounded-xl bg-blue-700 py-3 font-medium text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-70"
         >
           {loading ? "Đang lưu..." : "Xác nhận"}
         </button>

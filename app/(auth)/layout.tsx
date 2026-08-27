@@ -15,7 +15,7 @@ export default async function AuthLayout({
   }
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black px-4">
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[var(--background)] px-4">
       {/* BACKGROUND IMAGE */}
       <div className="absolute inset-0">
         <img
@@ -25,7 +25,7 @@ export default async function AuthLayout({
         />
 
         {/* OVERLAY */}
-        <div className="absolute inset-0 bg-black/70" />
+        <div className="absolute inset-0 bg-slate-950/55" />
       </div>
 
       {/* LIGHT EFFECTS */}
@@ -37,7 +37,7 @@ export default async function AuthLayout({
       <div className="relative z-10 w-full max-w-md">{children}</div>
 
       {/* BRAND */}
-      <div className="absolute bottom-6 text-xs tracking-[0.25em] text-zinc-600">
+      <div className="absolute bottom-6 text-xs tracking-[0.25em] text-white/70">
         REAL ASSET VAL
       </div>
     </main>

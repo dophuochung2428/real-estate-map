@@ -2,10 +2,10 @@ import Link from "next/link";
 
 export default function EmptyState() {
   return (
-    <div className="rounded-3xl bg-[var(--card)] p-12 text-center shadow-sm">
+    <div className="rounded-3xl border border-[var(--border)] bg-white p-12 text-center shadow-sm">
       <h2 className="text-3xl font-bold">Chưa có tin đăng</h2>
 
-      <p className="mt-3 text-gray-500">Hãy tạo tin đầu tiên của bạn</p>
+      <p className="mt-3 text-[var(--muted-foreground)]">Hãy tạo tin đầu tiên của bạn</p>
 
       <Link
         href="/properties/create"

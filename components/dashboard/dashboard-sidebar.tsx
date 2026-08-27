@@ -71,7 +71,7 @@ export default function DashboardSidebar() {
         flex-col
         border-r
         border-[var(--border)]
-        bg-[var(--card)]
+        bg-white
         lg:flex
       "
     >
@@ -96,7 +96,7 @@ export default function DashboardSidebar() {
               REAL ASSET VALUE
             </p>
 
-            <p className="mt-1 text-[11px] italic text-red-400">
+            <p className="mt-1 text-[11px] italic text-red-600">
               Uy tín, chính xác, nhanh chóng
             </p>
           </div>
@@ -177,7 +177,7 @@ function SidebarItem({
         ${
           active
             ? "bg-[var(--primary)] text-white"
-            : "hover:bg-[var(--hover)] hover:text-[var(--primary)]"
+            : "text-slate-700 hover:bg-[var(--hover)] hover:text-[var(--primary)]"
         }
       `}
     >

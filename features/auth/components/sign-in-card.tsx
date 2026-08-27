@@ -115,10 +115,10 @@ export const SignInCard = () => {
 
   return (
     <div className="relative z-10 w-full max-w-md">
-      <div className="rounded-[32px] border border-white/10 bg-white/10 p-8 shadow-2xl backdrop-blur-xl">
+      <div className="rounded-[32px] border border-white/30 bg-white/90 p-8 shadow-2xl backdrop-blur-xl">
         {/* HEADER */}
         <div className="mb-8 text-center">
-          <div className="mx-auto h-16 w-16 overflow-hidden rounded-2xl border border-white/10 bg-white/10 backdrop-blur">
+          <div className="mx-auto h-16 w-16 overflow-hidden rounded-2xl border border-[var(--border)] bg-white backdrop-blur">
             <img
               src="/logos/logo_v2.png"
               alt="logo"
@@ -126,11 +126,11 @@ export const SignInCard = () => {
             />
           </div>
 
-          <h1 className="mt-5 text-3xl font-black tracking-tight text-white">
+          <h1 className="mt-5 text-3xl font-black tracking-tight text-[var(--foreground)]">
             REAL ASSET VAL
           </h1>
 
-          <p className="mt-2 text-sm text-zinc-400">
+          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
             Hệ thống dành cho tài khoản được cấp quyền
           </p>
         </div>
@@ -139,11 +139,11 @@ export const SignInCard = () => {
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* EMAIL */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-300">Email</label>
+            <label className="text-sm font-medium text-[var(--foreground)]">Email</label>
 
             <div className="relative">
               <User
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
                 size={20}
               />
 
@@ -157,20 +157,20 @@ export const SignInCard = () => {
                     email: e.target.value,
                   })
                 }
-                className="h-14 w-full rounded-2xl border border-white/10 bg-white/5 pl-12 pr-4 text-white outline-none placeholder:text-zinc-500 transition-all duration-200 focus:border-white/20 focus:bg-white/10 focus:ring-4 focus:ring-white/5"
+                className="h-14 w-full rounded-2xl border border-[var(--border)] bg-white pl-12 pr-4 text-[var(--foreground)] outline-none placeholder:text-[var(--muted-foreground)] transition-all duration-200 focus:border-[var(--primary)] focus:bg-[var(--hover)] focus:ring-4 focus:ring-[var(--focus-ring)]"
               />
             </div>
           </div>
 
           {/* PASSWORD */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-300">
+            <label className="text-sm font-medium text-[var(--foreground)]">
               Mật khẩu
             </label>
 
             <div className="relative">
               <Lock
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
                 size={20}
               />
 
@@ -184,13 +184,13 @@ export const SignInCard = () => {
                     password: e.target.value,
                   })
                 }
-                className="h-14 w-full rounded-2xl border border-white/10 bg-white/5 pl-12 pr-12 text-white outline-none placeholder:text-zinc-500 transition-all duration-200 focus:border-white/20 focus:bg-white/10 focus:ring-4 focus:ring-white/5"
+                className="h-14 w-full rounded-2xl border border-[var(--border)] bg-white pl-12 pr-12 text-[var(--foreground)] outline-none placeholder:text-[var(--muted-foreground)] transition-all duration-200 focus:border-[var(--primary)] focus:bg-[var(--hover)] focus:ring-4 focus:ring-[var(--focus-ring)]"
               />
 
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 transition hover:text-white"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] transition hover:text-[var(--foreground)]"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -198,7 +198,7 @@ export const SignInCard = () => {
           </div>
 
           <div className="text-right">
-            <p className="text-sm text-zinc-500">
+            <p className="text-sm text-[var(--muted-foreground)]">
               Quên mật khẩu? Liên hệ quản trị viên.
             </p>
           </div>
@@ -208,7 +208,7 @@ export const SignInCard = () => {
             disabled={isLoading}
             type="submit"
             className={clsx(
-              "flex h-14 w-full items-center justify-center rounded-2xl bg-white text-lg font-bold text-black transition-all duration-200 hover:scale-[1.01] hover:bg-zinc-200",
+              "flex h-14 w-full items-center justify-center rounded-2xl bg-[var(--primary)] text-lg font-bold text-[var(--primary-foreground)] transition-all duration-200 hover:scale-[1.01] hover:bg-[var(--primary-hover)]",
               isLoading && "cursor-not-allowed opacity-70 hover:scale-100",
             )}
           >
@@ -224,7 +224,7 @@ export const SignInCard = () => {
 
           {/* ERROR */}
           {error && (
-            <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-3 text-center text-sm text-red-100">
+            <div className="rounded-2xl border border-red-200 bg-red-50 p-3 text-center text-sm text-red-800">
               {error}
             </div>
           )}
@@ -234,7 +234,7 @@ export const SignInCard = () => {
         <button
           type="button"
           onClick={() => router.push("/")}
-          className="inline-flex items-center gap-2 text-xs text-zinc-400 transition hover:text-white"
+          className="inline-flex items-center gap-2 text-xs text-[var(--muted-foreground)] transition hover:text-[var(--primary)]"
         >
           <Home size={14} />
           Quay về trang chủ

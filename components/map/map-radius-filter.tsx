@@ -49,17 +49,17 @@ export default function MapRadiusFilter({
         className={`
   inline-flex h-12 w-12 items-center justify-center
   rounded-2xl
-  border border-white/10
+  border border-[var(--border)]
   shadow-2xl
   backdrop-blur
   transition-all duration-200
   hover:-translate-y-0.5
-  hover:bg-slate-800
-  hover:shadow-black/40
+  hover:bg-[var(--hover)]
+  hover:shadow-slate-900/10
   ${
     enabled
       ? "bg-blue-600 text-white ring-4 ring-blue-400/20"
-      : "bg-slate-900/90 text-white"
+      : "bg-[var(--card)] text-[var(--foreground)]"
   }
 `}
       >
@@ -72,8 +72,8 @@ export default function MapRadiusFilter({
           className="
   flex items-center gap-2
   rounded-2xl
-  border border-white/10
-  bg-slate-900/90
+  border border-[var(--border)]
+  bg-[var(--card)]
   p-2
   shadow-2xl
   backdrop-blur
@@ -84,10 +84,10 @@ export default function MapRadiusFilter({
             className="
     flex h-10 w-10 items-center justify-center
     rounded-xl
-    text-white/70
+    text-[var(--muted-foreground)]
     transition-all duration-200
-    hover:bg-white/10
-    hover:text-white
+    hover:bg-[var(--hover)]
+    hover:text-[var(--foreground)]
   "
           >
             <X size={16} />
@@ -105,7 +105,7 @@ export default function MapRadiusFilter({
                   ${
                     active
                       ? "bg-white text-slate-900 shadow-lg"
-                      : "text-white/80 hover:bg-white/10 hover:text-white"
+                      : "text-slate-700 hover:bg-[var(--surface)] hover:text-[var(--foreground)]"
                   }
                 `}
               >

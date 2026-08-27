@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html
       lang="vi"
-      className={cn("dark h-full", "font-sans", geist.variable)}
+      className={cn("h-full", "font-sans", geist.variable)}
       suppressHydrationWarning
     >
       <body className="h-full bg-[var(--background)] text-[var(--foreground)]">

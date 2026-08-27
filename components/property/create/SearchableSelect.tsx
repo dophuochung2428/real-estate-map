@@ -97,7 +97,7 @@ export default function SearchableSelect({
           />
         ) : (
           <span
-            className={value ? "text-[var(--foreground)]" : "text-gray-400"}
+            className={value ? "text-[var(--foreground)]" : "text-[var(--muted-foreground)]"}
           >
             {value || placeholder}
           </span>
@@ -125,7 +125,7 @@ export default function SearchableSelect({
                 key={option.code}
                 type="button"
                 onClick={() => handleSelect(option)}
-                className={`w-full rounded-xl px-3 py-2.5 text-left hover:bg-black/5 dark:hover:bg-white/5 ${
+                className={`w-full rounded-xl px-3 py-2.5 text-left hover:bg-[var(--surface)] ${
                   option.name === value ? "font-semibold" : ""
                 }`}
               >

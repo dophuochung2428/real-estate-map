@@ -17,7 +17,7 @@ export default function PropertyCard({ property }: Props) {
   return (
     <Link
       href={`/properties/${property.id}`}
-      className="group overflow-hidden rounded-[30px] border border-white/10 bg-[var(--card)] transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
+      className="group overflow-hidden rounded-[30px] border border-[var(--border)] bg-white transition duration-300 hover:-translate-y-1 hover:shadow-xl"
     >
       {/* IMAGE */}
       <div className="relative h-72 overflow-hidden">
@@ -55,11 +55,11 @@ export default function PropertyCard({ property }: Props) {
 
       {/* CONTENT */}
       <div className="p-5">
-        <h3 className="line-clamp-2 text-lg font-bold leading-snug text-white transition group-hover:text-red-500">
+        <h3 className="line-clamp-2 text-lg font-bold leading-snug text-[var(--foreground)] transition group-hover:text-[var(--primary)]">
           {property.title}
         </h3>
 
-        <div className="mt-3 flex items-center gap-2 text-sm text-white/50">
+        <div className="mt-3 flex items-center gap-2 text-sm text-[var(--muted-foreground)]">
           <MapPin className="size-4 shrink-0" />
           <span className="line-clamp-1">
             {property.district || property.address}

@@ -45,8 +45,8 @@ export default function PropertyAppraisalSummary({
           <span
             className={`inline-flex rounded-full px-4 py-2 text-sm font-semibold ${
               property.appraisal_completed_at
-                ? "bg-green-500/10 text-green-300"
-                : "bg-yellow-500/10 text-yellow-300"
+                ? "bg-green-50 text-green-800"
+                : "bg-yellow-50 text-yellow-800"
             }`}
           >
             {property.appraisal_completed_at

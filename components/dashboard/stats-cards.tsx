@@ -35,7 +35,7 @@ export default function StatsCards({ total, active, sold }: Props) {
       {stats.map((item) => (
         <div
           key={item.label}
-          className="rounded-3xl bg-[var(--card)] p-6 shadow-sm"
+          className="rounded-3xl border border-[var(--border)] bg-white p-6 shadow-sm"
         >
           <div className="flex items-center justify-between">
             <div>

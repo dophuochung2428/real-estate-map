@@ -80,18 +80,18 @@ export const SignUpCard = () => {
 
   return (
     <div className="relative z-10 w-full max-w-md">
-      <div className="rounded-[32px] border border-white/10 bg-white/10 p-8 shadow-2xl backdrop-blur-xl">
+      <div className="rounded-[32px] border border-white/30 bg-white/90 p-8 shadow-2xl backdrop-blur-xl">
         {/* HEADER */}
         <div className="mb-8 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/10 text-3xl backdrop-blur">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--border)] bg-white text-3xl backdrop-blur">
             🏠
           </div>
 
-          <h1 className="mt-5 text-3xl font-black tracking-tight text-white">
+          <h1 className="mt-5 text-3xl font-black tracking-tight text-[var(--foreground)]">
             Tạo tài khoản
           </h1>
 
-          <p className="mt-2 text-sm text-zinc-400">
+          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
             Đăng ký để bắt đầu sử dụng nền tảng
           </p>
         </div>
@@ -99,13 +99,13 @@ export const SignUpCard = () => {
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* USERNAME */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-300">
+            <label className="text-sm font-medium text-[var(--foreground)]">
               Tên người dùng
             </label>
 
             <div className="relative">
               <User
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
                 size={20}
               />
 
@@ -114,22 +114,22 @@ export const SignUpCard = () => {
                 placeholder="Tên của bạn"
                 value={form.username}
                 onChange={(e) => setForm({ ...form, username: e.target.value })}
-                className="h-14 w-full rounded-2xl border border-white/10 bg-white/5 pl-12 pr-4 text-white outline-none placeholder:text-zinc-500 transition-all duration-200 focus:border-white/20 focus:bg-white/10 focus:ring-4 focus:ring-white/5"
+                className="h-14 w-full rounded-2xl border border-[var(--border)] bg-white pl-12 pr-4 text-[var(--foreground)] outline-none placeholder:text-[var(--muted-foreground)] transition-all duration-200 focus:border-[var(--primary)] focus:bg-[var(--hover)] focus:ring-4 focus:ring-[var(--focus-ring)]"
               />
             </div>
 
             {errors.username && (
-              <p className="text-sm text-red-400">{errors.username[0]}</p>
+              <p className="text-sm text-red-700">{errors.username[0]}</p>
             )}
           </div>
 
           {/* EMAIL */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-300">Email</label>
+            <label className="text-sm font-medium text-[var(--foreground)]">Email</label>
 
             <div className="relative">
               <Mail
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
                 size={20}
               />
 
@@ -138,24 +138,24 @@ export const SignUpCard = () => {
                 placeholder="your@email.com"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="h-14 w-full rounded-2xl border border-white/10 bg-white/5 pl-12 pr-4 text-white outline-none placeholder:text-zinc-500 transition-all duration-200 focus:border-white/20 focus:bg-white/10 focus:ring-4 focus:ring-white/5"
+                className="h-14 w-full rounded-2xl border border-[var(--border)] bg-white pl-12 pr-4 text-[var(--foreground)] outline-none placeholder:text-[var(--muted-foreground)] transition-all duration-200 focus:border-[var(--primary)] focus:bg-[var(--hover)] focus:ring-4 focus:ring-[var(--focus-ring)]"
               />
             </div>
 
             {errors.email && (
-              <p className="text-sm text-red-400">{errors.email[0]}</p>
+              <p className="text-sm text-red-700">{errors.email[0]}</p>
             )}
           </div>
 
           {/* PHONE */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-300">
+            <label className="text-sm font-medium text-[var(--foreground)]">
               Số điện thoại
             </label>
 
             <div className="relative">
               <Phone
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
                 size={20}
               />
 
@@ -164,24 +164,24 @@ export const SignUpCard = () => {
                 placeholder="0123 456 789"
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                className="h-14 w-full rounded-2xl border border-white/10 bg-white/5 pl-12 pr-4 text-white outline-none placeholder:text-zinc-500 transition-all duration-200 focus:border-white/20 focus:bg-white/10 focus:ring-4 focus:ring-white/5"
+                className="h-14 w-full rounded-2xl border border-[var(--border)] bg-white pl-12 pr-4 text-[var(--foreground)] outline-none placeholder:text-[var(--muted-foreground)] transition-all duration-200 focus:border-[var(--primary)] focus:bg-[var(--hover)] focus:ring-4 focus:ring-[var(--focus-ring)]"
               />
             </div>
 
             {errors.phone && (
-              <p className="text-sm text-red-400">{errors.phone[0]}</p>
+              <p className="text-sm text-red-700">{errors.phone[0]}</p>
             )}
           </div>
 
           {/* PASSWORD */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-300">
+            <label className="text-sm font-medium text-[var(--foreground)]">
               Mật khẩu
             </label>
 
             <div className="relative">
               <Lock
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)]"
                 size={20}
               />
 
@@ -190,26 +190,26 @@ export const SignUpCard = () => {
                 placeholder="••••••••"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className="h-14 w-full rounded-2xl border border-white/10 bg-white/5 pl-12 pr-12 text-white outline-none placeholder:text-zinc-500 transition-all duration-200 focus:border-white/20 focus:bg-white/10 focus:ring-4 focus:ring-white/5"
+                className="h-14 w-full rounded-2xl border border-[var(--border)] bg-white pl-12 pr-12 text-[var(--foreground)] outline-none placeholder:text-[var(--muted-foreground)] transition-all duration-200 focus:border-[var(--primary)] focus:bg-[var(--hover)] focus:ring-4 focus:ring-[var(--focus-ring)]"
               />
 
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 transition hover:text-white"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] transition hover:text-[var(--foreground)]"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
 
             {errors.password && (
-              <p className="text-sm text-red-400">{errors.password[0]}</p>
+              <p className="text-sm text-red-700">{errors.password[0]}</p>
             )}
           </div>
 
           {/* CONFIRM */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-zinc-300">
+            <label className="text-sm font-medium text-[var(--foreground)]">
               Xác nhận mật khẩu
             </label>
 
@@ -229,20 +229,20 @@ export const SignUpCard = () => {
                     confirmPassword: e.target.value,
                   })
                 }
-                className="h-14 w-full rounded-2xl border border-white/10 bg-white/5 pl-12 pr-12 text-white outline-none placeholder:text-zinc-500 transition-all duration-200 focus:border-white/20 focus:bg-white/10 focus:ring-4 focus:ring-white/5"
+                className="h-14 w-full rounded-2xl border border-[var(--border)] bg-white pl-12 pr-12 text-[var(--foreground)] outline-none placeholder:text-slate-400 transition-all duration-200 focus:border-[var(--primary)] focus:bg-[var(--hover)] focus:ring-4 focus:ring-[var(--focus-ring)]"
               />
 
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 transition hover:text-white"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] transition hover:text-[var(--foreground)]"
               >
                 {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
 
             {errors.confirmPassword && (
-              <p className="text-sm text-red-400">
+              <p className="text-sm text-red-700">
                 {errors.confirmPassword[0]}
               </p>
             )}
@@ -268,19 +268,19 @@ export const SignUpCard = () => {
 
           {/* ERROR */}
           {serverError && (
-            <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-3 text-center text-sm text-red-100">
+            <div className="rounded-2xl border border-red-200 bg-red-50 p-3 text-center text-sm text-red-800">
               {serverError}
             </div>
           )}
         </form>
 
         {/* FOOTER */}
-        <div className="mt-8 border-t border-white/10 pt-6 text-center">
+        <div className="mt-8 border-t border-[var(--border)] pt-6 text-center">
           <p className="text-sm text-zinc-500">Đã có tài khoản?</p>
 
           <button
             onClick={() => router.push("/login")}
-            className="mt-2 font-semibold text-white transition hover:text-zinc-300"
+            className="mt-2 font-semibold text-[var(--primary)] transition hover:text-[var(--primary-hover)]"
           >
             Đăng nhập
           </button>

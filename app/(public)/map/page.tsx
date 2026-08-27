@@ -101,7 +101,7 @@ export default function MapPage() {
 
       {/* EMPTY RESULT */}
       {!loading && properties.length === 0 && (
-        <div className="absolute bottom-6 left-1/2 z-[60] -translate-x-1/2 rounded-2xl border border-white/10 bg-slate-900/90 px-5 py-3 text-sm font-medium text-white shadow-2xl backdrop-blur">
+        <div className="absolute bottom-6 left-1/2 z-[60] -translate-x-1/2 rounded-2xl border border-[var(--border)] bg-white px-5 py-3 text-sm font-medium text-[var(--foreground)] shadow-xl backdrop-blur">
           Không tìm thấy bất động sản
         </div>
       )}
@@ -112,7 +112,7 @@ export default function MapPage() {
         <div className="pointer-events-auto absolute top-16 right-0 md:right-0">
           <Link
             href="/"
-            className="mr-3 mt-[-5px] inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-slate-900/90 px-3 py-3 text-sm font-medium text-white shadow-2xl backdrop-blur transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-black/40 md:px-4"
+            className="mr-3 mt-[-5px] inline-flex items-center justify-center gap-2 rounded-xl border border-[var(--border)] bg-white px-3 py-3 text-sm font-medium text-[var(--foreground)] shadow-xl backdrop-blur transition-all duration-200 hover:-translate-y-0.5 hover:bg-[var(--surface)] md:px-4"
           >
             <List size={18} />
             <span className="hidden md:inline">Danh sách</span>
@@ -123,7 +123,7 @@ export default function MapPage() {
         <div className="pointer-events-auto absolute top-4 left-12 md:left-12">
           <button
             onClick={() => setShowFilters(true)}
-            className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-slate-900/90 px-3 py-3 text-sm font-medium text-white shadow-2xl backdrop-blur transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-black/40 md:px-4"
+            className="inline-flex items-center justify-center rounded-xl border border-[var(--border)] bg-white px-3 py-3 text-sm font-medium text-[var(--foreground)] shadow-xl backdrop-blur transition-all duration-200 hover:-translate-y-0.5 hover:bg-[var(--surface)] md:px-4"
           >
             <span className="md:hidden">🔍</span>
             <span className="hidden md:inline">Tìm kiếm nhanh</span>

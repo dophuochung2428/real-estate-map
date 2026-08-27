@@ -5,32 +5,32 @@ export function getPropertyStatus(status: PropertyStatus) {
     case "active":
       return {
         label: "Đang hiển thị",
-        className: "bg-green-500/10 text-green-400 border border-green-500/20",
+        className: "bg-green-50 text-green-800 border border-green-200",
       };
 
     case "pending":
       return {
         label: "Chờ duyệt",
         className:
-          "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20",
+          "bg-yellow-50 text-yellow-800 border border-yellow-200",
       };
 
     case "sold":
       return {
         label: "Đã bán",
-        className: "bg-blue-500/10 text-blue-400 border border-blue-500/20",
+        className: "bg-blue-50 text-blue-800 border border-blue-200",
       };
 
     case "hidden":
       return {
         label: "Đã ẩn",
-        className: "bg-gray-500/10 text-gray-400 border border-gray-500/20",
+        className: "bg-slate-50 text-slate-700 border border-slate-200",
       };
 
     default:
       return {
         label: "Bản nháp",
-        className: "bg-zinc-500/10 text-zinc-400 border border-zinc-500/20",
+        className: "bg-slate-50 text-slate-700 border border-slate-200",
       };
   }
 }

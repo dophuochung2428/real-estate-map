@@ -83,7 +83,7 @@ export default function CreateUserModal({ open, onClose }: Props) {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               disabled={pending}
-              className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-black disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--input)] px-3 py-2 text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50"
             />
           </div>
 
@@ -99,7 +99,7 @@ export default function CreateUserModal({ open, onClose }: Props) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={pending}
-              className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-black disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--input)] px-3 py-2 text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50"
             />
           </div>
 
@@ -113,7 +113,7 @@ export default function CreateUserModal({ open, onClose }: Props) {
               value={role}
               onChange={(e) => setRole(e.target.value as "customer" | "staff")}
               disabled={pending}
-              className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-black disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--input)] px-3 py-2 text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50"
             >
               <option value="staff">Nhân viên</option>
 
@@ -134,7 +134,7 @@ export default function CreateUserModal({ open, onClose }: Props) {
     hover:bg-[var(--muted)]
     hover:scale-[1.02]
     active:scale-95
-    focus:outline-none focus:ring-2 focus:ring-black
+    focus:outline-none focus:ring-2 focus:ring-[var(--ring)]
     disabled:opacity-50
   "
           >
@@ -145,11 +145,11 @@ export default function CreateUserModal({ open, onClose }: Props) {
             disabled={pending}
             onClick={handleSubmit}
             className="
-    rounded-lg bg-black px-4 py-2 text-white
+    rounded-lg bg-[var(--primary)] px-4 py-2 text-white
     transition-all duration-200
-    hover:scale-[1.03] hover:opacity-90
+    hover:scale-[1.03] hover:bg-[var(--primary-hover)]
     active:scale-95
-    focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2
+    focus:outline-none focus:ring-2 focus:ring-[var(--ring)] focus:ring-offset-2
     disabled:cursor-not-allowed disabled:opacity-50
   "
           >

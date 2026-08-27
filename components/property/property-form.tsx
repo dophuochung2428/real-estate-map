@@ -328,7 +328,7 @@ export default function PropertyForm({ mode, initialData }: Props) {
           </p>
 
           {mode === "create" && (
-            <p className="mt-2 text-sm text-green-400/80">
+            <p className="mt-2 text-sm text-green-700">
               Bạn có thể nhập cả thông tin thẩm định ở bên dưới trước khi gửi.
             </p>
           )}
