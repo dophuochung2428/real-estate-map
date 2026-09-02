@@ -113,11 +113,15 @@ export default function PropertyMapPicker({ form, setForm }: Props) {
           scrollWheelZoom
           className="h-[500px] w-full"
         >
-          <TileLayer
+          {/* <TileLayer
             attribution="&copy; OpenStreetMap"
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
+          /> */}
 
+          <TileLayer
+            url="https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+            subdomains={["mt0", "mt1", "mt2", "mt3"]}
+          />
           <MapController form={form} />
           <LocationPicker setForm={setForm} />
           <DraggableMarker form={form} setForm={setForm} />
