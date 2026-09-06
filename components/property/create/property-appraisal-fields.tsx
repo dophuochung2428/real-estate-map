@@ -70,25 +70,21 @@ export default function PropertyAppraisalFields({
           <label className="mb-2 block font-medium">Lợi thế kinh doanh</label>
 
           <select
-            value={
-              form.business_advantage === null
-                ? ""
-                : String(form.business_advantage)
-            }
+            value={form.business_advantage ?? ""}
             onChange={(e) =>
               setForm((prev: any) => ({
                 ...prev,
                 business_advantage:
-                  e.target.value === "" ? null : e.target.value === "true",
+                  e.target.value === "" ? null : e.target.value,
               }))
             }
             className="h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4"
           >
             <option value="">Chưa chọn</option>
-
-            <option value="true">Có</option>
-
-            <option value="false">Không</option>
+            <option value="high">Lợi thế</option>
+            <option value="low">Kém lợi thế</option>
+            <option value="normal">Bình thường</option>
+            <option value="other">Khác</option>
           </select>
         </div>
 
@@ -180,6 +176,20 @@ export default function PropertyAppraisalFields({
                       >
                         CLN
                       </option>
+
+                      <option
+                        value="NTS"
+                        disabled={selectedTypes.includes("NTS")}
+                      >
+                        NTS
+                      </option>
+
+                      <option
+                        value="HNK"
+                        disabled={selectedTypes.includes("HNK")}
+                      >
+                        HNK
+                      </option>
                     </select>
                   </div>
 
@@ -259,7 +269,7 @@ export default function PropertyAppraisalFields({
             })}
 
             {/* THÊM LOẠI ĐẤT */}
-            {(form.landAreas ?? []).length < 5 && (
+            {(form.landAreas ?? []).length < 7 && (
               <button
                 type="button"
                 onClick={() =>

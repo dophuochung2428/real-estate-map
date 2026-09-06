@@ -48,11 +48,15 @@ function getAppraisalValue(
           : "";
 
     case "businessAdvantage":
-      return form.businessAdvantage === "true"
-        ? "Có lợi thế"
-        : form.businessAdvantage === "false"
-          ? "Không có lợi thế"
-          : "";
+      return form.businessAdvantage === "high"
+        ? "Lợi thế"
+        : form.businessAdvantage === "low"
+          ? "Kém lợi thế"
+          : form.businessAdvantage === "normal"
+            ? "Bình thường"
+            : form.businessAdvantage === "other"
+              ? "Khác"
+              : "";
 
     case "trafficLocation":
       return form.trafficLocation;
@@ -93,7 +97,15 @@ function getComparableValue(
       return comparable.legal_status ? "Có" : "Không";
 
     case "businessAdvantage":
-      return comparable.business_advantage ? "Có lợi thế" : "Không có lợi thế";
+      return comparable.business_advantage === "high"
+        ? "Lợi thế"
+        : comparable.business_advantage === "low"
+          ? "Kém lợi thế"
+          : comparable.business_advantage === "normal"
+            ? "Bình thường"
+            : comparable.business_advantage === "other"
+              ? "Khác"
+              : "";
 
     case "trafficLocation":
       return comparable.distanceKm !== undefined

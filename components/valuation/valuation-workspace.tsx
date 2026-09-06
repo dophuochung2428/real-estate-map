@@ -22,7 +22,28 @@ const LAND_SHAPE_LABELS: Record<string, string> = {
   irregular: "Không đều",
 };
 
-const LAND_AREA_TYPES: LandAreaType[] = ["ODT", "ONT", "LUC", "BHK", "CLN"];
+const LAND_AREA_TYPES: LandAreaType[] = [
+  "ODT",
+  "ONT",
+  "LUC",
+  "BHK",
+  "CLN",
+  "NTS",
+  "HNK",
+];
+
+const LAND_TYPE_OPTIONS: {
+  value: LandAreaType;
+  label: string;
+}[] = [
+  { value: "ODT", label: "Đất ODT" },
+  { value: "ONT", label: "Đất ONT" },
+  { value: "LUC", label: "Đất LUC" },
+  { value: "BHK", label: "Đất BHK" },
+  { value: "CLN", label: "Đất CLN" },
+  { value: "NTS", label: "Đất NTS" },
+  { value: "HNK", label: "Đất HNK" },
+];
 
 function getLandArea(
   landAreas: LandAreaFormItem[] | undefined,
@@ -102,6 +123,10 @@ export default function ValuationWorkspace() {
   const [viewingComparable, setViewingComparable] =
     useState<ComparablePropertyWithMeta | null>(null);
 
+  const [selectedLandTypes, setSelectedLandTypes] = useState<
+    [LandAreaType, LandAreaType, LandAreaType]
+  >(["ODT", "CLN", "BHK"]);
+
   type ConstructionData = {
     structure: string;
     floors: string;
@@ -141,6 +166,16 @@ export default function ValuationWorkspace() {
 
   const [negotiationRatios, setNegotiationRatios] = useState(["", "", "", ""]);
 
+  const handleLandTypeChange = (index: number, type: LandAreaType) => {
+    setSelectedLandTypes((previous) => {
+      const next = [...previous] as [LandAreaType, LandAreaType, LandAreaType];
+
+      next[index] = type;
+
+      return next;
+    });
+  };
+
   async function handleExport() {
     if (!canExport) {
       alert("Vui lòng chọn đủ 3 tài sản so sánh.");
@@ -160,6 +195,7 @@ export default function ValuationWorkspace() {
           comparables,
           negotiationRatios,
           adjustmentData,
+          selectedLandTypes,
         }),
       });
 
@@ -514,12 +550,20 @@ export default function ValuationWorkspace() {
               onChange={(v) => updateField("businessAdvantage", v)}
               options={[
                 {
-                  value: "true",
-                  label: "Có lợi thế",
+                  value: "low",
+                  label: "Kém lợi thế",
                 },
                 {
-                  value: "false",
-                  label: "Không có lợi thế",
+                  value: "normal",
+                  label: "Bình thường",
+                },
+                {
+                  value: "other",
+                  label: "Khác",
+                },
+                {
+                  value: "high",
+                  label: "Lợi thế",
                 },
               ]}
             />
@@ -602,34 +646,108 @@ export default function ValuationWorkspace() {
                   value: "CLN",
                   label: "CLN",
                 },
+                {
+                  value: "NTS",
+                  label: "NTS",
+                },
+                {
+                  value: "HNK",
+                  label: "HNK",
+                },
               ]}
             />
 
             <EditableInputRow
               stt="10.1"
-              label="Đất ODT (m²)"
-              value={getLandArea(form.landAreas, ["ODT"])}
-              fieldKey="odtLandArea"
+              label={`Đất ${selectedLandTypes[0]} (m²)`}
+              labelContent={
+                <div className="flex items-center gap-2">
+                  <span>Đất</span>
+
+                  <select
+                    value={selectedLandTypes[0]}
+                    onChange={(e) =>
+                      handleLandTypeChange(0, e.target.value as LandAreaType)
+                    }
+                    className="rounded-lg border border-[var(--border)] bg-[var(--background)] px-2 py-1 text-[var(--foreground)]"
+                  >
+                    {LAND_TYPE_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.value}
+                      </option>
+                    ))}
+                  </select>
+
+                  <span>(m²)</span>
+                </div>
+              }
+              value={getLandArea(form.landAreas, [selectedLandTypes[0]])}
+              fieldKey="landAreaSlot1"
+              landType={selectedLandTypes[0]}
               comparables={comparables}
-              onChange={(v) => updateLandArea("ODT", v)}
+              onChange={(value) => updateLandArea(selectedLandTypes[0], value)}
             />
 
             <EditableInputRow
               stt="10.2"
-              label="Đất CLN (m²)"
-              value={getLandArea(form.landAreas, ["CLN"])}
-              fieldKey="clnLandArea"
+              label={`Đất ${selectedLandTypes[1]} (m²)`}
+              labelContent={
+                <div className="flex items-center gap-2">
+                  <span>Đất</span>
+
+                  <select
+                    value={selectedLandTypes[1]}
+                    onChange={(e) =>
+                      handleLandTypeChange(1, e.target.value as LandAreaType)
+                    }
+                    className="rounded-lg border border-[var(--border)] bg-[var(--background)] px-2 py-1 text-[var(--foreground)]"
+                  >
+                    {LAND_TYPE_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.value}
+                      </option>
+                    ))}
+                  </select>
+
+                  <span>(m²)</span>
+                </div>
+              }
+              value={getLandArea(form.landAreas, [selectedLandTypes[1]])}
+              landType={selectedLandTypes[1]}
+              fieldKey="landAreaSlot2"
               comparables={comparables}
-              onChange={(v) => updateLandArea("CLN", v)}
+              onChange={(value) => updateLandArea(selectedLandTypes[1], value)}
             />
 
             <EditableInputRow
               stt="10.3"
-              label="Đất HNK/NTS/BHK (m²)"
-              value={getLandArea(form.landAreas, ["BHK"])}
-              fieldKey="hnkNtsBhkLandArea"
+              label={`Đất ${selectedLandTypes[2]} (m²)`}
+              labelContent={
+                <div className="flex items-center gap-2">
+                  <span>Đất</span>
+
+                  <select
+                    value={selectedLandTypes[2]}
+                    onChange={(e) =>
+                      handleLandTypeChange(2, e.target.value as LandAreaType)
+                    }
+                    className="rounded-lg border border-[var(--border)] bg-[var(--background)] px-2 py-1 text-[var(--foreground)]"
+                  >
+                    {LAND_TYPE_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.value}
+                      </option>
+                    ))}
+                  </select>
+
+                  <span>(m²)</span>
+                </div>
+              }
+              value={getLandArea(form.landAreas, [selectedLandTypes[2]])}
+              landType={selectedLandTypes[2]}
+              fieldKey="landAreaSlot3"
               comparables={comparables}
-              onChange={(v) => updateLandArea("BHK", v)}
+              onChange={(value) => updateLandArea(selectedLandTypes[2], value)}
             />
 
             <EditableInputRow
@@ -1131,8 +1249,10 @@ export default function ValuationWorkspace() {
 export function EditableInputRow({
   stt,
   label,
+  labelContent,
   value,
   fieldKey,
+  landType,
   comparables,
   onChange,
   required = false,
@@ -1140,8 +1260,10 @@ export function EditableInputRow({
 }: {
   stt: string;
   label: string;
+  labelContent?: React.ReactNode;
   value: string;
   fieldKey: string;
+  landType?: LandAreaType;
   comparables: ComparablePropertyWithMeta[];
   onChange: (value: string) => void;
   required?: boolean;
@@ -1172,7 +1294,7 @@ export function EditableInputRow({
           text-[var(--foreground)]
         "
       >
-        {label}
+        {labelContent ?? label}
 
         {required && <span className="ml-1 text-red-500">*</span>}
       </td>
@@ -1209,9 +1331,23 @@ export function EditableInputRow({
         />
       </td>
 
-      <ComparableValueCell comparable={comparables[0]} fieldKey={fieldKey} />
-      <ComparableValueCell comparable={comparables[1]} fieldKey={fieldKey} />
-      <ComparableValueCell comparable={comparables[2]} fieldKey={fieldKey} />
+      <ComparableValueCell
+        comparable={comparables[0]}
+        fieldKey={fieldKey}
+        landType={landType}
+      />
+
+      <ComparableValueCell
+        comparable={comparables[1]}
+        fieldKey={fieldKey}
+        landType={landType}
+      />
+
+      <ComparableValueCell
+        comparable={comparables[2]}
+        fieldKey={fieldKey}
+        landType={landType}
+      />
     </tr>
   );
 }
@@ -1359,13 +1495,15 @@ function EditableSelectRow({
 export function ComparableValueCell({
   comparable,
   fieldKey,
+  landType,
 }: {
   comparable?: ComparablePropertyWithMeta;
   fieldKey: string;
+  landType?: LandAreaType;
 }) {
   return (
     <td className="border border-[var(--border)] p-3 text-[var(--foreground)]">
-      {getComparableValue(comparable, fieldKey)}
+      {getComparableValue(comparable, fieldKey, landType)}
     </td>
   );
 }
@@ -1403,6 +1541,7 @@ function ComparableHeader({
 function getComparableValue(
   comparable: ComparablePropertyWithMeta | undefined,
   fieldKey: string,
+  landType?: LandAreaType,
 ) {
   if (!comparable) {
     return "";
@@ -1431,11 +1570,18 @@ function getComparableValue(
           ? "Có"
           : "Không";
     case "businessAdvantage":
-      return comparable.business_advantage === undefined
+      return comparable.business_advantage === undefined ||
+        comparable.business_advantage === null
         ? ""
-        : comparable.business_advantage
-          ? "Có lợi thế"
-          : "Không có lợi thế";
+        : comparable.business_advantage === "high"
+          ? "Lợi thế"
+          : comparable.business_advantage === "low"
+            ? "Kém lợi thế"
+            : comparable.business_advantage === "normal"
+              ? "Bình thường"
+              : comparable.business_advantage === "other"
+                ? "Khác"
+                : "";
     case "trafficLocation":
       return comparable.description ?? "";
     case "environment":
@@ -1445,6 +1591,10 @@ function getComparableValue(
     case "landAreas":
       return getComparableLandAreaTypes(comparable);
 
+    case "landAreaSlot1":
+    case "landAreaSlot2":
+    case "landAreaSlot3":
+      return landType ? getComparableLandArea(comparable, [landType]) : "";
     case "odtLandArea":
       return getComparableLandArea(comparable, ["ODT"]);
 
@@ -1452,7 +1602,7 @@ function getComparableValue(
       return getComparableLandArea(comparable, ["CLN"]);
 
     case "hnkNtsBhkLandArea":
-      return getComparableLandArea(comparable, ["BHK"]);
+      return getComparableLandArea(comparable, ["HNK", "NTS", "BHK"]);
     case "frontageWidth":
       return comparable.frontage_width !== undefined
         ? `${comparable.frontage_width} m`

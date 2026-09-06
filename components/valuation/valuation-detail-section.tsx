@@ -154,7 +154,6 @@ export default function ValuationDetailSection({
         fieldKey="structure"
         comparables={comparables}
         onChange={(v) => updateField("structure", v)}
-        readOnly
       />
 
       <EditableInputRow
@@ -164,7 +163,6 @@ export default function ValuationDetailSection({
         fieldKey="floors"
         comparables={comparables}
         onChange={(v) => updateField("floors", v)}
-        readOnly
       />
 
       <EditableInputRow
@@ -174,7 +172,6 @@ export default function ValuationDetailSection({
         fieldKey="usable_floor_area"
         comparables={comparables}
         onChange={(v) => updateField("usable_floor_area", v)}
-        readOnly
       />
 
       <EditableInputRow
@@ -184,7 +181,6 @@ export default function ValuationDetailSection({
         fieldKey="remaining_value_ratio"
         comparables={comparables}
         onChange={(v) => updateField("remaining_value_ratio", v)}
-        readOnly
       />
 
       <EditableInputRow
@@ -194,7 +190,6 @@ export default function ValuationDetailSection({
         fieldKey="construction_unit_price"
         comparables={comparables}
         onChange={(v) => updateField("construction_unit_price", v)}
-        readOnly
       />
 
       <CalculatedRow

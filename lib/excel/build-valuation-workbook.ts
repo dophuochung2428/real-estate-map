@@ -44,8 +44,9 @@ export async function buildValuationWorkbook(
     adjustments: number[][];
     results: number[][];
     sizeInputs: number[];
-    adjustmentRange: string[]; // thêm
+    adjustmentRange: string[];
   },
+  selectedLandTypes: [string, string, string] = ["ODT", "CLN", "BHK"],
 ) {
   const workbook = new ExcelJS.Workbook();
 
@@ -169,11 +170,32 @@ export async function buildValuationWorkbook(
     legalStatusText(c3.legal_status),
   );
 
-  const businessAdvantageText = (value: boolean | null | undefined) =>
-    value
-      ? "Khu vực dân cư tương đối đông đúc, không có lợi thế về kinh doanh, cơ sở hạ tầng tương đối hoàn thiện"
-      : "Không có lợi thế";
+  type BusinessAdvantage =
+    | "low"
+    | "normal"
+    | "other"
+    | "high"
+    | null
+    | undefined;
 
+  const businessAdvantageText = (value: BusinessAdvantage) => {
+    switch (value) {
+      case "low":
+        return "Kém lợi thế";
+
+      case "normal":
+        return "Bình thường";
+
+      case "other":
+        return "Khác";
+
+      case "high":
+        return "Lợi thế";
+
+      default:
+        return "";
+    }
+  };
   addRow(
     "6",
     "Vị trí khu vực, lợi thế kinh doanh",
@@ -221,29 +243,29 @@ export async function buildValuationWorkbook(
 
   addRow(
     "10.1",
-    "Đất ODT (m²)",
-    getLandArea(form, ["ODT"]),
-    getLandArea(c1, ["ODT"]),
-    getLandArea(c2, ["ODT"]),
-    getLandArea(c3, ["ODT"]),
+    `Đất ${selectedLandTypes[0]} (m²)`,
+    getLandArea(form, [selectedLandTypes[0]]),
+    getLandArea(c1, [selectedLandTypes[0]]),
+    getLandArea(c2, [selectedLandTypes[0]]),
+    getLandArea(c3, [selectedLandTypes[0]]),
   );
 
   addRow(
     "10.2",
-    "Đất CLN (m²)",
-    getLandArea(form, ["CLN"]),
-    getLandArea(c1, ["CLN"]),
-    getLandArea(c2, ["CLN"]),
-    getLandArea(c3, ["CLN"]),
+    `Đất ${selectedLandTypes[1]} (m²)`,
+    getLandArea(form, [selectedLandTypes[1]]),
+    getLandArea(c1, [selectedLandTypes[1]]),
+    getLandArea(c2, [selectedLandTypes[1]]),
+    getLandArea(c3, [selectedLandTypes[1]]),
   );
 
   addRow(
     "10.3",
-    "Đất HNK/NTS/BHK (m²)",
-    getLandArea(form, ["HNK", "NTS", "BHK"]),
-    getLandArea(c1, ["HNK", "NTS", "BHK"]),
-    getLandArea(c2, ["HNK", "NTS", "BHK"]),
-    getLandArea(c3, ["HNK", "NTS", "BHK"]),
+    `Đất ${selectedLandTypes[2]} (m²)`,
+    getLandArea(form, [selectedLandTypes[2]]),
+    getLandArea(c1, [selectedLandTypes[2]]),
+    getLandArea(c2, [selectedLandTypes[2]]),
+    getLandArea(c3, [selectedLandTypes[2]]),
   );
 
   addRow(
@@ -282,14 +304,21 @@ export async function buildValuationWorkbook(
     c3.asset_on_land,
   );
 
-  addRow("14.1", "Kết cấu", "", c1.structure, c2.structure, c3.structure);
+  addRow(
+    "14.1",
+    "Kết cấu",
+    form.structure,
+    c1.structure,
+    c2.structure,
+    c3.structure,
+  );
 
-  addRow("14.2", "Số tầng", "", c1.floors, c2.floors, c3.floors);
+  addRow("14.2", "Số tầng", form.floors, c1.floors, c2.floors, c3.floors);
 
   addRow(
     "14.3",
     "Diện tích sàn sử dụng (m²)",
-    "",
+    form.usable_floor_area,
     c1.usable_floor_area,
     c2.usable_floor_area,
     c3.usable_floor_area,
@@ -298,7 +327,7 @@ export async function buildValuationWorkbook(
   addRow(
     "14.4",
     "Tỷ lệ GTCL (%) đề xuất",
-    "",
+    form.remaining_value_ratio != null ? `${form.remaining_value_ratio}%` : "",
     c1.remaining_value_ratio != null ? `${c1.remaining_value_ratio}%` : "",
     c2.remaining_value_ratio != null ? `${c2.remaining_value_ratio}%` : "",
     c3.remaining_value_ratio != null ? `${c3.remaining_value_ratio}%` : "",
@@ -307,7 +336,7 @@ export async function buildValuationWorkbook(
   addRow(
     "14.5",
     "Đơn giá xây dựng (đồng/m²) đề xuất",
-    "",
+    form.construction_unit_price ?? "",
     c1.construction_unit_price,
     c2.construction_unit_price,
     c3.construction_unit_price,

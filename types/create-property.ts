@@ -37,7 +37,7 @@ export interface CreatePropertyPayload {
 
   legal_status?: boolean | null;
 
-  business_advantage?: boolean | null;
+  business_advantage?: "low" | "normal" | "other" | "high" | null;
 
   environment?: string;
 
@@ -67,7 +67,7 @@ export interface UpdateAppraisalPayload {
 
   legal_status?: boolean;
 
-  business_advantage?: boolean;
+  business_advantage?: "low" | "normal" | "other" | "high" | null;
 
   environment?: string;
 

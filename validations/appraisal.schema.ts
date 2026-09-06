@@ -8,14 +8,17 @@ export const appraisalSchema = z.object({
   contact_phone: z.string().optional(),
 
   legal_status: z.boolean().nullable().optional(),
-  business_advantage: z.boolean().nullable().optional(),
+  business_advantage: z
+    .enum(["low", "normal", "other", "high"])
+    .nullable()
+    .optional(),
 
   environment: z.string().optional(),
 
   landAreas: z
     .array(
       z.object({
-        type: z.enum(["ODT", "ONT", "LUC", "BHK", "CLN"]),
+        type: z.enum(["ODT", "ONT", "LUC", "BHK", "CLN", "NTS", "HNK"]),
         area: z.number().min(0, "Diện tích không hợp lệ"),
         unit_price: z.number().nullable().optional(),
       }),

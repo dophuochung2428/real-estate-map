@@ -270,12 +270,12 @@ export function calculateScore(
   score += Math.min(landAreaScore, 20);
 
   // ============================================================
-  // BUSINESS
+  // BUSINESS ADVANTAGE
   // Max: 2
   // ============================================================
   if (
     form.businessAdvantage !== "" &&
-    property.business_advantage === (form.businessAdvantage === "true")
+    property.business_advantage === form.businessAdvantage
   ) {
     score += 2;
   }

@@ -20,6 +20,19 @@ export default function PropertyAppraisalSummary({
     return "Chưa cập nhật";
   };
 
+  const formatBusinessAdvantage = (
+    value: "low" | "normal" | "other" | "high" | null | undefined,
+  ) => {
+    const labels = {
+      low: "Kém lợi thế",
+      normal: "Bình thường",
+      other: "Khác",
+      high: "Lợi thế",
+    };
+
+    return value ? (labels[value] ?? "Chưa cập nhật") : "Chưa cập nhật";
+  };
+
   const formatValue = (value: any, unit = "") => {
     if (value === null || value === undefined || value === "") {
       return "-";
@@ -86,7 +99,7 @@ export default function PropertyAppraisalSummary({
         />
         <SummaryRow
           label="Lợi thế kinh doanh"
-          value={formatBoolean(property.business_advantage)}
+          value={formatBusinessAdvantage(property.business_advantage)}
         />
         <SummaryRow
           label="Môi trường"

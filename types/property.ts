@@ -31,7 +31,14 @@ export interface PropertyImage {
   created_at?: string;
 }
 
-export type LandAreaType = "ODT" | "ONT" | "LUC" | "BHK" | "CLN";
+export type LandAreaType =
+  | "ODT"
+  | "ONT"
+  | "LUC"
+  | "BHK"
+  | "CLN"
+  | "NTS"
+  | "HNK";
 
 export interface LandAreaItem {
   type: LandAreaType;
@@ -73,7 +80,7 @@ export interface Property {
 
   legal_status?: boolean;
 
-  business_advantage?: boolean;
+  business_advantage?: "low" | "normal" | "other" | "high" | null;
 
   environment?: string;
   traffic_location?: string | null;
