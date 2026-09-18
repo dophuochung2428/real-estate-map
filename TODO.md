@@ -32,3 +32,17 @@ sửa cấu trúc form hiển thị chức năng thẩm định excel (1ngày), 
 2 ngày test(trừ)
 
 đổ lên excel
+
+
+
+
+Hình thể thửa đất -> Nhập tay
+
+đơn giá mặc định 90%
+Đơn giá excel =                                                     done
+toàn bộ số là number, số phần ngàn
+
+Thêm 3 sheet mỗi sheet 1 hình
+Làm tròn số line 31
+
+diệntích là dấu ,; tiền là dấu .

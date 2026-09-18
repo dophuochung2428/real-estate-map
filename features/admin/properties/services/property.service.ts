@@ -26,4 +26,18 @@ export const propertyService = {
 
     return data;
   },
+
+  async adminDeleteProperty(id: string) {
+    const res = await fetch(`/api/admin/properties/${id}`, {
+      method: "DELETE",
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Delete failed");
+    }
+
+    return data;
+  },
 };

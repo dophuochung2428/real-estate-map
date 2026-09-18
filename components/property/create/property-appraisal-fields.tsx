@@ -330,25 +330,76 @@ export default function PropertyAppraisalFields({
         <div>
           <label className="mb-2 block font-medium">Hình thể thửa đất</label>
 
-          <select
-            value={form.land_shape}
-            onChange={(e) =>
-              setForm((prev: any) => ({ ...prev, land_shape: e.target.value }))
-            }
-            className="h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4"
-          >
-            <option value="">Chọn hình thể</option>
+          {(() => {
+            const standardLandShapes = [
+              "square",
+              "rectangle",
+              "expanding_back",
+              "narrowing_back",
+              "irregular",
+            ];
 
-            <option value="square">Vuông</option>
+            const landShape = form.land_shape ?? "";
 
-            <option value="rectangle">Chữ nhật</option>
+            const isCustomLandShape =
+              landShape !== "" && !standardLandShapes.includes(landShape);
 
-            <option value="expanding_back">Nở hậu</option>
+            return (
+              <>
+                <select
+                  value={isCustomLandShape ? "custom" : landShape}
+                  onChange={(e) => {
+                    const value = e.target.value;
 
-            <option value="narrowing_back">Tóp hậu</option>
+                    if (value === "custom") {
+                      setForm((prev: any) => ({
+                        ...prev,
+                        land_shape: "__custom__",
+                      }));
 
-            <option value="irregular">Không đều</option>
-          </select>
+                      return;
+                    }
+
+                    setForm((prev: any) => ({
+                      ...prev,
+                      land_shape: value,
+                    }));
+                  }}
+                  className="h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4"
+                >
+                  <option value="">Chọn hình thể</option>
+
+                  <option value="square">Vuông</option>
+
+                  <option value="rectangle">Chữ nhật</option>
+
+                  <option value="expanding_back">Nở hậu</option>
+
+                  <option value="narrowing_back">Tóp hậu</option>
+
+                  <option value="irregular">Không đều</option>
+
+                  <option value="custom">Nhập tay</option>
+                </select>
+
+                {(isCustomLandShape || landShape === "__custom__") && (
+                  <input
+                    type="text"
+                    value={landShape === "__custom__" ? "" : landShape}
+                    onChange={(e) =>
+                      setForm((prev: any) => ({
+                        ...prev,
+                        land_shape: e.target.value,
+                      }))
+                    }
+                    className="mt-3 h-12 w-full rounded-2xl border border-[var(--border)] px-4 outline-none"
+                    placeholder="Nhập hình thể thửa đất"
+                    autoFocus
+                  />
+                )}
+              </>
+            );
+          })()}
         </div>
 
         <div>

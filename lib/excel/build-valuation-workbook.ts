@@ -81,6 +81,16 @@ export async function buildValuationWorkbook(
   const c2 = comparables[1] ?? {};
   const c3 = comparables[2] ?? {};
 
+  const getComparableImage = (property: any) => {
+    return (
+      property?.property_images?.find(
+        (image: any) => image.is_thumbnail === true,
+      )?.image_url ??
+      property?.property_images?.[0]?.image_url ??
+      null
+    );
+  };
+
   const addRow = (
     stt: string,
     label: string,
@@ -209,9 +219,15 @@ export async function buildValuationWorkbook(
     "7",
     "Vị trí giao thông",
     form.trafficLocation,
-    c1.distanceKm ? `Cách TSTĐ ${c1.distanceKm.toFixed(2)} km` : "",
-    c2.distanceKm ? `Cách TSTĐ ${c2.distanceKm.toFixed(2)} km` : "",
-    c3.distanceKm ? `Cách TSTĐ ${c3.distanceKm.toFixed(2)} km` : "",
+    c1.distanceKm
+      ? `Cách TSTĐ ${c1.distanceKm.toFixed(2)} km và ` + c1.description
+      : "",
+    c2.distanceKm
+      ? `Cách TSTĐ ${c2.distanceKm.toFixed(2)} km và ` + c2.description
+      : "",
+    c3.distanceKm
+      ? `Cách TSTĐ ${c3.distanceKm.toFixed(2)} km và ` + c3.description
+      : "",
   );
 
   addRow(
@@ -390,9 +406,9 @@ export async function buildValuationWorkbook(
     "21",
     "Đơn giá đất theo Nghị quyết số 16/2025/NQ-HĐND ngày 31/12/2025 của Hội đồng nhân dân tỉnh An Giang",
     "",
-    "",
-    "",
-    "",
+    c1.state_unit_price ?? "",
+    c2.state_unit_price ?? "",
+    c3.state_unit_price ?? "",
   );
 
   addRow(
@@ -776,11 +792,11 @@ export async function buildValuationWorkbook(
 
   sheet.addRow(["I", "GIÁ TRỊ QUYỀN SỬ DỤNG ĐẤT (ODT)", "", "", "", ""]); // 111
 
-  sheet.addRow(["1", "", "", "", "", ""]); // 112
+  sheet.addRow(["1", "  ", "", "", "", ""]); // 112
 
   sheet.addRow(["II", "GIÁ TRỊ CÔNG TRÌNH XÂY DỰNG TRÊN ĐẤT", "", "", "", ""]); // 113
 
-  sheet.addRow(["1", "", "", "", "", ""]); // 114
+  sheet.addRow(["1", form.structure, "", "", "", ""]); // 114
 
   sheet.addRow(["2", "", "", "", "", ""]); // 115
 
@@ -791,6 +807,17 @@ export async function buildValuationWorkbook(
   sheet.addRow(["", "Tổng cộng", "", "", "", ""]); // 118
 
   sheet.addRow(["", "Làm tròn", "", "", "", ""]); // 119
+
+  sheet.addRow([]);
+  sheet.addRow(["Tọa độ:"]);
+
+  sheet.addRow(["TSTĐ:", `${form.latitude ?? ""}, ${form.longitude ?? ""}`]);
+
+  sheet.addRow(["TSSS1:", `${c1.lat ?? ""}, ${c1.lng ?? ""}`]);
+
+  sheet.addRow(["TSSS2:", `${c2.lat ?? ""}, ${c2.lng ?? ""}`]);
+
+  sheet.addRow(["TSSS3:", `${c3.lat ?? ""}, ${c3.lng ?? ""}`]);
 
   // ==========================
   // MERGE STT CELLS
@@ -1014,28 +1041,245 @@ export async function buildValuationWorkbook(
     );
   };
 
-  // ==========================
   // APPLY NUMBER FORMAT
-  // ==========================
 
-  [
-    "C11",
+  // Diện tích: 40.806,097
+  const areaCells = [
     "D11",
     "E11",
     "F11",
-    "G11",
-    "C12",
-    "D12",
-    "E12",
-    "F12",
-    "G12",
-    "C13",
+    "G11", // Diện tích
     "D13",
     "E13",
     "F13",
-    "G13",
+    "G13", // Diện tích đất 1
+    "D14",
+    "E14",
+    "F14",
+    "G14", // Diện tích đất 2
+    "D15",
+    "E15",
+    "F15",
+    "G15", // Diện tích đất 3
+    "D22",
+    "E22",
+    "F22",
+    "G22", // Diện tích sàn sử dụng
+    "D111",
+  ];
+
+  areaCells.forEach((address) => {
+    sheet.getCell(address).numFmt = "#,##0.000";
+  });
+
+  // Chiều rộng / chiều sâu: 12,50
+  const dimensionCells = [
+    "D16",
+    "E16",
+    "F16",
+    "G16", // Mặt tiền
+    "D17",
+    "E17",
+    "F17",
+    "G17", // Chiều sâu
+  ];
+
+  dimensionCells.forEach((address) => {
+    sheet.getCell(address).numFmt = "#,##0.00";
+  });
+
+  // Số tầng
+  const floorCells = ["D21", "E21", "F21", "G21"];
+
+  floorCells.forEach((address) => {
+    sheet.getCell(address).numFmt = "#,##0";
+  });
+
+  // Tiền / đơn giá: 40.806.097
+  const moneyCells = [
+    "D24",
+    "E24",
+    "F24",
+    "G24", // Đơn giá xây dựng
+    "D25",
+    "E25",
+    "F25",
+    "G25", // Tổng giá trị công trình
+    "D26",
+    "E26",
+    "F26",
+    "G26", // Chi phí chuyển đổi
+    "D27",
+    "E27",
+    "F27",
+    "G27", // Chi phí chuyển đổi
+    "D28",
+    "E28",
+    "F28",
+    "G28", // Giá chào bán
+    "D29",
+    "E29",
+    "F29",
+    "G29", // Giá thương lượng
+    "D30",
+    "E30",
+    "F30",
+    "G30", // Giá sau chuyển đổi
+    "D31",
+    "E31",
+    "F31",
+    "G31", // Đơn giá ODT
+    "D32",
+    "E32",
+    "F32",
+    "G32", // Giá đất Nhà nước
+    "D33",
+    "E33",
+    "F33",
+    "G33", // ODT
+    "D34",
+    "E34",
+    "F34",
+    "G34", // CLN
+    "D35",
+    "E35",
+    "F35",
+    "G35", // HNK/NTS/BHK
+  ];
+
+  moneyCells.forEach((address) => {
+    sheet.getCell(address).numFmt = "#,##0";
+  });
+
+  // Hệ số điều chỉnh
+  [
+    "E56",
+    "F56",
+    "G56",
+    "E61",
+    "F61",
+    "G61",
+    "E66",
+    "F66",
+    "G66",
+    "E71",
+    "F71",
+    "G71",
+    "E76",
+    "F76",
+    "G76",
+    "E81",
+    "F81",
+    "G81",
+    "E86",
+    "F86",
+    "G86",
+    "E91",
+    "F91",
+    "G91",
+    "E96",
+    "F96",
+    "G96",
+  ].forEach((address) => {
+    sheet.getCell(address).numFmt = "0.00%";
+  });
+
+  // Giá trị điều chỉnh và giá sau điều chỉnh
+  [
+    "E57",
+    "F57",
+    "G57",
+    "E62",
+    "F62",
+    "G62",
+    "E67",
+    "F67",
+    "G67",
+    "E72",
+    "F72",
+    "G72",
+    "E77",
+    "F77",
+    "G77",
+    "E82",
+    "F82",
+    "G82",
+    "E87",
+    "F87",
+    "G87",
+    "E92",
+    "F92",
+    "G92",
+    "E97",
+    "F97",
+    "G97",
+
+    "E58",
+    "F58",
+    "G58",
+    "E63",
+    "F63",
+    "G63",
+    "E68",
+    "F68",
+    "G68",
+    "E73",
+    "F73",
+    "G73",
+    "E78",
+    "F78",
+    "G78",
+    "E83",
+    "F83",
+    "G83",
+    "E88",
+    "F88",
+    "G88",
+    "E93",
+    "F93",
+    "G93",
+    "E98",
+    "F98",
+    "G98",
   ].forEach((address) => {
     sheet.getCell(address).numFmt = "#,##0";
+  });
+
+  // Các giá trị tổng hợp
+  [
+    "E99",
+    "F99",
+    "G99",
+    "E100",
+    "F100",
+    "G100",
+    "E103",
+    "F103",
+    "G103",
+    "E106",
+    "F106",
+    "G106",
+    "F110",
+    "F111",
+    "F112",
+    "F113",
+    "F114",
+    "F115",
+    "F116",
+    "F117",
+    "F118",
+  ].forEach((address) => {
+    sheet.getCell(address).numFmt = "#,##0";
+  });
+
+  // Độ lệch: -5,00%
+  ["E101", "F101", "G101"].forEach((address) => {
+    sheet.getCell(address).numFmt = "0.00%";
+  });
+
+  // Số lượng
+  ["E104", "F104", "G104"].forEach((address) => {
+    sheet.getCell(address).numFmt = "0.00";
   });
 
   // ==========================
@@ -1047,16 +1291,6 @@ export async function buildValuationWorkbook(
 
     cell.value = formatDate(cell.value);
   });
-
-  // ==========================
-  // FORMAT NUMBER ROW
-  // ==========================
-
-  for (let row = 23; row <= 29; row++) {
-    ["E", "F", "G"].forEach((col) => {
-      sheet.getCell(`${col}${row}`).numFmt = "#,##0";
-    });
-  }
 
   // FORMULA
 
@@ -1676,15 +1910,6 @@ export async function buildValuationWorkbook(
     };
   };
 
-  // Ví dụ nếu API sau này trả về link khảo sát
-  // nếu chưa có sẽ tự để trống
-
-  addHyperlink("D3", "khảo sát thực tế", c1.surveyUrl);
-
-  addHyperlink("E3", "khảo sát thực tế", c2.surveyUrl);
-
-  addHyperlink("F3", "khảo sát thực tế", c3.surveyUrl);
-
   // ==========================
   // EMPTY CELL CLEANUP
   // ==========================
@@ -1714,6 +1939,100 @@ export async function buildValuationWorkbook(
   // ==========================
   // RETURN
   // ==========================
+
+  // ==========================
+  // TSSS IMAGE SHEETS
+  // ==========================
+
+  const addImageSheet = async (
+    sheetName: "TSSS1" | "TSSS2" | "TSSS3",
+    property: any,
+  ) => {
+    const imageSheet = workbook.addWorksheet(sheetName);
+
+    imageSheet.getColumn(1).width = 100;
+
+    imageSheet.getCell("A1").value = sheetName;
+
+    imageSheet.getCell("A1").font = {
+      name: "Times New Roman",
+      size: 14,
+      bold: true,
+    };
+
+    imageSheet.getCell("A1").alignment = {
+      horizontal: "center",
+      vertical: "middle",
+    };
+
+    const imageUrl = getComparableImage(property);
+
+    if (!imageUrl) {
+      imageSheet.getCell("A3").value = "Không có hình ảnh";
+      imageSheet.getCell("A3").font = {
+        name: "Times New Roman",
+        size: 12,
+      };
+
+      imageSheet.getCell("A3").alignment = {
+        horizontal: "center",
+        vertical: "middle",
+      };
+
+      return;
+    }
+
+    try {
+      const response = await fetch(imageUrl);
+
+      if (!response.ok) {
+        throw new Error(
+          `Không thể tải hình ảnh: ${response.status} ${response.statusText}`,
+        );
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+
+      // ExcelJS không hỗ trợ WebP trực tiếp.
+      // Cần chuyển ảnh sang PNG trước khi nhúng vào Excel.
+      const sharp = (await import("sharp")).default;
+
+      const pngBuffer = await sharp(Buffer.from(arrayBuffer)).png().toBuffer();
+
+      const imageId = workbook.addImage({
+        buffer: pngBuffer as unknown as ExcelJS.Buffer,
+        extension: "png",
+      });
+
+      imageSheet.addImage(imageId, {
+        tl: {
+          col: 0,
+          row: 2,
+        },
+        ext: {
+          width: 800,
+          height: 600,
+        },
+      });
+    } catch (error) {
+      console.error(`Không thể thêm ảnh cho ${sheetName}:`, error);
+
+      imageSheet.getCell("A3").value = "Không thể tải hình ảnh";
+      imageSheet.getCell("A3").font = {
+        name: "Times New Roman",
+        size: 12,
+      };
+
+      imageSheet.getCell("A3").alignment = {
+        horizontal: "center",
+        vertical: "middle",
+      };
+    }
+  };
+
+  await addImageSheet("TSSS1", c1);
+  await addImageSheet("TSSS2", c2);
+  await addImageSheet("TSSS3", c3);
 
   return workbook;
 }

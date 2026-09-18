@@ -16,9 +16,23 @@ export function useAdminProperties(initialData: Property[]) {
     },
   });
 
+  const deletePropertyMutation = useMutation({
+    mutationFn: (id: string) => propertyService.adminDeleteProperty(id),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["admin-properties"],
+      });
+    },
+  });
+
   return {
     properties: initialData,
+
     changeStatus: changeStatusMutation.mutateAsync,
     isUpdating: changeStatusMutation.isPending,
+
+    deleteProperty: deletePropertyMutation.mutateAsync,
+    isDeleting: deletePropertyMutation.isPending,
   };
 }

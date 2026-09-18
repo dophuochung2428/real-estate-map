@@ -126,6 +126,8 @@ export default function PropertyForm({ mode, initialData }: Props) {
 
         direction: form.direction ?? null,
 
+        land_shape: form.land_shape === "__custom__" ? "" : form.land_shape,
+
         state_unit_price:
           form.state_unit_price === "" ? null : Number(form.state_unit_price),
 

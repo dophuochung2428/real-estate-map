@@ -23,7 +23,12 @@ export async function getAdminProperties({ page = 1, search, status }: Params) {
     property_images (
       image_url,
       is_thumbnail
-    )
+    ),
+      property_land_areas (
+    land_type,
+    area,
+    unit_price
+  )
   `,
     {
       count: "exact",

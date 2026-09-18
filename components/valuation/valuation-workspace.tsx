@@ -12,6 +12,10 @@ export type ComparablePropertyWithMeta = ComparableProperty & {
   source?: string;
   contact?: string;
   created_at?: string | null;
+  property_images?: {
+    image_url: string;
+    is_thumbnail: boolean;
+  }[];
 };
 
 const LAND_SHAPE_LABELS: Record<string, string> = {
@@ -164,7 +168,12 @@ export default function ValuationWorkspace() {
     adjustmentRange: [],
   });
 
-  const [negotiationRatios, setNegotiationRatios] = useState(["", "", "", ""]);
+  const [negotiationRatios, setNegotiationRatios] = useState([
+    "",
+    "90",
+    "90",
+    "90",
+  ]);
 
   const handleLandTypeChange = (index: number, type: LandAreaType) => {
     setSelectedLandTypes((previous) => {
@@ -488,22 +497,22 @@ export default function ValuationWorkspace() {
               <td className="border border-[var(--border)] p-3">Tọa độ</td>
 
               <td className="border border-[var(--border)] p-3">
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="min-w-0">
                     <div className="mb-1 text-xs opacity-70">Lat</div>
                     <input
                       value={form.latitude}
                       onChange={(e) => updateField("latitude", e.target.value)}
-                      className="w-full rounded-lg border border-[var(--border)] px-3 py-2"
+                      className="w-full min-w-0 rounded-lg border border-[var(--border)] px-3 py-2"
                     />
                   </div>
 
-                  <div>
+                  <div className="min-w-0">
                     <div className="mb-1 text-xs opacity-70">Lng</div>
                     <input
                       value={form.longitude}
                       onChange={(e) => updateField("longitude", e.target.value)}
-                      className="w-full rounded-lg border border-[var(--border)] px-3 py-2"
+                      className="w-full min-w-0 rounded-lg border border-[var(--border)] px-3 py-2"
                     />
                   </div>
                 </div>

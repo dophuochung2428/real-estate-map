@@ -16,6 +16,10 @@ export async function searchComparableProperties(form: ValuationSearchForm) {
 
   const { data, error } = await supabase.from("properties").select(`
       *,
+        property_images (
+          image_url,
+          is_thumbnail
+        ),
       landAreas:property_land_areas(
         id,
         property_id,
